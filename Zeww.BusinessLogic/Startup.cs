@@ -34,6 +34,7 @@ namespace Zeww.BusinessLogic
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+            services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IUserWorkspaceRepository, UserWorkspaceRepository>();
         }
 
