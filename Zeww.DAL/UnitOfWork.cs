@@ -23,6 +23,7 @@ namespace Zeww.DAL
             Users = new UserRepository(context);
             UserWorkspaces = new UserWorkspaceRepository(context);
             Workspaces = new WorkspaceRepository(context);
+            Files = new FileRepository(context);
         }
 
         public IChatRepository Chats { get; private set; }
@@ -30,6 +31,7 @@ namespace Zeww.DAL
         public IUserRepository Users { get; private set; }
         public IUserWorkspaceRepository UserWorkspaces { get; private set; }
         public IWorkspaceRepository Workspaces{ get; private set; }
+        public IFileRepository Files { get; private set; }
 
 
         public void Save() {
