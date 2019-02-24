@@ -14,9 +14,11 @@ namespace Zeww.Models
         [EmailAddress]
         public string Email { get; set; }
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
+        public virtual ICollection<UserChats> UserChats { get; set; }
 
         public User() {
             this.UserWorkspaces = new HashSet<UserWorkspace>();
+            this.UserChats = new HashSet<UserChats>();
         }
     }
 }
