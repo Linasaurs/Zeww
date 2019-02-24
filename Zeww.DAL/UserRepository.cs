@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Zeww.Models;
 using Zeww.Repository;
+using Microsoft.AspNetCore.Identity;
 
 namespace Zeww.DAL
 {
@@ -13,6 +14,26 @@ namespace Zeww.DAL
         //Your methods go here
         public void Add(User userToAdd) {
             dbSet.Add(userToAdd);
+        }
+
+        public User Authenticate(string email, string password)
+        {
+            var users = Get(u => u.Email == email);
+            var user = users.GetEnumerator().Current;
+            if(user == null)
+            {
+                return null;
+            }
+
+            var passwordHasher = new PasswordHasher<User>();
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
+            {
+                return null;
+            }
+
+            return user;
+
         }
     }
 }
