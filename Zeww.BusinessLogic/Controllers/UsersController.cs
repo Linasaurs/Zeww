@@ -18,7 +18,6 @@ namespace Zeww.BusinessLogic.Controllers
     {
         private IUnitOfWork _unitOfWork;
    
-
         public UsersController(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
         }
@@ -28,15 +27,15 @@ namespace Zeww.BusinessLogic.Controllers
         {
             return "Hello";
         }
-       
+
         [HttpGet("{id}")]
         public string GetById(int Id) {
             return _unitOfWork.Users.GetByID(Id).Name;
         }
 
-        // POST api/users
+        // POST api/users 
+        [Route("~/Post")] 
         [HttpPost]
-        [Route("~/Post")]
         public void Post([FromBody] User user) {
             _unitOfWork.Users.Add(user);
             _unitOfWork.Save();
