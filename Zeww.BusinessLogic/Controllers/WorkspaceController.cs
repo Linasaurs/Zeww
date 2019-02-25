@@ -27,7 +27,7 @@ namespace Zeww.BusinessLogic.Controllers
         [Route("AddNewWorkspace")]
         public void AddNewWorkspaceByName(string name)
         {
-            _unitOfWork.Workspaces.Add(new Workspace {Name = name});
+            _unitOfWork.Workspaces.Add(new Workspace {WorkspaceName = name});
             _unitOfWork.Save();
         }
     }

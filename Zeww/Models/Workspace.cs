@@ -18,7 +18,8 @@ namespace Zeww.Models
         [MinLength(3)]
         [RegularExpression(@"^[A-Z]+[a-zA-Z0-9""'\s-]*$")]
         [Required]
-        public string WorkspaceName { get; set; }
+        public string WorkspaceName { get; set; } 
+
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
 
     }
