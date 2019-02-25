@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190225121229_GivingChannelAPurpose")]
-    partial class GivingChannelAPurpose
+    [Migration("20190225121127_userUpdate2")]
+    partial class userUpdate2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,8 +29,6 @@ namespace Zeww.Migrations
                     b.Property<bool>("IsPrivate");
 
                     b.Property<string>("Name");
-
-                    b.Property<string>("Purpose");
 
                     b.Property<int>("WorkspaceId");
 
