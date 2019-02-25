@@ -34,20 +34,20 @@ namespace Zeww.BusinessLogic.Controllers
         {
             return "Hello";
         }
-       
+
         [HttpGet("{id}")]
-        public ActionResult GetById(int Id) {
+        public ActionResult GetById(int Id)
+        {
             if (Id < 1)
             {
                 return BadRequest();
             }
 
-          
-            if (_unitOfWork.Users.GetByID(Id)  == null)
+
+            if (_unitOfWork.Users.GetByID(Id) == null)
             {
                 return NotFound();
             }
-
             var user = new
             {
                 id = _unitOfWork.Users.GetByID(Id).Id,
@@ -60,6 +60,7 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(user);
 
         }
+       
 
         [HttpPost]
         [Route("SignUp")]
