@@ -57,7 +57,6 @@ namespace Zeww.BusinessLogic.Controllers
                 var passwordHasher = new PasswordHasher<User>();
                 user.Password = passwordHasher.HashPassword(user, user.Password);
 
-                //var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, claimedPassword);
                 _unitOfWork.Users.Insert(user);
                 _unitOfWork.Save();
 
@@ -68,6 +67,5 @@ namespace Zeww.BusinessLogic.Controllers
 
             return BadRequest(ModelState);
         }
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }
