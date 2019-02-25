@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190225115431_dummyData")]
-    partial class dummyData
+    [Migration("20190225121200_uncommented")]
+    partial class uncommented
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,17 +39,25 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ChatId");
+
                     b.Property<string>("Extension");
 
-                    b.Property<string>("name");
+                    b.Property<long>("Size");
 
-                    b.Property<string>("source");
+                    b.Property<string>("Source");
 
-                    b.HasKey("id");
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Files");
                 });
@@ -77,24 +85,9 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email")
-                        .IsRequired();
+                    b.Property<string>("Email");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(15);
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(15);
-
-                    b.Property<string>("PhoneNumber");
-
-                    b.Property<int>("Status");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(15);
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -139,6 +132,19 @@ namespace Zeww.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("Zeww.Models.File", b =>
+                {
+                    b.HasOne("Zeww.Models.Chat", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Zeww.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Zeww.Models.UserChats", b =>

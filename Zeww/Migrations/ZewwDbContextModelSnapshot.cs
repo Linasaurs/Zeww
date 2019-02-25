@@ -37,19 +37,25 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ChatId");
 
                     b.Property<string>("Extension");
 
                     b.Property<long>("Size");
 
+                    b.Property<string>("Source");
+
                     b.Property<int>("UserId");
 
-                    b.Property<string>("source");
+                    b.HasKey("Id");
 
-                    b.HasKey("id");
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("UserId");
 
@@ -79,12 +85,7 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email")
-                        .IsRequired();
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(15);
+                    b.Property<string>("Email");
 
                     b.Property<string>("Password")
                         .IsRequired();
@@ -97,6 +98,7 @@ namespace Zeww.Migrations
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(15);
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -145,6 +147,11 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
+                    b.HasOne("Zeww.Models.Chat", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Zeww.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")

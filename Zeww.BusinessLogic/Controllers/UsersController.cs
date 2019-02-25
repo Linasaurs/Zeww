@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -64,6 +65,23 @@ namespace Zeww.BusinessLogic.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        public static string getHomePath()
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                return Environment.GetEnvironmentVariable("HOME");
+
+            return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+        }
+        [HttpGet("download/{filename}")]
+        public void DownloadFile(string filename)
+        {
+            string pathDownload = Path.Combine(getHomePath(), "Downloads");
+            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.name == filename).FirstOrDefault();
+            WebClient client = new WebClient();
+            var DownloadedFileName = fileToDownload.name + fileToDownload.Extension;
+            client.DownloadFile(fileToDownload.source, (pathDownload +"/"+ DownloadedFileName));
         }
     }
 }
