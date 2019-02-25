@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class GivingChannelAPurpose : Migration
+    public partial class dummyData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,12 +15,26 @@ namespace Zeww.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     WorkspaceId = table.Column<int>(nullable: false),
                     IsPrivate = table.Column<bool>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    Purpose = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Chats", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Files",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    name = table.Column<string>(nullable: true),
+                    source = table.Column<string>(nullable: true),
+                    Extension = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Files", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,28 +81,6 @@ namespace Zeww.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Workspaces", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Files",
-                columns: table => new
-                {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    source = table.Column<string>(nullable: true),
-                    Size = table.Column<long>(nullable: false),
-                    Extension = table.Column<string>(nullable: true),
-                    UserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Files", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Files_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -139,11 +131,6 @@ namespace Zeww.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Files_UserId",
-                table: "Files",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserChats_UserId",
