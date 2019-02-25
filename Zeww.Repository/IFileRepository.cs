@@ -8,6 +8,6 @@ namespace Zeww.Repository
     public interface IFileRepository : IGenericRepository<File>
     {
         //Your method headers go here
-        IEnumerable<File> GetFilesBySenderName(string name);
+        IEnumerable<File> GetFilesBySenderName(string senderName , string channelName);
     }
 }

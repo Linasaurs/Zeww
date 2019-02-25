@@ -2,7 +2,7 @@
 
 namespace Zeww.Migrations
 {
-    public partial class CreateAfterMovingToNewDatabse : Migration
+    public partial class FileTest : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -16,8 +16,13 @@ namespace Zeww.Models
         public string source { get; set; }
         public long Size { get; set; }
         public string Extension { get; set; }
-        [ForeignKey("User")]
+        /*[ForeignKey("User")]
+        [Column("Id")]
         public int UserId { get; set; }
         public User User { get; set; }
+        [ForeignKey("Chat")]
+        [Column("Id")]
+        public int ChatId { get; set; }
+        public Chat Chat { get; set; }*/
     }
 }

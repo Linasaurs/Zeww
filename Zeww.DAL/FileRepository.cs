@@ -13,21 +13,25 @@ namespace Zeww.DAL
         //This sets the context of the child class to the context of the super class
         public FileRepository(ZewwDbContext context) : base(context) { }
 
-        public IEnumerable<File> GetFilesBySenderName(string name)
-        {
-            if(!String.IsNullOrEmpty(name))
-            {
-                return Get(FilterBySenderName(name));
-            }
-
-            return Get();
-        }
-
-        private Expression<Func<File, bool>> FilterBySenderName(string name)
-        {
-            return File => File.User.Name == name;
-        }
-
         //Your methods go here
+        public IEnumerable<File> GetFilesBySenderName(string senderName , string channelName)
+        {
+            if (!String.IsNullOrEmpty(channelName))
+            {
+                if (!String.IsNullOrEmpty(senderName))
+                    return Get();//FilterBySenderName(senderName,channelName)
+                return Get();
+            }
+            else
+                return null;
+           
+        }
+
+        /*private Expression<Func<File, bool>> FilterBySenderName(string name, string channelName)
+        {
+            return File => (File.User.Name == name && File.Chat.Name == channelName);
+        }*/
+
+       
     }
 }
