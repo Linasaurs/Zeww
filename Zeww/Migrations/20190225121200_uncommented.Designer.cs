@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190225121200_uncommented")]
+    partial class uncommented
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,8 +59,6 @@ namespace Zeww.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Files");
                 });
 
@@ -87,17 +87,6 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Email");
 
-                    b.Property<string>("Password")
-                        .IsRequired();
-
-
-                    b.Property<string>("PhoneNumber");
-
-                    b.Property<int>("Status");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(15);
                     b.Property<string>("Name");
 
                     b.HasKey("Id");

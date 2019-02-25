@@ -24,7 +24,6 @@ namespace Zeww.Models
         public string Email { get; set; }
 
         [Required]
-        [StringLength(15, MinimumLength = 6, ErrorMessage = "password must be between 3 and 15 characters")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
       
