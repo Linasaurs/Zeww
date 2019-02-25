@@ -38,16 +38,16 @@ namespace Zeww.BusinessLogic.Controllers
 
             return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
- 
+
         [HttpGet("download/{filename}")]
         public void DownloadFile(string filename)
         {
             string pathDownload = Path.Combine(getHomePath(), "Downloads");
-            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.name == filename).FirstOrDefault();
+            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.Name == filename).FirstOrDefault();
             WebClient client = new WebClient();
-            var DownloadedFileName = fileToDownload.name + fileToDownload.Extension;
-            client.DownloadFile(fileToDownload.source, (pathDownload +"/"+ DownloadedFileName));
-
+            var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
+            client.DownloadFile(fileToDownload.Source, (pathDownload + "/" + DownloadedFileName));
+        }
         // POST api/users
         [HttpPost("Post")]
         public void Post([FromBody] User user) {
