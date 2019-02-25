@@ -10,8 +10,7 @@ namespace Zeww.BusinessLogic.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ChatsController : Controller
-    {
+    public class ChatsController : Controller {
         private IUnitOfWork _unitOfWork;
 
         public ChatsController(IUnitOfWork unitOfWork) {
@@ -19,15 +18,18 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         // GET: /<controller>/
+        [HttpGet]
         public string Index() {
             return "Hello";
         }
 
         //This is code for Ziad, please do not touch this method
-        [Route("~/CreateNewChannel")]
-        public string CreateNewChannel(Chat chat) {
-
-            return "passable";
+        [HttpPost]
+        [Route("CreateNewChannel")]
+        public IActionResult CreateNewChannel(Chat chat) {
+            _unitOfWork.Chats.Insert(chat);
+            _unitOfWork.Save();
+            return Ok();
         }
 
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
