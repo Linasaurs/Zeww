@@ -12,9 +12,9 @@ namespace Zeww.Models
     {
         [Key]
         public int Id { get; set; }
-        public string name { get; set; }
         [Url]
-        public string source { get; set; }
+        public string Source { get; set; }
+        public string Name { get; set; }
         public long Size { get; set; }
         public string Extension { get; set; }
         [ForeignKey("User")]
