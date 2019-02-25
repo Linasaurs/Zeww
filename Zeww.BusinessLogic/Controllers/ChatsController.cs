@@ -31,5 +31,12 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
             return Ok();
         }
+
+        [HttpPut]
+        [Route("EditChannelPurpose")]
+        public IActionResult EditChannelPurpose(Chat chat, String newName) {
+
+            return Ok();
+        }
     }
 }
