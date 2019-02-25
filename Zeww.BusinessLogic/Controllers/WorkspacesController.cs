@@ -37,6 +37,10 @@ namespace Zeww.BusinessLogic.Controllers
         [Route("name/{workspaceName}")]
         public IActionResult GetWorkspaceName(string workspaceName)
         {
+            // if(loginSuccessful){
+            // then check in the workspace in the workspaces list to 
+            // make sure that this workspace exists in his list of workspaces
+            // }
             if (!string.IsNullOrWhiteSpace(workspaceName))
             {
                 var query = _unitOfWork.Workspaces.Get();
