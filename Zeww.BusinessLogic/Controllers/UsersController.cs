@@ -42,5 +42,16 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
         }
 
+        //Get user list of channels
+        [HttpGet]
+        [Route("/chats")]
+        public void GetListOfChannelsbyUserId(int id)
+        {
+            _unitOfWork.Chats.GetListOfChannelsbyUserId(1);
+            _unitOfWork.Save();
+        }
+       
+
+
     }
 }

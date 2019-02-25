@@ -8,6 +8,7 @@ namespace Zeww.Repository
     public interface IChatRepository : IGenericRepository<Chat> {
 
         //Your method headers go here
+        void GetListOfChannelsbyUserId(int id);
 
     }
 }
