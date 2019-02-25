@@ -28,6 +28,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("Purpose");
+
                     b.Property<int>("WorkspaceId");
 
                     b.HasKey("Id");
@@ -87,7 +89,8 @@ namespace Zeww.Migrations
                         .HasMaxLength(15);
 
                     b.Property<string>("Password")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(15);
 
                     b.Property<string>("PhoneNumber");
 
