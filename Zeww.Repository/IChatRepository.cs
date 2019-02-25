@@ -9,5 +9,7 @@ namespace Zeww.Repository
 
         //Your method headers go here
         void Insert(User userToAdd);
+        
+      
     }
 }

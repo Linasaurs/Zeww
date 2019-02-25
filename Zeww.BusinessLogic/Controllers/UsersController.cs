@@ -43,6 +43,23 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
         }
 
+        //GET api/userChannels
+        [HttpGet]
+        [Route("{id}")]
+        public IActionResult GetUserChannels(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("ID must be greater than zero");
+            }
 
+            var chat = _unitOfWork.Users.GetByID(id).UserChats.Where(c =>c.ChatId == id).SingleOrDefault();
+            if (chat == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(chat);
+        }
     }
 }
