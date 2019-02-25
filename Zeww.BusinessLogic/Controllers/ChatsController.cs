@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zeww.Models;
 using Zeww.Repository;
 
 namespace Zeww.BusinessLogic.Controllers
@@ -22,8 +23,9 @@ namespace Zeww.BusinessLogic.Controllers
             return "Hello";
         }
 
-
-        public string CreateNewChannel() {
+        //This is code for Ziad, please do not touch this method
+        [Route("~/CreateNewChannel")]
+        public string CreateNewChannel(Chat chat) {
 
             return "passable";
         }
