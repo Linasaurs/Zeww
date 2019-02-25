@@ -14,5 +14,6 @@ namespace Zeww.DAL
         public void Add(User userToAdd) {
             dbSet.Add(userToAdd);
         }
+       
     }
 }

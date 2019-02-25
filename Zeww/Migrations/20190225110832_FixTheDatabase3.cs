@@ -2,7 +2,7 @@
 
 namespace Zeww.Migrations
 {
-    public partial class updateUserChats2 : Migration
+    public partial class FixTheDatabase3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

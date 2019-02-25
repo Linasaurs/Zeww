@@ -9,13 +9,14 @@ using Zeww.DAL;
 using Zeww.Models;
 using Zeww.Repository;
 
+
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Zeww.BusinessLogic.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : Controller
+    public class UsersController : ControllerBase
     {
         private IUnitOfWork _unitOfWork;
    
@@ -31,8 +32,29 @@ namespace Zeww.BusinessLogic.Controllers
         }
        
         [HttpGet("{id}")]
-        public string GetById(int Id) {
-            return _unitOfWork.Users.GetByID(Id).Name;
+        public ActionResult GetById(int Id) {
+            if (Id < 1)
+            {
+                return BadRequest();
+            }
+
+          
+            if (_unitOfWork.Users.GetByID(Id)  == null)
+            {
+                return NotFound();
+            }
+
+            var user = new
+            {
+                id = _unitOfWork.Users.GetByID(Id).Id,
+                name = _unitOfWork.Users.GetByID(Id).Name,
+                email = _unitOfWork.Users.GetByID(Id).Email,
+                UserName = _unitOfWork.Users.GetByID(Id).UserName,
+                status = _unitOfWork.Users.GetByID(Id).Status,
+                phoneNumber = _unitOfWork.Users.GetByID(Id).PhoneNumber
+            };
+            return Ok(user);
+
         }
 
         // POST api/users
