@@ -36,6 +36,15 @@ namespace Zeww.BusinessLogic
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
             services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IUserWorkspaceRepository, UserWorkspaceRepository>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +61,7 @@ namespace Zeww.BusinessLogic
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
             app.UseMvc();
         }
     }
