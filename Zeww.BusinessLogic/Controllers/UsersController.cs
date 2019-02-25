@@ -48,6 +48,24 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return NotFound();
             }
+            
+            return Ok(_unitOfWork.Users.GetByID(Id));
+
+        }
+        [HttpGet("withoutPasswords/{id}")]
+        public ActionResult GetByIdWithoutPassword(int Id)
+        {
+            if (Id < 1)
+            {
+                return BadRequest();
+            }
+
+
+            if (_unitOfWork.Users.GetByID(Id) == null)
+            {
+                return NotFound();
+            }
+
             var user = new
             {
                 id = _unitOfWork.Users.GetByID(Id).Id,
@@ -60,7 +78,6 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(user);
 
         }
-       
 
         [HttpPost]
         [Route("SignUp")]
