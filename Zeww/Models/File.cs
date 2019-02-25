@@ -12,14 +12,15 @@ namespace Zeww.Models
     {
         [Key]
         public int id { get; set; }
-        [NotMappedAttribute]
-        public IFormFile file { get; set; }
+        public string name { get; set; }
+        //[NotMappedAttribute]
+        //public IFormFile file { get; set; }
         [Url]
         public string source { get; set; }
-        public long Size { get; set; }
+        //public long Size { get; set; }
         public string Extension { get; set; }
-        [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User User { get; set; }
+        //[ForeignKey("User")]
+        //public int UserId { get; set; }
+        //public User User { get; set; }
     }
 }
