@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190225110946_FixTheDatabase4")]
+    partial class FixTheDatabase4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,25 +39,19 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ChatId");
 
                     b.Property<string>("Extension");
 
                     b.Property<long>("Size");
 
-                    b.Property<string>("Source");
-
                     b.Property<int>("UserId");
 
-                    b.HasKey("Id");
+                    b.Property<string>("source");
 
-                    b.HasIndex("ChatId");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("id");
 
                     b.HasIndex("UserId");
 
@@ -85,11 +81,16 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Password")
+                    b.Property<string>("Email")
                         .IsRequired();
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(15);
 
                     b.Property<string>("PhoneNumber");
 
@@ -98,7 +99,6 @@ namespace Zeww.Migrations
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(15);
-                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -147,11 +147,6 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
-                    b.HasOne("Zeww.Models.Chat", "Chat")
-                        .WithMany()
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Zeww.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
