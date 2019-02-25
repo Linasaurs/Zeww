@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Zeww.DAL;
@@ -35,12 +36,33 @@ namespace Zeww.BusinessLogic.Controllers
             return _unitOfWork.Users.GetByID(Id).Name;
         }
 
-        // POST api/users
         [HttpPost]
-        [Route("~/Post")]
-        public void Post([FromBody] User user) {
-            _unitOfWork.Users.Add(user);
-            _unitOfWork.Save();
+        [Route("SignUp")]
+        public IActionResult SignUp([FromBody] User user)
+        {
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(user.UserName) == null ? false : true;
+            if (userNameExists)
+                return BadRequest("This username is already taken.");
+
+            var emailExists = _unitOfWork.Users.GetUserByEmail(user.Email) == null ? false : true;
+            if (emailExists)
+                return BadRequest("There is an account with this email.");
+
+            if (ModelState.IsValid)
+            {
+                var passwordHasher = new PasswordHasher<User>();
+                user.Password = passwordHasher.HashPassword(user, user.Password);
+
+                //var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, claimedPassword);
+                _unitOfWork.Users.Insert(user);
+                _unitOfWork.Save();
+
+                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("SignUp", user.Id.ToString());
+
+                return Created(location, user);
+            }
+
+            return BadRequest(ModelState);
         }
 
 
