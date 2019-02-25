@@ -9,5 +9,8 @@ namespace Zeww.Repository
     {
         //Your method headers go here
         IEnumerable<File> GetFilesBySenderName(string senderName , string channelName);
+
+        void Add(File FileToAdd);
+        IEnumerable<File> GetFilesFromChat(string chatName);
     }
 }

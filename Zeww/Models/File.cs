@@ -11,18 +11,16 @@ namespace Zeww.Models
     public class File
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
         [Url]
-        public string source { get; set; }
+        public string Source { get; set; }
         public long Size { get; set; }
         public string Extension { get; set; }
-        /*[ForeignKey("User")]
-        [Column("Id")]
+        [ForeignKey("User")]
         public int UserId { get; set; }
         public User User { get; set; }
         [ForeignKey("Chat")]
-        [Column("Id")]
         public int ChatId { get; set; }
-        public Chat Chat { get; set; }*/
+        public Chat Chat { get; set; }
     }
 }

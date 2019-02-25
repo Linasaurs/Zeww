@@ -36,8 +36,7 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         // POST api/users
-        [HttpPost]
-        [Route("~/Post")]
+        [HttpPost("Post")]
         public void Post([FromBody] User user) {
             _unitOfWork.Users.Add(user);
             _unitOfWork.Save();

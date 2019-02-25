@@ -14,24 +14,32 @@ namespace Zeww.DAL
         public FileRepository(ZewwDbContext context) : base(context) { }
 
         //Your methods go here
-        public IEnumerable<File> GetFilesBySenderName(string senderName , string channelName)
+        public IEnumerable<File> GetFilesBySenderName(string senderName , string chatName)
         {
-            if (!String.IsNullOrEmpty(channelName))
+            if (!String.IsNullOrEmpty(chatName))
             {
                 if (!String.IsNullOrEmpty(senderName))
-                    return Get();//FilterBySenderName(senderName,channelName)
-                return Get();
+                    return Get(FilterBySenderName(senderName, chatName));
+                return GetFilesFromChat(chatName);
             }
             else
                 return null;
            
         }
 
-        /*private Expression<Func<File, bool>> FilterBySenderName(string name, string channelName)
+        public void Add(File fileToAdd)
+        {
+            dbSet.Add(fileToAdd);
+        }
+
+        private Expression<Func<File, bool>> FilterBySenderName(string name, string channelName)
         {
             return File => (File.User.Name == name && File.Chat.Name == channelName);
-        }*/
+        }
 
-       
+        public IEnumerable<File> GetFilesFromChat(string chatName)
+        {
+            return Get(File => (File.Chat.Name == chatName));
+        }
     }
 }
