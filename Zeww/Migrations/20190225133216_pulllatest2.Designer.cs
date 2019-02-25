@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190225121200_uncommented")]
-    partial class uncommented
+    [Migration("20190225133216_pulllatest2")]
+    partial class pulllatest2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("Purpose");
+
                     b.Property<int>("WorkspaceId");
 
                     b.HasKey("Id");
@@ -46,6 +48,8 @@ namespace Zeww.Migrations
                     b.Property<int>("ChatId");
 
                     b.Property<string>("Extension");
+
+                    b.Property<string>("Name");
 
                     b.Property<long>("Size");
 
@@ -85,9 +89,24 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<int>("Status");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(15);
 
                     b.HasKey("Id");
 
@@ -126,8 +145,14 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CompanyName");
+
+                    b.Property<string>("DateOfCreation");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
+
+                    b.Property<string>("WorkspaceProjectName");
 
                     b.HasKey("Id");
 
