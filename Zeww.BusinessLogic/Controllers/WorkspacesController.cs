@@ -8,6 +8,7 @@ using Zeww.Models;
 using Zeww.Repository;
 using System.Web.Http;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -28,9 +29,9 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         // GET: /<controller>/
-        public string Index()
+        public IEnumerable<Workspace> Index()
         {
-            return "Hello";
+            return _unitOfWork.Workspaces.Get();
         }
         
         [HttpGet]
@@ -56,13 +57,25 @@ namespace Zeww.BusinessLogic.Controllers
             return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
         }
 
-        // POST api/users
+        // POST api/NewWorkspace/workspacename
         [HttpPost]
-        [Route("~/Post")]
-        public void Post([FromBody] Workspace workspace)
+        [Route("NewWorkspace/{name}")]
+        public IActionResult AddNewWorkspaceByName(string name, [FromBody] [Bind] Optionals Optionals)
         {
-            _unitOfWork.Workspaces.Insert(workspace);
-            _unitOfWork.Save();
+            Workspace newWorkspace;
+
+            if (Optionals != null)
+                newWorkspace = new Workspace(Optionals) { WorkspaceName = name, DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy") };
+            else
+                newWorkspace = new Workspace { WorkspaceName = name, DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy"), CompanyName = Optionals.CompanyName };
+
+            if (!TryValidateModel(newWorkspace))
+                return BadRequest(ModelState); 
+            else 
+                _unitOfWork.Workspaces.Insert(newWorkspace);
+                _unitOfWork.Save(); 
+
+            return Ok(newWorkspace);
         }
 
     }

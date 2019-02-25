@@ -10,9 +10,6 @@ namespace Zeww.DAL {
         public WorkspaceRepository(ZewwDbContext context) : base(context) { }
         
         //Your methods go here 
-        public void Add(Workspace newWorkspace)
-        {
-            dbSet.Add(newWorkspace);
-        }
+        
     }
 }

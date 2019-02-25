@@ -120,8 +120,14 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CompanyName");
+
+                    b.Property<string>("DateOfCreation");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
+
+                    b.Property<string>("WorkspaceProjectName");
 
                     b.HasKey("Id");
 
