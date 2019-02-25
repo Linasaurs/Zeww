@@ -8,8 +8,13 @@ namespace Zeww.DAL {
     public class MessageRepository: GenericRepository<Message>, IMessageRepository {
         //This sets the context of the child class to the context of the super class
         public MessageRepository(ZewwDbContext context) : base(context) { }
-        
+
         //Your methods go here
+
+        public void Add(Message message)
+        {
+            dbSet.Add(message);
+        }
 
     }
 
