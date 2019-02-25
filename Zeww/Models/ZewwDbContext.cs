@@ -20,6 +20,9 @@ namespace Zeww.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<UserWorkspace>()
                 .HasKey(uw => new { uw.WorkspaceId, uw.UserId });
+
+            modelBuilder.Entity<UserChats>()
+                .HasKey(uw => new { uw.ChatId, uw.UserId });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
