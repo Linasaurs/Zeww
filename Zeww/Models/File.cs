@@ -11,16 +11,16 @@ namespace Zeww.Models
     public class File
     {
         [Key]
-        public int id { get; set; }
-        public string name { get; set; }
-        //[NotMappedAttribute]
-        //public IFormFile file { get; set; }
+        public int Id { get; set; }
         [Url]
-        public string source { get; set; }
-        //public long Size { get; set; }
+        public string Source { get; set; }
+        public long Size { get; set; }
         public string Extension { get; set; }
-        //[ForeignKey("User")]
-        //public int UserId { get; set; }
-        //public User User { get; set; }
+        [ForeignKey("User")]
+        public int UserId { get; set; }
+        public User User { get; set; }
+        [ForeignKey("Chat")]
+        public int ChatId { get; set; }
+        public Chat Chat { get; set; }
     }
 }

@@ -47,6 +47,12 @@ namespace Zeww.BusinessLogic.Controllers
             WebClient client = new WebClient();
             var DownloadedFileName = fileToDownload.name + fileToDownload.Extension;
             client.DownloadFile(fileToDownload.source, (pathDownload +"/"+ DownloadedFileName));
+
+        // POST api/users
+        [HttpPost("Post")]
+        public void Post([FromBody] User user) {
+            _unitOfWork.Users.Add(user);
+            _unitOfWork.Save();
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////
     }
