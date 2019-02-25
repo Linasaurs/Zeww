@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,21 +37,11 @@ namespace Zeww.BusinessLogic.Controllers
 
         // POST api/users
         [HttpPost]
-        [Route("~/Post")]
+        //[Route("~/Post")]
         public void Post([FromBody] User user) {
             _unitOfWork.Users.Add(user);
             _unitOfWork.Save();
         }
-
-        //Get user list of channels
-        [HttpGet]
-        [Route("/chats")]
-        public void GetListOfChannelsbyUserId(int id)
-        {
-            _unitOfWork.Chats.GetListOfChannelsbyUserId(1);
-            _unitOfWork.Save();
-        }
-       
 
 
     }

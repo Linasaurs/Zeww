@@ -13,6 +13,11 @@ namespace Zeww.Models
         public int WorkspaceId { get; set; }
         public bool IsPrivate { get; set; }
         public string Name { get; set; }
-        public List<User> Users { get; set; }
+        public virtual ICollection<UserChats> UserChats { get; set; }
+
+        public Chat()
+        {
+            this.UserChats = new HashSet<UserChats>();
+        }
     }
 }

@@ -5,9 +5,8 @@ using Zeww.Models;
 
 namespace Zeww.Repository
 {
-    public interface IChatRepository : IGenericRepository<Chat> {
-
+    public interface IFileRepository : IGenericRepository<File>
+    {
         //Your method headers go here
-        void Insert(User userToAdd);
     }
 }
