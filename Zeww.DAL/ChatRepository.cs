@@ -12,8 +12,7 @@ namespace Zeww.DAL
         //This sets the context of the child class to the context of the super class
         public ChatRepository(ZewwDbContext context) : base(context) { }
 
-        public void Insert(User userToAdd)
-        {
+        public void Insert(User userToAdd) {
             throw new NotImplementedException();
         }
 
