@@ -10,12 +10,19 @@ namespace Zeww.DAL
 {
     public class ChatRepository : GenericRepository<Chat>, IChatRepository {
 
-        private IUnitOfWork _unitOfWork;
-
         //This sets the context of the child class to the context of the super class
         public ChatRepository(ZewwDbContext context) : base(context) { }
 
+
+        public void Insert(User userToAdd) {
+            throw new NotImplementedException();
+        }
+
         //Your methods go here
         
+        public void addChat(Chat chatToAdd) {
+            dbSet.Add(chatToAdd);
+        }
+
     }
 }

@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190225132741_pulllatest")]
+    partial class pulllatest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,6 +29,8 @@ namespace Zeww.Migrations
                     b.Property<bool>("IsPrivate");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("Purpose");
 
                     b.Property<int>("WorkspaceId");
 
@@ -57,8 +61,6 @@ namespace Zeww.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Files");
                 });
 
@@ -85,11 +87,16 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Password")
+                    b.Property<string>("Email")
                         .IsRequired();
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(15);
 
                     b.Property<string>("PhoneNumber");
 
@@ -98,7 +105,6 @@ namespace Zeww.Migrations
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(15);
-                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
@@ -137,8 +143,14 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CompanyName");
+
+                    b.Property<string>("DateOfCreation");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
+
+                    b.Property<string>("WorkspaceProjectName");
 
                     b.HasKey("Id");
 

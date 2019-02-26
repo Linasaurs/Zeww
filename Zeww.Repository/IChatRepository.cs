@@ -8,5 +8,7 @@ namespace Zeww.Repository
     public interface IChatRepository : IGenericRepository<Chat> {
 
         //Your method headers go here
+        void Insert(User userToAdd);
+        void addChat(Chat chatToAdd);
     }
 }

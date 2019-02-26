@@ -8,8 +8,10 @@ namespace Zeww.Repository
     public interface IUserRepository : IGenericRepository<User> {
 
         //Your method headers go here
-        void Add(User userToAdd);
+        User GetUserByUserName(string name);
 
-        
+        User GetUserByEmail(string email);
+
+
     }
 }
