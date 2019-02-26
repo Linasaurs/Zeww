@@ -169,10 +169,12 @@ namespace Zeww.BusinessLogic.Controllers
         [Route("AddDontDisturbPeriod")]
         public IActionResult AddDontDisturbPeriod([FromBody] DoNotDisturbDTO dto)
         {
+            //User user = GetAuthenticatedUser();
+
             var from = dto.DoNotDisturbFrom;
             var to = dto.DoNotDisturbTo;
 
-            if (to >= from)
+            if (to <= from)
                 return BadRequest("The 'to' value can't be less than the 'from' value");
 
             if (ModelState.IsValid)
