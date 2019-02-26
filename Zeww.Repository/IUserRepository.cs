@@ -9,7 +9,11 @@ namespace Zeww.Repository
 
         //Your method headers go here
         void Add(User userToAdd);
+        User GetUserByEmail(string email);
+        bool Authenticate(User user, string claimedPassword);
+        string GenerateJWTToken(User user);
 
-        
+
+
     }
 }

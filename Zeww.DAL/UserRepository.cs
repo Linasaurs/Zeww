@@ -4,6 +4,9 @@ using System.Text;
 using Zeww.Models;
 using Zeww.Repository;
 using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace Zeww.DAL
 {
@@ -16,24 +19,40 @@ namespace Zeww.DAL
             dbSet.Add(userToAdd);
         }
 
-        public User Authenticate(string email, string password)
+        public User GetUserByEmail(string email)
         {
             var users = Get(u => u.Email == email);
-            var user = users.GetEnumerator().Current;
-            if(user == null)
-            {
-                return null;
-            }
+            var usersEnumerator = users.GetEnumerator();
+            usersEnumerator.MoveNext();
+            return usersEnumerator.Current;
+        }
 
+        public bool Authenticate(User user, string claimedPassword)
+        {
             var passwordHasher = new PasswordHasher<User>();
-            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, claimedPassword);
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
             {
-                return null;
+                return false;
             }
+            return true;
+        }
 
-            return user;
-
+        public string GenerateJWTToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }
