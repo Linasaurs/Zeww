@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class GivingChannelAPurpose : Migration
+    public partial class AddedTopictoChatandNametoFile : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,8 @@ namespace Zeww.Migrations
                     WorkspaceId = table.Column<int>(nullable: false),
                     IsPrivate = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Purpose = table.Column<string>(nullable: true)
+                    Purpose = table.Column<string>(nullable: true),
+                    Topic = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -73,16 +74,24 @@ namespace Zeww.Migrations
                 name: "Files",
                 columns: table => new
                 {
-                    id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    source = table.Column<string>(nullable: true),
+                    Source = table.Column<string>(nullable: true),
                     Size = table.Column<long>(nullable: false),
                     Extension = table.Column<string>(nullable: true),
-                    UserId = table.Column<int>(nullable: false)
+                    Name = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: false),
+                    ChatId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Files", x => x.id);
+                    table.PrimaryKey("PK_Files", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Files_Chats_ChatId",
+                        column: x => x.ChatId,
+                        principalTable: "Chats",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Files_Users_UserId",
                         column: x => x.UserId,
@@ -139,6 +148,11 @@ namespace Zeww.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Files_ChatId",
+                table: "Files",
+                column: "ChatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Files_UserId",

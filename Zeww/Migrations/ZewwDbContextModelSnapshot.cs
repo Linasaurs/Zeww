@@ -30,6 +30,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Purpose");
 
+                    b.Property<string>("Topic");
+
                     b.Property<int>("WorkspaceId");
 
                     b.HasKey("Id");
@@ -47,6 +49,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Extension");
 
+                    b.Property<string>("Name");
+
                     b.Property<long>("Size");
 
                     b.Property<string>("Source");
@@ -56,8 +60,6 @@ namespace Zeww.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("UserId");
 
@@ -87,9 +89,24 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<int>("Status");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(15);
 
                     b.HasKey("Id");
 

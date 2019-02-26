@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190225121200_uncommented")]
-    partial class uncommented
+    [Migration("20190226091300_AddedTopictoChatandNametoFile")]
+    partial class AddedTopictoChatandNametoFile
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,10 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("Purpose");
+
+                    b.Property<string>("Topic");
+
                     b.Property<int>("WorkspaceId");
 
                     b.HasKey("Id");
@@ -46,6 +50,8 @@ namespace Zeww.Migrations
                     b.Property<int>("ChatId");
 
                     b.Property<string>("Extension");
+
+                    b.Property<string>("Name");
 
                     b.Property<long>("Size");
 
@@ -85,9 +91,24 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(15);
+
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<int>("Status");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(15);
 
                     b.HasKey("Id");
 

@@ -49,9 +49,9 @@ namespace Zeww.BusinessLogic.Controllers
 
 
         [HttpGet("GetFiles/{chatName}")]
-        public IActionResult GetFiles(string chatName,[FromQuery]string SenderName)
+        public IActionResult GetFiles(string chatName,[FromQuery]string SenderName, [FromQuery]string topic)
         {
-            var returnedFileList = _unitOfWork.Files.GetFilesBySenderName(SenderName , chatName);
+            var returnedFileList = _unitOfWork.Files.GetFiles(chatName, SenderName, topic);
             if (returnedFileList != null)
                 return Ok(returnedFileList);
             return NotFound();
