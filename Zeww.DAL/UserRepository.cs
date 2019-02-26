@@ -28,14 +28,6 @@ namespace Zeww.DAL
             return query.SingleOrDefault(u => u.Email == email);
         }
 
-        public User GetUserByEmail(string email)
-        {
-            var users = Get(u => u.Email == email);
-            var usersEnumerator = users.GetEnumerator();
-            usersEnumerator.MoveNext();
-            return usersEnumerator.Current;
-        }
-
         public bool Authenticate(User user, string claimedPassword)
         {
             var passwordHasher = new PasswordHasher<User>();
