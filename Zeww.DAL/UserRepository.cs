@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Zeww.Models;
 using Zeww.Repository;
 
@@ -14,5 +15,6 @@ namespace Zeww.DAL
         public void Add(User userToAdd) {
             dbSet.Add(userToAdd);
         }
+
     }
 }

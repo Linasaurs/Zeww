@@ -36,6 +36,7 @@ namespace Zeww.BusinessLogic
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
             services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IUserWorkspaceRepository, UserWorkspaceRepository>();
+            services.AddScoped<IUserChatsRepository, UserChatsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
