@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190226093553_WipeAfterPull")]
-    partial class WipeAfterPull
+    [Migration("20190226125935_TopicAddedToChannel")]
+    partial class TopicAddedToChannel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
