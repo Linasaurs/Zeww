@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190225121127_userUpdate2")]
-    partial class userUpdate2
+    [Migration("20190225134601_dummyData2")]
+    partial class dummyData2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,15 +45,11 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Extension");
 
-                    b.Property<long>("Size");
-
-                    b.Property<int>("UserId");
+                    b.Property<string>("name");
 
                     b.Property<string>("source");
 
                     b.HasKey("id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Files");
                 });
@@ -143,14 +139,6 @@ namespace Zeww.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Workspaces");
-                });
-
-            modelBuilder.Entity("Zeww.Models.File", b =>
-                {
-                    b.HasOne("Zeww.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Zeww.Models.UserChats", b =>

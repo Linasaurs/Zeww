@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190225121321_userUpdate3")]
-    partial class userUpdate3
+    [Migration("20190225141605_CleanWipe")]
+    partial class CleanWipe
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -81,24 +81,11 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email")
-                        .IsRequired();
+                    b.Property<string>("Email");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(15);
+                    b.Property<string>("Name");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(15);
-
-                    b.Property<string>("PhoneNumber");
-
-                    b.Property<int>("Status");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(15);
+                    b.Property<string>("Password");
 
                     b.HasKey("Id");
 

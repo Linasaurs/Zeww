@@ -8,7 +8,7 @@ namespace Zeww.Repository
     public interface IFileRepository : IGenericRepository<File>
     {
         //Your method headers go here
-        IEnumerable<File> GetFilesBySenderName(string senderName , string channelName);
+        IEnumerable<File> GetFiles(string chatName , string senderName , string topic);
 
         void Add(File FileToAdd);
         IEnumerable<File> GetFilesFromChat(string chatName);
