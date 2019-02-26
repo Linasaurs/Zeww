@@ -32,6 +32,25 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Route("details/{chatID}")]
+        public IActionResult GetChannelDetails(int? chatID)
+        {
+            var chatDetails = _unitOfWork.Chats.GetByID(chatID);
+            if (chatDetails==null)
+            {
+                return NotFound();
+            }
+           else if (chatDetails.Id.Equals(chatID))
+            {
+                return Ok(chatDetails);
+            }
+            return NotFound();
+
+        }
+            
+        
+
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
         [HttpPost("PostChat")]
         public IActionResult PostChat([FromBody]Chat chat)
