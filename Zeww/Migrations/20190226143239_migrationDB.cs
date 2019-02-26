@@ -2,7 +2,7 @@
 
 namespace Zeww.Migrations
 {
-    public partial class pulllatest3 : Migration
+    public partial class migrationDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
