@@ -36,6 +36,9 @@ namespace Zeww.BusinessLogic.Controllers
         
         [HttpGet]
         [Route("GetWorkspaceName/{workspaceName}")]
+
+        //i need login first then i will check if this user has this workspace in his list of workspaces
+        //to make sure that he has access to this workspace, then we do the check in the funtion below
         public IActionResult GetWorkspaceName(string workspaceName) {
             if (!string.IsNullOrWhiteSpace(workspaceName)) {
                 var query = _unitOfWork.Workspaces.Get();
