@@ -101,6 +101,17 @@ namespace Zeww.BusinessLogic.Controllers
 
             return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
+
+        [HttpGet("user/ShowConnectionStatus/{userId}")]
+        public void ShowConnectionStatus(int userId) {
+            //Ziad is working on this method, please do not touch it!
+        }
+
+        [HttpPut("user/ToggleUserConnectionStatus/{userId}")]
+        public void ToggleUserConnectionStatus(int UserId) {
+            //Ziad is working on this method, please do not touch it!
+        }
+
         [HttpGet("download/{filename}")]
         public void DownloadFile(string filename)
         {

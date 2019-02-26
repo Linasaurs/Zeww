@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class TopicAddedToChannel : Migration
+    public partial class AddedConnectionStatusToUser : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,7 +53,8 @@ namespace Zeww.Migrations
                     Email = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: true),
-                    Status = table.Column<int>(nullable: false)
+                    Status = table.Column<int>(nullable: false),
+                    ConnectionStatus = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
