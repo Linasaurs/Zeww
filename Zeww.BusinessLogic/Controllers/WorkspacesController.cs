@@ -8,6 +8,7 @@ using Zeww.Models;
 using Zeww.Repository;
 using System.Web.Http;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,20 +17,23 @@ namespace Zeww.BusinessLogic.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WorkspacesController : Controller {
+    public class WorkspacesController : Controller
+    {
 
         private IUnitOfWork _unitOfWork;
 
 
-        public WorkspacesController(IUnitOfWork unitOfWork) {
+        public WorkspacesController(IUnitOfWork unitOfWork)
+        {
             this._unitOfWork = unitOfWork;
         }
 
         // GET: /<controller>/
-        public string Index() {
-            return "Hello";
+        public IEnumerable<Workspace> Index()
+        {
+            return _unitOfWork.Workspaces.Get();
         }
-
+        
         [HttpGet]
         [Route("GetWorkspaceName/{workspaceName}")]
         public IActionResult GetWorkspaceName(string workspaceName) {
@@ -40,22 +44,36 @@ namespace Zeww.BusinessLogic.Controllers
                 else
                     return NotFound("There's no existing workspace with the specified name.");
 
-            } else
+            }
+            else
                 return BadRequest();
-        }
 
+        }
         [HttpGet("{id}")]
-        public string GetById(int Id) {
+        public string GetById(int Id)
+        {
             return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
         }
 
-        // POST api/users
+        // POST api/NewWorkspace/workspacename
         [HttpPost]
-        [Route("~/Post")]
-        public void Post([FromBody] Workspace workspace)
+        [Route("NewWorkspace/{name}")]
+        public IActionResult AddNewWorkspaceByName(string name, [FromBody] [Bind] Optionals Optionals)
         {
-            _unitOfWork.Workspaces.Insert(workspace);
-            _unitOfWork.Save();
+            Workspace newWorkspace;
+
+            if (Optionals != null)
+                newWorkspace = new Workspace(Optionals) { WorkspaceName = name, DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy") };
+            else
+                newWorkspace = new Workspace { WorkspaceName = name, DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy"), CompanyName = Optionals.CompanyName };
+
+            if (!TryValidateModel(newWorkspace))
+                return BadRequest(ModelState); 
+            else 
+                _unitOfWork.Workspaces.Insert(newWorkspace);
+                _unitOfWork.Save(); 
+
+            return Ok(newWorkspace);
         }
 
     }
