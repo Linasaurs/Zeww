@@ -25,7 +25,7 @@ namespace Zeww.BusinessLogic.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : Controller
     {
         private IUnitOfWork _unitOfWork;
 
