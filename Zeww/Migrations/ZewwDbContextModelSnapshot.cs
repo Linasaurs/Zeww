@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 using Zeww.Models;
 
 namespace Zeww.Migrations
@@ -24,9 +25,17 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CreatorID");
+
+                    b.Property<DateTime>("DateCreated");
+
                     b.Property<bool>("IsPrivate");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("Purpose");
+
+                    b.Property<string>("Topic");
 
                     b.Property<int>("WorkspaceId");
 
@@ -44,6 +53,8 @@ namespace Zeww.Migrations
                     b.Property<int>("ChatId");
 
                     b.Property<string>("Extension");
+
+                    b.Property<string>("Name");
 
                     b.Property<long>("Size");
 
@@ -85,7 +96,12 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(15);
 
                     b.Property<string>("Password")
                         .IsRequired();
@@ -98,7 +114,8 @@ namespace Zeww.Migrations
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(15);
-                    b.Property<string>("Name");
+
+                    b.Property<string>("Password");
 
                     b.HasKey("Id");
 
@@ -137,8 +154,16 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CompanyName");
+
+                    b.Property<string>("DateOfCreation");
+
+                    b.Property<string>("URL");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
+
+                    b.Property<string>("WorkspaceProjectName");
 
                     b.HasKey("Id");
 

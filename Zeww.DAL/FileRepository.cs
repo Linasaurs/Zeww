@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using Zeww.Models;
@@ -14,32 +15,41 @@ namespace Zeww.DAL
         public FileRepository(ZewwDbContext context) : base(context) { }
 
         //Your methods go here
-        public IEnumerable<File> GetFilesBySenderName(string senderName , string chatName)
-        {
-            if (!String.IsNullOrEmpty(chatName))
-            {
-                if (!String.IsNullOrEmpty(senderName))
-                    return Get(FilterBySenderName(senderName, chatName));
-                return GetFilesFromChat(chatName);
-            }
-            else
-                return null;
-           
-        }
-
         public void Add(File fileToAdd)
         {
             dbSet.Add(fileToAdd);
         }
-
-        private Expression<Func<File, bool>> FilterBySenderName(string name, string channelName)
-        {
-            return File => (File.User.Name == name && File.Chat.Name == channelName);
-        }
-
         public IEnumerable<File> GetFilesFromChat(string chatName)
         {
             return Get(File => (File.Chat.Name == chatName));
+        }
+        public IEnumerable<File> GetFiles(string chatName , string senderName  , string topic)
+        {
+            if (!String.IsNullOrEmpty(chatName))
+            {
+                IQueryable<File> filesToReturn = GetFilesFromChat(chatName).AsQueryable();
+                if (!String.IsNullOrEmpty(senderName))
+                {
+                    filesToReturn = filesToReturn.Where(FilterBySenderName(senderName));
+                }
+                if(!String.IsNullOrEmpty(senderName))
+                {
+                    filesToReturn = filesToReturn.Where(FilterByTopic(topic));
+                }
+                return filesToReturn;
+            }
+            else
+                return null;
+        }
+        //Filter Expression for Getting files by sender name
+        private Expression<Func<File, bool>> FilterBySenderName(string name)
+        {
+            return File => (File.User.Name == name);
+        }
+        //Filter Expression for Getting files by topic
+        private Expression<Func<File, bool>> FilterByTopic(string topic)
+        {
+            return File => (File.Chat.Topic == topic);
         }
     }
 }
