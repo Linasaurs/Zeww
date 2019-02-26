@@ -82,6 +82,7 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest();
             }
             channelToChangePurposeOf.Purpose = newChannelPurpose.Purpose;
+            _unitOfWork.Chats.Update(channelToChangePurposeOf);
             _unitOfWork.Save();
             return Ok();
         }
