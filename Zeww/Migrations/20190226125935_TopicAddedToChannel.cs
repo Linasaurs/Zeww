@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class WipeAfterPull : Migration
+    public partial class TopicAddedToChannel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

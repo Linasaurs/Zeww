@@ -15,6 +15,7 @@ using Zeww.DAL;
 using Zeww.Models;
 using Zeww.Repository;
 using Zeww.BusinessLogic.ExtensionMethods;
+using Newtonsoft.Json;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,7 +25,7 @@ namespace Zeww.BusinessLogic.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : Controller
     {
         private IUnitOfWork _unitOfWork;
 
