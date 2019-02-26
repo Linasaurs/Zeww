@@ -41,10 +41,18 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpGet]
-        [Route("SearchByChannelName")]
+        [Route("SearchByChannelName/{channelName}")]
         public IActionResult SearchByChannelName(String channelName) {
-            //Ziad is still working on that method
-            return Ok();
+            //This code is written by Hanna and replicated here
+            if (!string.IsNullOrWhiteSpace(channelName)) {
+                var query = _unitOfWork.Chats.Get();
+                if (query.Any(c => c.Name.Contains(channelName)))
+                    return Ok(channelName);
+                else
+                    return NotFound("There's no existing workspace with the specified name.");
+
+            } else
+                return BadRequest();
         }
 
     }

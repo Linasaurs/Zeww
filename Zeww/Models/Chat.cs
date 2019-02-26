@@ -13,8 +13,8 @@ namespace Zeww.Models
         [ForeignKey("Workspace")]
         public int WorkspaceId { get; set; }
         [ForeignKey("User")]
-        public int CreatorID { get; set; }
-        public DateTime DateCreated { get; set; }
+        //public int CreatorID { get; set; }
+        //public DateTime DateCreated { get; set; }
         public bool IsPrivate { get; set; }
         public string Name { get; set; }
         //Purpose should only be added in the case pf group channels
@@ -24,7 +24,7 @@ namespace Zeww.Models
         public Chat()
         {
             this.UserChats = new HashSet<UserChats>();
-            this.DateCreated = DateTime.Now;
+            //this.DateCreated = DateTime.Now;
         }
     }
 }
