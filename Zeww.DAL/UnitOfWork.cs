@@ -25,6 +25,7 @@ namespace Zeww.DAL
             UserWorkspaces = new UserWorkspaceRepository(context);
             Workspaces = new WorkspaceRepository(context);
             Files = new FileRepository(context);
+            UserChats = new UserChatsRepository(context);
         }
 
         public IChatRepository Chats { get; private set; }
