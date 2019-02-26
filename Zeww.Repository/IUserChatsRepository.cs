@@ -5,8 +5,7 @@ using Zeww.Models;
 
 namespace Zeww.Repository
 {
-    public interface IChatRepository : IGenericRepository<Chat> {
-
-        //Your method headers go here
+    public interface IUserChatsRepository : IGenericRepository<UserChats>
+    {
     }
 }
