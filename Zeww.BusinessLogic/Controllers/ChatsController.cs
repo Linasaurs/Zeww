@@ -34,9 +34,10 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpPut]
-        [Route("EditChannelPurpose")]
-        public IActionResult EditChannelPurpose(Chat chat, String newName) {
+        [Route("EditChannelPurpose/{channelId}")]
+        public IActionResult EditChannelPurpose(Chat chat, int channelId) {
             //Ziad is still working on that method
+
             return Ok();
         }
 
