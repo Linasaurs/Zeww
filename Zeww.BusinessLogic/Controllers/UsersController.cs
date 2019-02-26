@@ -68,8 +68,7 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         //GET api/userChannels
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetUserChannels(int id)
         {
             if (id <= 0)
@@ -82,13 +81,15 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return NotFound();
             }
+        
+            return Ok(chat);
+        }
+
         public static string getHomePath()
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix)
                 return Environment.GetEnvironmentVariable("HOME");
 
-            return Ok(chat);
-        }
             return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
         [HttpGet("download/{filename}")]

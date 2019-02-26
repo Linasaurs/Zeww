@@ -58,5 +58,21 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
         }
 
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult DeleteWorkspace(int id)
+        {
+            if (id <= 0)
+                return BadRequest("ID must be greater than zero");
+
+            var workspace = _unitOfWork.Workspaces.GetByID(id);
+ 
+            if (workspace==null)
+                return NotFound();
+
+            _unitOfWork.Workspaces.Delete(id);
+
+            return NoContent();
+        }
     }
 }
