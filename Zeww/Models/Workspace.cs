@@ -12,12 +12,7 @@ namespace Zeww.Models
         {
             this.UserWorkspaces = new HashSet<UserWorkspace>();
         }
-        public Workspace(Optionals optionals) { 
-
-            this.UserWorkspaces = new HashSet<UserWorkspace>();
-            this.CompanyName = optionals.CompanyName;
-            this.WorkspaceProjectName = optionals.WorkspaceProjectName;
-        }
+  
 
         [Key]
         public int Id { get; set; }
@@ -31,17 +26,14 @@ namespace Zeww.Models
 
         public string WorkspaceProjectName { get; set; }  
 
-        public string DateOfCreation { get; set; } 
+        public string DateOfCreation { get; set; }
+
+        public string URL { get; set; }
 
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
          
        
     }
 
-    public class Optionals
-    {
-        public string CompanyName { get; set; }
-
-        public string WorkspaceProjectName { get; set; }
-    }
+  
 }

@@ -68,6 +68,8 @@ namespace Zeww.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Files");
                 });
 
@@ -107,6 +109,7 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired();
+
 
                     b.Property<string>("PhoneNumber");
 
@@ -156,6 +159,8 @@ namespace Zeww.Migrations
                     b.Property<string>("CompanyName");
 
                     b.Property<string>("DateOfCreation");
+
+                    b.Property<string>("URL");
 
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
