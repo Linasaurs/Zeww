@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Zeww.Models;
 using Zeww.Repository;
@@ -23,13 +24,14 @@ namespace Zeww.BusinessLogic.Controllers
             return "Hello";
         }
 
-        //This is code for Ziad, please do not touch this method
+        
         [HttpPost]
         [Route("CreateNewChannel")]
         public IActionResult CreateNewChannel(Chat chat) {
             _unitOfWork.Chats.Insert(chat);
             _unitOfWork.Save();
-            return Ok();
+            var returnedChat = _unitOfWork.Chats.Get(ch => ch.Name == chat.Name && ch.WorkspaceId == chat.WorkspaceId);
+            return Ok(returnedChat);
         }
 
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
@@ -49,9 +51,9 @@ namespace Zeww.BusinessLogic.Controllers
 
 
         [HttpGet("GetFiles/{chatName}")]
-        public IActionResult GetFiles(string chatName,[FromQuery]string SenderName)
+        public IActionResult GetFiles(string chatName,[FromQuery]string SenderName, [FromQuery]string topic)
         {
-            var returnedFileList = _unitOfWork.Files.GetFilesBySenderName(SenderName , chatName);
+            var returnedFileList = _unitOfWork.Files.GetFiles(chatName, SenderName, topic);
             if (returnedFileList != null)
                 return Ok(returnedFileList);
             return NotFound();
@@ -68,6 +70,30 @@ namespace Zeww.BusinessLogic.Controllers
                 return Ok(insertedFile);
             }
             return BadRequest();
+        }
+
+
+        [HttpPut]
+        [Route("EditChannelPurpose/{channelId}")]
+        public IActionResult EditChannelPurpose(Chat chat, int channelId) {
+            //Ziad is still working on that method
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("SearchByChannelName/{channelName}")]
+        public IActionResult SearchByChannelName(String channelName) {
+            //This code is written by Hanna and replicated here
+            if (!string.IsNullOrWhiteSpace(channelName)) {
+                var query = _unitOfWork.Chats.Get();
+                if (query.Any(c => c.Name.Contains(channelName)))
+                    return Ok(channelName);
+                else
+                    return NotFound("Could ot find a channel with that name, Sorry!");
+
+            } else
+                return BadRequest();
         }
 
         [HttpPost("AddUserToChannel")]

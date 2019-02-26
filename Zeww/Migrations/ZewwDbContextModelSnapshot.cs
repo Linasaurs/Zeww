@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 using Zeww.Models;
 
 namespace Zeww.Migrations
@@ -24,11 +25,17 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CreatorID");
+
+                    b.Property<DateTime>("DateCreated");
+
                     b.Property<bool>("IsPrivate");
 
                     b.Property<string>("Name");
 
                     b.Property<string>("Purpose");
+
+                    b.Property<string>("Topic");
 
                     b.Property<int>("WorkspaceId");
 
@@ -104,6 +111,8 @@ namespace Zeww.Migrations
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(15);
+
+                    b.Property<string>("Password");
 
                     b.HasKey("Id");
 

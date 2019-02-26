@@ -7,5 +7,7 @@ namespace Zeww.Repository
 {
     public interface IUserChatsRepository : IGenericRepository<UserChats>
     {
+        //Your method headers go here
     }
 }
+

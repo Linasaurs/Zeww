@@ -10,7 +10,7 @@ namespace Zeww.Repository {
         IUserWorkspaceRepository UserWorkspaces { get; }
         IWorkspaceRepository Workspaces { get; }
         IFileRepository Files { get; }
-        IUserChatsRepository UserChats { get;  }
+        IUserChatsRepository UserChats { get; }
         void Save();
     }
 }
