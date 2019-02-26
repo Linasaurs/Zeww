@@ -91,6 +91,7 @@ namespace Zeww.BusinessLogic
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseCors("CorsPolicy");
             app.UseMvc();
         }
     }

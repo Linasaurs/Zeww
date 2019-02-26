@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Zeww.Models;
 using Zeww.Repository;
@@ -15,8 +16,16 @@ namespace Zeww.DAL
         public UserRepository(ZewwDbContext context) : base(context) { }
 
         //Your methods go here
-        public void Add(User userToAdd) {
-            dbSet.Add(userToAdd);
+        public User GetUserByUserName(string name)
+        {
+            IQueryable<User> query = dbSet;
+            return query.SingleOrDefault(u => u.Name == name);
+        }
+
+        public User GetUserByEmail(string email)
+        {
+            IQueryable<User> query = dbSet;
+            return query.SingleOrDefault(u => u.Email == email);
         }
 
         public User GetUserByEmail(string email)
