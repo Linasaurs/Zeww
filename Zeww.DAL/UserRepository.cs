@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using Zeww.Models;
 using Zeww.Repository;
+using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace Zeww.DAL
 {
@@ -24,5 +28,32 @@ namespace Zeww.DAL
             return query.SingleOrDefault(u => u.Email == email);
         }
 
+        public bool Authenticate(User user, string claimedPassword)
+        {
+            var passwordHasher = new PasswordHasher<User>();
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, claimedPassword);
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public string GenerateJWTToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
     }
 }

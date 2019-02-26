@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Zeww.DAL;
 using Zeww.Repository;
 
@@ -37,13 +40,39 @@ namespace Zeww.BusinessLogic
             services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IUserWorkspaceRepository, UserWorkspaceRepository>();
 
-            services.AddCors(options =>
+            //JWT Authentication
+            var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
+            services.AddAuthentication(x =>
             {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUnitOfWork>();
+                        var userId = int.Parse(context.Principal.Identity.Name);
+                        var user = userService.Users.GetByID(userId);
+                        if (user == null)
+                        {
+                            context.Fail("Unauthorized");
+                        }
+                        context.HttpContext.Items["user"] = user;
+                        return Task.CompletedTask;
+                    }
+                };
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
             });
         }
 
@@ -61,6 +90,7 @@ namespace Zeww.BusinessLogic
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseCors("CorsPolicy");
             app.UseMvc();
         }
