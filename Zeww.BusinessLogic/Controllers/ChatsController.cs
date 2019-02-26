@@ -49,7 +49,7 @@ namespace Zeww.BusinessLogic.Controllers
                 if (query.Any(c => c.Name.Contains(channelName)))
                     return Ok(channelName);
                 else
-                    return NotFound("There's no existing workspace with the specified name.");
+                    return NotFound("Could ot find a channel with that name, Sorry!");
 
             } else
                 return BadRequest();
