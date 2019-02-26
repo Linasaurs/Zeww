@@ -19,6 +19,7 @@ namespace Zeww.DAL
             optionsBuilder.UseSqlServer(connection);
             context = new ZewwDbContext(optionsBuilder.Options);
             Chats = new ChatRepository(context);
+            UserChats = new UserChatsRepository(context);
             Messages = new MessageRepository(context);
             Users = new UserRepository(context);
             UserWorkspaces = new UserWorkspaceRepository(context);
@@ -32,6 +33,7 @@ namespace Zeww.DAL
         public IUserWorkspaceRepository UserWorkspaces { get; private set; }
         public IWorkspaceRepository Workspaces{ get; private set; }
         public IFileRepository Files { get; private set; }
+        public IUserChatsRepository UserChats { get; private set; }
 
 
         public void Save() {

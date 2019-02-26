@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Linq;
 using Zeww.Models;
 using Zeww.Repository;
 using Microsoft.AspNetCore.Identity;
@@ -55,5 +56,6 @@ namespace Zeww.DAL
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
     }
 }
