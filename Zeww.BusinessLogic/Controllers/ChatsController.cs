@@ -30,7 +30,8 @@ namespace Zeww.BusinessLogic.Controllers
         public IActionResult CreateNewChannel(Chat chat) {
             _unitOfWork.Chats.Insert(chat);
             _unitOfWork.Save();
-            return Ok();
+            var returnedChat = _unitOfWork.Chats.Get(ch => ch.Name == chat.Name && ch.WorkspaceId == chat.WorkspaceId);
+            return Ok(returnedChat);
         }
 
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
@@ -50,9 +51,9 @@ namespace Zeww.BusinessLogic.Controllers
 
 
         [HttpGet("GetFiles/{chatName}")]
-        public IActionResult GetFiles(string chatName,[FromQuery]string SenderName)
+        public IActionResult GetFiles(string chatName,[FromQuery]string SenderName, [FromQuery]string topic)
         {
-            var returnedFileList = _unitOfWork.Files.GetFilesBySenderName(SenderName , chatName);
+            var returnedFileList = _unitOfWork.Files.GetFiles(chatName, SenderName, topic);
             if (returnedFileList != null)
                 return Ok(returnedFileList);
             return NotFound();
