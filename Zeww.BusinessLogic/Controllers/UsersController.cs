@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Zeww.BusinessLogic.DTOs;
 using Zeww.DAL;
 using Zeww.Models;
 using Zeww.Repository;
@@ -104,6 +105,24 @@ namespace Zeww.BusinessLogic.Controllers
             WebClient client = new WebClient();
             var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
             client.DownloadFile(fileToDownload.Source, (pathDownload +"/"+ DownloadedFileName));
+        }
+
+        [HttpPut]
+        [Route("AddDontDisturbPeriod")]
+        public IActionResult AddDontDisturbPeriod([FromBody] DoNotDisturbDTO dto)
+        {
+            var from = dto.DoNotDisturbFrom;
+            var to = dto.DoNotDisturbTo;
+
+            if (to >= from)
+                return BadRequest("The 'to' value can't be less than the 'from' value");
+
+            if (ModelState.IsValid)
+            {
+
+            }
+
+            return null;
         }
     }
 }
