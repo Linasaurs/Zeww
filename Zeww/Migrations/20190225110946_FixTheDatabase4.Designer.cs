@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190226091300_AddedTopictoChatandNametoFile")]
-    partial class AddedTopictoChatandNametoFile
+    [Migration("20190225110946_FixTheDatabase4")]
+    partial class FixTheDatabase4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,10 +30,6 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Purpose");
-
-                    b.Property<string>("Topic");
-
                     b.Property<int>("WorkspaceId");
 
                     b.HasKey("Id");
@@ -43,25 +39,19 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ChatId");
-
                     b.Property<string>("Extension");
-
-                    b.Property<string>("Name");
 
                     b.Property<long>("Size");
 
-                    b.Property<string>("Source");
-
                     b.Property<int>("UserId");
 
-                    b.HasKey("Id");
+                    b.Property<string>("source");
 
-                    b.HasIndex("ChatId");
+                    b.HasKey("id");
 
                     b.HasIndex("UserId");
 
@@ -157,11 +147,6 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
-                    b.HasOne("Zeww.Models.Chat", "Chat")
-                        .WithMany()
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Zeww.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
