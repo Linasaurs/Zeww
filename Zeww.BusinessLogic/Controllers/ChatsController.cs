@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Zeww.Models;
 using Zeww.Repository;
@@ -23,7 +24,7 @@ namespace Zeww.BusinessLogic.Controllers
             return "Hello";
         }
 
-        //This is code for Ziad, please do not touch this method
+        
         [HttpPost]
         [Route("CreateNewChannel")]
         public IActionResult CreateNewChannel(Chat chat) {
@@ -68,6 +69,30 @@ namespace Zeww.BusinessLogic.Controllers
                 return Ok(insertedFile);
             }
             return BadRequest();
+        }
+
+
+        [HttpPut]
+        [Route("EditChannelPurpose/{channelId}")]
+        public IActionResult EditChannelPurpose(Chat chat, int channelId) {
+            //Ziad is still working on that method
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("SearchByChannelName/{channelName}")]
+        public IActionResult SearchByChannelName(String channelName) {
+            //This code is written by Hanna and replicated here
+            if (!string.IsNullOrWhiteSpace(channelName)) {
+                var query = _unitOfWork.Chats.Get();
+                if (query.Any(c => c.Name.Contains(channelName)))
+                    return Ok(channelName);
+                else
+                    return NotFound("Could ot find a channel with that name, Sorry!");
+
+            } else
+                return BadRequest();
         }
 
     }
