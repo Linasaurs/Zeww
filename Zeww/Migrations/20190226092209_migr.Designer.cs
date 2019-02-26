@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190226103305_dummyData3")]
-    partial class dummyData3
+    [Migration("20190226092209_migr")]
+    partial class migr
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("Purpose");
+
                     b.Property<int>("WorkspaceId");
 
                     b.HasKey("Id");
@@ -39,17 +41,27 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ChatId");
+
                     b.Property<string>("Extension");
 
-                    b.Property<string>("name");
+                    b.Property<string>("Name");
 
-                    b.Property<string>("source");
+                    b.Property<long>("Size");
 
-                    b.HasKey("id");
+                    b.Property<string>("Source");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Files");
                 });
@@ -85,8 +97,7 @@ namespace Zeww.Migrations
                         .HasMaxLength(15);
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(15);
+                        .IsRequired();
 
                     b.Property<string>("PhoneNumber");
 
@@ -133,12 +144,31 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CompanyName");
+
+                    b.Property<string>("DateOfCreation");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
+
+                    b.Property<string>("WorkspaceProjectName");
 
                     b.HasKey("Id");
 
                     b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("Zeww.Models.File", b =>
+                {
+                    b.HasOne("Zeww.Models.Chat", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Zeww.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Zeww.Models.UserChats", b =>
