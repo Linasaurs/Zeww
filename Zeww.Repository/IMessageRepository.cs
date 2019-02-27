@@ -7,6 +7,6 @@ namespace Zeww.Repository {
     public interface IMessageRepository : IGenericRepository<Message> {
 
         void Add(Message message);
-
+        void PinMessage(int messageId);
     }
 }

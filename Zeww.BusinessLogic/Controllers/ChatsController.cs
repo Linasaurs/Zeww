@@ -81,6 +81,23 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok();
         }
 
+        [HttpPut]
+        [Route("EditChannelTopic/{channelId}")]
+        public IActionResult EditChannelTopic(int channelId,[FromQuery]string topic)
+        {
+            if(!String.IsNullOrEmpty(topic) && channelId != 0)
+            {
+                var success = _unitOfWork.Chats.EditChatTopic(channelId , topic);
+                _unitOfWork.Save();
+                if(success)
+                {
+                    return Ok(_unitOfWork.Chats.GetByID(channelId));
+                }
+                return NotFound();
+            }
+            return BadRequest();
+        }
+
         [HttpGet]
         [Route("SearchByChannelName/{channelName}")]
         public IActionResult SearchByChannelName(String channelName) {
