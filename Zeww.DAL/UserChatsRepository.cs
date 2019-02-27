@@ -6,11 +6,8 @@ using Zeww.Repository;
 
 namespace Zeww.DAL
 {
-    public class UserChatsRepository : GenericRepository<UserChats>, IUserChatsRepository
+    class UserChatsRepository : GenericRepository<UserChats>, IUserChatsRepository
     {
-            public UserChatsRepository(ZewwDbContext context) : base(context) { }
-
-            //Your methods go here
-
-     }
+        public UserChatsRepository(ZewwDbContext context) : base(context) { }
+    }
 }
