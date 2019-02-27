@@ -32,8 +32,7 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(_unitOfWork.Messages.GetByID(Id).MessageContent);
         }
 
-        [HttpPost]
-        //[Route("~/Post")]
+        [HttpPost("PostMessage")]
         public IActionResult Post([FromBody] Message message)
         {
             _unitOfWork.Messages.Add(message);
@@ -42,5 +41,12 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
+        [HttpPut("PinMessage/{messageId}")]
+        public IActionResult PinMessage(int messageId)
+        {
+            _unitOfWork.Messages.PinMessage(messageId);
+            _unitOfWork.Save();
+            return Ok("Message has been Pinned");
+        }
     }
 }
