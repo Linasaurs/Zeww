@@ -131,12 +131,12 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest();
         }
 
+        [AllowAnonymous]
         [HttpPost("AddUserToChannel/{channelId}")]
-        public IActionResult AddUserToChannel(int channelId, [FromBody] int userID)
+        public IActionResult AddUserToChannel(int channelId, [FromBody] string UserName)
         {
             UserChats userChat = new UserChats();
-            //User user = _unitOfWork.Users.GetUserByUserName(UserName);
-            User user = _unitOfWork.Users.GetByID(userID);
+            User user = _unitOfWork.Users.GetUserByUserName(UserName);
             Chat chat = _unitOfWork.Chats.GetByID(channelId);
 
             if (user != null && chat != null)
@@ -148,7 +148,7 @@ namespace Zeww.BusinessLogic.Controllers
                 //send message to channel ----- call taher's function
                 return Ok(userChat);
             }
-            else return BadRequest(channelId);
+            else return BadRequest();
         }
 
 
