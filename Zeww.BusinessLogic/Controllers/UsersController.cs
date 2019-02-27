@@ -43,6 +43,7 @@ namespace Zeww.BusinessLogic.Controllers
         [HttpGet("{id}")]
         public ActionResult GetById(int Id)
         {
+            User _ = this.GetAuthenticatedUser();
             if (Id < 1)
             {
                 return BadRequest();
@@ -57,9 +58,11 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(_unitOfWork.Users.GetByID(Id));
 
         }
+
         [HttpGet("withoutPasswords/{id}")]
         public ActionResult GetByIdWithoutPassword(int Id)
         {
+            User _ = this.GetAuthenticatedUser();
             if (Id < 1)
             {
                 return BadRequest();

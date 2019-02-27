@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190227110755_addedForignKeysToWorkSpace")]
+    partial class addedForignKeysToWorkSpace
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,7 +148,7 @@ namespace Zeww.Migrations
 
                     b.HasAlternateKey("UserId", "WorkspaceId");
 
-                    b.ToTable("UserWorkspaces");
+                    b.ToTable("UserWorkspace");
                 });
 
             modelBuilder.Entity("Zeww.Models.Workspace", b =>
@@ -207,12 +209,12 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.UserWorkspace", b =>
                 {
-                    b.HasOne("Zeww.Models.User")
+                    b.HasOne("Zeww.Models.User", "User")
                         .WithMany("UserWorkspaces")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Zeww.Models.Workspace")
+                    b.HasOne("Zeww.Models.Workspace", "Workspace")
                         .WithMany("UserWorkspaces")
                         .HasForeignKey("WorkspaceId")
                         .OnDelete(DeleteBehavior.Cascade);

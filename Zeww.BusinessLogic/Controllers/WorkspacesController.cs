@@ -22,7 +22,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         private IUnitOfWork _unitOfWork;
 
-
         public WorkspacesController(IUnitOfWork unitOfWork)
         {
            this._unitOfWork = unitOfWork;
@@ -32,7 +31,7 @@ namespace Zeww.BusinessLogic.Controllers
         [HttpGet]
         public IEnumerable<Workspace> Index()
         {
-            AddUserToWorkSpace(1, 1);
+            //AddUserToWorkSpace(1, 1);
             return _unitOfWork.Workspaces.Get();
         }
 
@@ -57,7 +56,7 @@ namespace Zeww.BusinessLogic.Controllers
             return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
         }
 
-        [HttpGet("{id}/users")]
+        [HttpGet("GetUsersByWorkspaceId/{id}")]
         public ActionResult GetUsersByWorkspaceId(int Id)
         {
             if (Id < 1)
@@ -70,10 +69,12 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return NotFound();
             }
-
-
-            return Ok(_unitOfWork.UserWorkspaces.GetWorkspacesByUserId(Id));
-
+            var ListOfUsersIds = _unitOfWork.Workspaces.GetUsersIdInWorkspace(Id);
+            var ListOfUsers = new List<User>();
+            foreach (var userId in ListOfUsersIds) {
+                ListOfUsers.Add(_unitOfWork.Users.GetByID(userId));
+            }
+            return Ok(ListOfUsers);
 
         }
 
@@ -102,11 +103,19 @@ namespace Zeww.BusinessLogic.Controllers
         {
             var workspace = _unitOfWork.Workspaces.GetByID(workspaceId);
             var user = _unitOfWork.Users.GetByID(userId);
-            var uw = new UserWorkspace {UserId=userId,User=user,WorkspaceId=workspaceId,
-            Workspace=workspace};
-            _unitOfWork.UserWorkspaces.Insert(uw);
+            var uw = new UserWorkspace
+            {
+                UserId = userId,
+                //User = user,
+                WorkspaceId = workspaceId
+                //,
+                //Workspace = workspace
+            };
             user.UserWorkspaces.Add(uw);
-            //workspace.UserWorkspaces.Add(uw);
+            workspace.UserWorkspaces.Add(uw);
+            _unitOfWork.UserWorkspaces.Insert(uw);
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Workspaces.Update(workspace);
             _unitOfWork.Save();
 
         }
