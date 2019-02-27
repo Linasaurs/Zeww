@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,14 +25,8 @@ namespace Zeww.Models
                 .HasKey(uw => new { uw.ChatId, uw.UserId });
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            IConfigurationRoot Configuration = new ConfigurationBuilder()
-           .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory())+"/Zeww")
-           .AddJsonFile("appsettings.json")
-           .Build();
-
-            string connection = Configuration.GetConnectionString("ZewwDatabase");
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            string connection = @"Server=.\SQLEXPRESS;Database=ZewwDatabase;Trusted_Connection=True;ConnectRetryCount=0";
             optionsBuilder.UseSqlServer(connection);
         }
 
