@@ -169,5 +169,11 @@ namespace Zeww.BusinessLogic.Controllers
             }
             return NotFound();
         }
+        [HttpGet("MessagesDate")]
+        public IActionResult viewMessagesDate()
+        {
+            return Ok();
+        }
+
     }
 }

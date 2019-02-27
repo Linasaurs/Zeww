@@ -56,8 +56,6 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<long>("Size");
-
                     b.Property<string>("Source");
 
                     b.Property<int>("UserId");
@@ -97,6 +95,8 @@ namespace Zeww.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ConnectionStatus");
 
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
