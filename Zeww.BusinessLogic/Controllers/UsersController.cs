@@ -119,7 +119,7 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok("You can use this email");
         }
 
-        [HttpGet("user/ShowConnectionStatus")]
+        [HttpGet("ShowConnectionStatusForLoggedInUser")]
         public IActionResult ShowConnectionStatus() {
             //Ziad is working on this method, please do not touch it!
             User userToShowConnectionStatusFor = this.GetAuthenticatedUser();
@@ -127,13 +127,16 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(connectionStatus);
         }
 
-        [HttpPut("user/ToggleUserConnectionStatus/{userId}")]
+        [HttpPut("ToggleUserConnectionStatusForLoggedInUser")]
         public IActionResult ToggleUserConnectionStatus(int userId, ConnectionStatus newConnectionStatus) {
             //Ziad is working on this method, please do not touch it!
             var userToChangeConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
-            if(userToChangeConnectionStatusFor == null) {
-                return BadRequest("There is no such user");
+            if (userToChangeConnectionStatusFor.ConnectionStatus == 0) {
+                userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Away;
+            } else {
+                userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Active;
             }
+
             userToChangeConnectionStatusFor.ConnectionStatus = newConnectionStatus;
             return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
          }
