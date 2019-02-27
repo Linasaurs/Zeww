@@ -134,18 +134,22 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest();
         }
 
-        [HttpPost("AddUserToChannel")]
-        public IActionResult AddUserToChannel([FromBody] UserChats UserChat)
+        [AllowAnonymous]
+        [HttpPost("AddUserToChannel/{channelId}")]
+        public IActionResult AddUserToChannel(int channelId, [FromBody] string UserName)
         {
-            User user = _unitOfWork.Users.GetByID(UserChat.UserId);
-            Chat chat = _unitOfWork.Chats.GetByID(UserChat.ChatId);
+            UserChats userChat = new UserChats();
+            User user = _unitOfWork.Users.GetUserByUserName(UserName);
+            Chat chat = _unitOfWork.Chats.GetByID(channelId);
 
             if (user != null && chat != null)
             {
-                _unitOfWork.UserChats.Insert(UserChat);
+                userChat.ChatId = channelId;
+                userChat.UserId = user.Id;
+                _unitOfWork.UserChats.Insert(userChat);
                 _unitOfWork.Save();
                 //send message to channel ----- call taher's function
-                return Ok(UserChat);
+                return Ok(userChat);
             }
             else return BadRequest();
         }
