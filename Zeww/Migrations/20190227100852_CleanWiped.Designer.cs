@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190226155208_AddedConnectionStatusToUser")]
-    partial class AddedConnectionStatusToUser
+    [Migration("20190227100852_CleanWiped")]
+    partial class CleanWiped
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,8 +58,6 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<long>("Size");
-
                     b.Property<string>("Source");
 
                     b.Property<int>("UserId");
@@ -85,7 +83,11 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
+                    b.Property<bool>("isPinned");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
 
                     b.ToTable("Messages");
                 });
@@ -97,6 +99,10 @@ namespace Zeww.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("ConnectionStatus");
+
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("Email")
                         .IsRequired();
@@ -157,6 +163,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
+                    b.Property<string>("URL");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
 
@@ -180,14 +188,22 @@ namespace Zeww.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Zeww.Models.Message", b =>
+                {
+                    b.HasOne("Zeww.Models.Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Zeww.Models.UserChats", b =>
                 {
-                    b.HasOne("Zeww.Models.Chat", "UserChat")
+                    b.HasOne("Zeww.Models.Chat")
                         .WithMany("UserChats")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Zeww.Models.User", "User")
+                    b.HasOne("Zeww.Models.User")
                         .WithMany("UserChats")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
