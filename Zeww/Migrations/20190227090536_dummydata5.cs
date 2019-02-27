@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class migrationURLWS : Migration
+    public partial class dummydata5 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,9 +15,12 @@ namespace Zeww.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     WorkspaceId = table.Column<int>(nullable: false),
+                    CreatorID = table.Column<int>(nullable: false),
+                    DateCreated = table.Column<DateTime>(nullable: false),
                     IsPrivate = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Purpose = table.Column<string>(nullable: true)
+                    Purpose = table.Column<string>(nullable: true),
+                    Topic = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -49,7 +53,9 @@ namespace Zeww.Migrations
                     Email = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: true),
-                    Status = table.Column<int>(nullable: false)
+                    Status = table.Column<int>(nullable: false),
+                    DailyDoNotDisturbFrom = table.Column<int>(nullable: true),
+                    DailyDoNotDisturbTo = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -81,7 +87,6 @@ namespace Zeww.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Source = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    Size = table.Column<long>(nullable: false),
                     Extension = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
                     ChatId = table.Column<int>(nullable: false)

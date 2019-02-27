@@ -183,11 +183,11 @@ namespace Zeww.BusinessLogic.Controllers
         [HttpDelete("LeaveChannel/{userId}/{channelId}")]
         public IActionResult LeaveChannel(int channelId, int userId)
         {
-            var chatToBeDeleted = _unitOfWork.Chats.Get().Where(c => c.Id == channelId).FirstOrDefault();
+            var chatToBeDeleted = _unitOfWork.Chats.GetByID(channelId);
             var userChannel = _unitOfWork.UserChats.Get().Where(c => (c.ChatId == chatToBeDeleted.Id) && (c.UserId == userId)).FirstOrDefault();
             if (chatToBeDeleted == null || userChannel == null)
             {
-                return NotFound();
+                return NotFound("User is not a member in this channel");
             }
             else
             {
@@ -195,11 +195,11 @@ namespace Zeww.BusinessLogic.Controllers
                 {
                     _unitOfWork.UserChats.Delete(userChannel);
                     _unitOfWork.Save();
-                    return Ok();
+                    return Ok("User left chat");
                 }
                 else
                 {
-                    return BadRequest("You Can't delete a private message");
+                    return BadRequest("You can't delete a private message");
                 }
             }
         }
