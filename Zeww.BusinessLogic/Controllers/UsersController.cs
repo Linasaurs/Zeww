@@ -119,14 +119,6 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok("You can use this email");
         }
 
-        public static string getHomePath()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-                return Environment.GetEnvironmentVariable("HOME");
-
-            return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
-        }
-
         [HttpGet("user/ShowConnectionStatus")]
         public IActionResult ShowConnectionStatus() {
             //Ziad is working on this method, please do not touch it!
@@ -146,15 +138,6 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
          }
 
-        [HttpGet("download/{filename}")]
-        public void DownloadFile(string filename)
-        {
-            string pathDownload = Path.Combine(getHomePath(), "Downloads");
-            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.Name == filename).FirstOrDefault();
-            WebClient client = new WebClient();
-            var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
-            client.DownloadFile(fileToDownload.Source, (pathDownload +"/"+ DownloadedFileName));
-        }
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
