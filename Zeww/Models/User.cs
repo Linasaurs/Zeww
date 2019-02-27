@@ -48,6 +48,8 @@ namespace Zeww.Models
     }
     public enum Status {
         Available,
+        InMeeting,
+        Vacation,
         Busy,
         Away
     }

@@ -121,7 +121,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet("ShowConnectionStatusForLoggedInUser")]
         public IActionResult ShowConnectionStatus() {
-            //Ziad is working on this method, please do not touch it!
             User userToShowConnectionStatusFor = this.GetAuthenticatedUser();
             var connectionStatus = userToShowConnectionStatusFor.ConnectionStatus;
             return Ok(connectionStatus);
@@ -129,7 +128,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpPut("ToggleUserConnectionStatusForLoggedInUser")]
         public IActionResult ToggleUserConnectionStatus(int userId, ConnectionStatus newConnectionStatus) {
-            //Ziad is working on this method, please do not touch it!
             var userToChangeConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
             if (userToChangeConnectionStatusFor.ConnectionStatus == 0) {
                 userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Away;
@@ -140,6 +138,13 @@ namespace Zeww.BusinessLogic.Controllers
             userToChangeConnectionStatusFor.ConnectionStatus = newConnectionStatus;
             return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
          }
+
+        [HttpGet("ShowStatusById/{userId}")]
+        public IActionResult ShowStatusById(int userId) {
+            var userToShowStatusFor = _unitOfWork.Users.GetByID(userId);
+            var userStatus = userToShowStatusFor.Status;
+            return Ok(userStatus);
+        }
 
         [AllowAnonymous]
         [HttpPost]
