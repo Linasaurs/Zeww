@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class initialCreation : Migration
+    public partial class secondInitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,21 +28,6 @@ namespace Zeww.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Messages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    SenderID = table.Column<int>(nullable: false),
-                    ChatId = table.Column<int>(nullable: false),
-                    MessageContent = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -53,7 +38,9 @@ namespace Zeww.Migrations
                     Email = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: true),
-                    Status = table.Column<int>(nullable: false)
+                    Status = table.Column<int>(nullable: false),
+                    DailyDoNotDisturbFrom = table.Column<int>(nullable: true),
+                    DailyDoNotDisturbTo = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -69,11 +56,34 @@ namespace Zeww.Migrations
                     WorkspaceName = table.Column<string>(nullable: false),
                     CompanyName = table.Column<string>(nullable: true),
                     WorkspaceProjectName = table.Column<string>(nullable: true),
-                    DateOfCreation = table.Column<string>(nullable: true)
+                    DateOfCreation = table.Column<string>(nullable: true),
+                    URL = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Workspaces", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    SenderID = table.Column<int>(nullable: false),
+                    ChatId = table.Column<int>(nullable: false),
+                    MessageContent = table.Column<string>(nullable: true),
+                    isPinned = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_Chats_ChatId",
+                        column: x => x.ChatId,
+                        principalTable: "Chats",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,7 +94,6 @@ namespace Zeww.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Source = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    Size = table.Column<long>(nullable: false),
                     Extension = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
                     ChatId = table.Column<int>(nullable: false)
@@ -164,6 +173,11 @@ namespace Zeww.Migrations
                 name: "IX_Files_UserId",
                 table: "Files",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_ChatId",
+                table: "Messages",
+                column: "ChatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserChats_UserId",

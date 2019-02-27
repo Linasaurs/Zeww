@@ -62,5 +62,39 @@ namespace Zeww.BusinessLogic.Controllers
             return Created(location,newWorkspace);
         }
 
+        [HttpPut]
+        [Route("EditWorkspaceName/{workspace.Id}")]
+        public IActionResult EditWorkspaceName([FromBody] Workspace workspace)
+        {
+            var workspaceNameToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
+            if (workspaceNameToEdit == null)
+            {
+                return BadRequest();
+            }
+            workspaceNameToEdit.WorkspaceName = workspace.WorkspaceName;
+            _unitOfWork.Workspaces.Update(workspaceNameToEdit);
+            _unitOfWork.Save();
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("EditWorkspaceURL/{workspace.Id}")]
+        public IActionResult EditWorkspaceURL([FromBody] Workspace workspace)
+        {
+            var workspaceURLToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
+            if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName== workspace.WorkspaceName)
+            {
+
+                workspaceURLToEdit.URL = workspace.URL;
+                _unitOfWork.Workspaces.Update(workspaceURLToEdit);
+                _unitOfWork.Save();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+            
+        }
     }
 }

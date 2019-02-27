@@ -100,22 +100,6 @@ namespace Zeww.BusinessLogic.Controllers
 
 
         [HttpPut]
-        [Route("EditChannelPurpose/{channelId}")]
-        public IActionResult EditChannelPurpose(int channelId, [FromBody] DTOs.EditChannelPurposeDTO newChannelPurpose)
-        {
-            //Ziad is still working on that method
-            var channelToChangePurposeOf = _unitOfWork.Chats.GetByID(channelId);
-            if (channelToChangePurposeOf == null)
-            {
-                return BadRequest();
-            }
-            channelToChangePurposeOf.Purpose = newChannelPurpose.Purpose;
-            _unitOfWork.Chats.Update(channelToChangePurposeOf);
-            _unitOfWork.Save();
-            return Ok();
-        }
-
-        [HttpPut]
         [Route("EditChannelTopic/{channelId}")]
         public IActionResult EditChannelTopic(int channelId, [FromQuery]string topic)
         {
