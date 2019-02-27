@@ -13,6 +13,7 @@ namespace Zeww.Models
         public int SenderID { get; set; }
         public int ChatId { get; set; }
         public string MessageContent { get; set; }
+        public bool isPinned { get; set; }
 
     }
 }

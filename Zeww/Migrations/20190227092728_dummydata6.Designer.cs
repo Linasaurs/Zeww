@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190226153927_migration")]
-    partial class migration
+    [Migration("20190227092728_dummydata6")]
+    partial class dummydata6
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,8 +57,6 @@ namespace Zeww.Migrations
                     b.Property<string>("Extension");
 
                     b.Property<string>("Name");
-
-                    b.Property<long>("Size");
 
                     b.Property<string>("Source");
 
@@ -158,6 +156,8 @@ namespace Zeww.Migrations
                     b.Property<string>("CompanyName");
 
                     b.Property<string>("DateOfCreation");
+
+                    b.Property<string>("URL");
 
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
