@@ -35,8 +35,9 @@ namespace Zeww
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            var connection = @"Server=.\SQLEXPRESS;Database=ZewwDatabase;Trusted_Connection=True;ConnectRetryCount=0";
+            
+           
+            var connection = Configuration.GetConnectionString("ZewwDatabase");
             services.AddDbContext<ZewwDbContext>
                 (options => options.UseSqlServer(connection));
         }
