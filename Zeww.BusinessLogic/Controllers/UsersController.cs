@@ -127,13 +127,10 @@ namespace Zeww.BusinessLogic.Controllers
             return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
 
-        [HttpGet("user/ShowConnectionStatus/{userId}")]
-        public IActionResult ShowConnectionStatus(int userId) {
+        [HttpGet("user/ShowConnectionStatus")]
+        public IActionResult ShowConnectionStatus() {
             //Ziad is working on this method, please do not touch it!
-            var userToShowConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
-            if (userToShowConnectionStatusFor == null) {
-                return BadRequest("There is no such user");
-            }
+            User userToShowConnectionStatusFor = this.GetAuthenticatedUser();
             var connectionStatus = userToShowConnectionStatusFor.ConnectionStatus;
             return Ok(connectionStatus);
         }
