@@ -21,6 +21,7 @@ namespace Zeww.Models
         public string Purpose { get; set; }
         public string Topic { get; set; }
         public virtual ICollection<UserChats> UserChats { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
 
         public Chat()
         {

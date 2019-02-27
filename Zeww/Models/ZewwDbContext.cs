@@ -26,7 +26,7 @@ namespace Zeww.Models
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            string connection = @"Server=.\SQLEXPRESS;Database=ZewwDatabase;Trusted_Connection=True;ConnectRetryCount=0";
+            string connection = @"Server=./SQLEXPRESS;Database=ZewwDatabase;Trusted_Connection=True;ConnectRetryCount=0";
             optionsBuilder.UseSqlServer(connection);
         }
 
