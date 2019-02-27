@@ -102,13 +102,11 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return BadRequest("ID must be greater than zero");
             }
-
             var chat = _unitOfWork.Users.GetByID(id).UserChats.Where(c =>c.ChatId == id).SingleOrDefault();
             if (chat == null)
             {
                 return NotFound();
-            }
-        
+            }      
             return Ok(chat);
         }
 

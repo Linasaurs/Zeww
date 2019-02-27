@@ -76,6 +76,7 @@ namespace Zeww.BusinessLogic.Controllers
             return Created(location,newWorkspace);
         }
 
+        //Delete Workspace
         [HttpDelete]
         [Route("{id}")]
         public IActionResult DeleteWorkspace(int id)
@@ -89,6 +90,7 @@ namespace Zeww.BusinessLogic.Controllers
                 return NotFound();
 
             _unitOfWork.Workspaces.Delete(id);
+            _unitOfWork.Save();
 
             return NoContent();
         }
