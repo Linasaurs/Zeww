@@ -173,39 +173,94 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest("Invalid email/username or password");
         }
 
-        [HttpGet("profile/{id}")]
-        public string viewProfile(int id)
+        public static string getHomePath()
         {
-            var user = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
-            string userJson = JsonConvert.SerializeObject(user);
-            return userJson;
-        }
-        [HttpPut("EditProfile")]
-        public void EditProfile([FromBody] User user)
-        {
-            var userToEdit = _unitOfWork.Users.Get().Where(u => u.Id == user.Id).FirstOrDefault();
-            userToEdit.Name = user.Name;
-            userToEdit.UserName = user.UserName;
-            userToEdit.Email = user.Email;
-            userToEdit.Password = user.Password;
-            userToEdit.PhoneNumber = user.PhoneNumber;
-            userToEdit.Status = user.Status;
-            userToEdit.UserWorkspaces = user.UserWorkspaces;
-            userToEdit.UserChats = user.UserChats;
-            _unitOfWork.Users.Update(userToEdit);
-            _unitOfWork.Save();
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                return Environment.GetEnvironmentVariable("HOME");
+
+            return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
 
-        [HttpDelete("LeaveChannel/{userId}/{channelId}")]
-        public void LeaveChannel(int channelId, int userId)
+        [AllowAnonymous]
+        [HttpGet("download/{filename}")]
+        public IActionResult DownloadFile(string filename)
         {
-            //var userDeleteing = _unitOfWork.Users.Get().Where(u => u.Id == userId).FirstOrDefault();
-            var chatToBeDeleted = _unitOfWork.Chats.Get().Where(c => c.Id == channelId).FirstOrDefault();
-            var userChannel = _unitOfWork.UserChats.Get().Where(c => (c.ChatId == channelId) && ( c.UserId == userId)).FirstOrDefault();
-            if (!chatToBeDeleted.IsPrivate)
+            string pathDownload = Path.Combine(getHomePath(), "Downloads");
+            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.Name == filename).FirstOrDefault();
+
+            if (fileToDownload != null)
             {
-                _unitOfWork.UserChats.Delete(userChannel);
+                WebClient client = new WebClient();
+                var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
+                client.DownloadFile(fileToDownload.Source, (pathDownload + "/" + DownloadedFileName));
+                return Ok();
+            }
+            return NotFound("File not found");
+        }
+
+        [AllowAnonymous]
+        [HttpGet("profile/{id}")]
+        public IActionResult viewProfile(int id)
+        {
+            var user = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
+            if (user != null)
+            {
+                string userJson = JsonConvert.SerializeObject(user);
+                return Ok(userJson);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPut("EditProfile/{id}")]
+        public IActionResult EditProfile(int id, [FromBody] User user)
+        {
+            var userToEdit = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
+            if (userToEdit != null)
+            {
+                userToEdit.Name = user.Name;
+                userToEdit.UserName = user.UserName;
+                userToEdit.Email = user.Email;
+                userToEdit.Password = user.Password;
+                userToEdit.PhoneNumber = user.PhoneNumber;
+                userToEdit.Status = user.Status;
+                userToEdit.UserWorkspaces = user.UserWorkspaces;
+                userToEdit.UserChats = user.UserChats;
+                _unitOfWork.Users.Update(userToEdit);
                 _unitOfWork.Save();
+                return Ok(userToEdit);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpDelete("LeaveChannel/{userId}/{channelId}")]
+        public IActionResult LeaveChannel(int channelId, int userId)
+        {
+            var chatToBeDeleted = _unitOfWork.Chats.GetByID(channelId);
+            var userChannel = _unitOfWork.UserChats.Get().Where(c => (c.ChatId == chatToBeDeleted.Id) && (c.UserId == userId)).FirstOrDefault();
+            if (chatToBeDeleted == null || userChannel == null)
+            {
+                return NotFound("User is not a member in this channel");
+            }
+            else
+            {
+                if (!chatToBeDeleted.IsPrivate)
+                {
+                    _unitOfWork.UserChats.Delete(userChannel);
+                    _unitOfWork.Save();
+                    return Ok("User left chat");
+                }
+                else
+                {
+                    return BadRequest("You can't delete a private message");
+                }
             }
         }
 
