@@ -12,5 +12,7 @@ namespace Zeww.Repository
         void addChat(Chat chatToAdd);
 
         bool EditChatTopic(int channelId , string topic);
+
+        void EditChannelName(int channelId , string newName);
     }
 }

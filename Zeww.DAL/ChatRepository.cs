@@ -39,5 +39,12 @@ namespace Zeww.DAL
                 return false;
             }
         }
+
+        public void EditChannelName(int channelId, string newName)
+        {
+            Chat chat = GetByID(channelId);
+            chat.Name = newName;
+            Update(chat);
+        }
     }
 }
