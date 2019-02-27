@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,6 +19,7 @@ namespace Zeww.DAL
         }
 
         //Your methods go here
+        
         public void addChat(Chat chatToAdd) {
             dbSet.Add(chatToAdd);
         }

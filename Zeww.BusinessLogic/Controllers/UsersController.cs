@@ -25,7 +25,7 @@ namespace Zeww.BusinessLogic.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : Controller
     {
         private IUnitOfWork _unitOfWork;
 
@@ -66,6 +66,7 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("SignUp")]
         public IActionResult SignUp([FromBody] User user)
@@ -204,5 +205,29 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
 
+        [HttpPut]
+        [Route("AddDontDisturbPeriod")]
+        public IActionResult AddDontDisturbPeriod([FromBody] DoNotDisturbDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            var from = dto.DoNotDisturbFrom;
+            var to = dto.DoNotDisturbTo;
+
+            if (to <= from)
+                return BadRequest("The 'to' value can't be less than or equal the 'from' value");
+
+            if (ModelState.IsValid)
+            {
+                user.DailyDoNotDisturbFrom = from;
+                user.DailyDoNotDisturbTo = to;
+
+                _unitOfWork.Save();
+
+                return NoContent();
+            }
+
+            return BadRequest(ModelState);
+        }
     }
 }
