@@ -24,5 +24,27 @@ namespace Zeww.DAL
             dbSet.Add(chatToAdd);
         }
 
+        public bool EditChatTopic(int channelId, string topic)
+        {
+            try
+            {
+                var chatToUpdate = GetByID(channelId);
+                chatToUpdate.Topic = topic;
+                Update(chatToUpdate);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error occured : " + e.ToString());
+                return false;
+            }
+        }
+
+        public void EditChannelName(int channelId, string newName)
+        {
+            Chat chat = GetByID(channelId);
+            chat.Name = newName;
+            Update(chat);
+        }
     }
 }
