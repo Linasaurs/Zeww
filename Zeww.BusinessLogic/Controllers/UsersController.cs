@@ -96,14 +96,15 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         //GET api/userChannels
-        [HttpGet("{id}")]
-        public IActionResult GetUserChannels(int id)
+        [HttpGet]
+        public IActionResult GetUserChannels()
         {
-            if (id <= 0)
-            {
-                return BadRequest("ID must be greater than zero");
-            }
-            var chat = _unitOfWork.Users.GetByID(id).UserChats.Where(c =>c.ChatId == id).SingleOrDefault();
+            User user = this.GetAuthenticatedUser();
+            //if (user.Id <= 0)
+            //{
+            //    return BadRequest("ID must be greater than zero");
+            //}
+            var chat = user.UserChats;
             if (chat == null)
             {
                 return NotFound();
@@ -111,7 +112,6 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(chat);
         }
 
-        public static string getHomePath()
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyUserNameIsUnique")]
