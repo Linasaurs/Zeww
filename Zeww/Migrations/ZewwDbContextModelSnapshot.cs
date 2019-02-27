@@ -96,6 +96,8 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ConnectionStatus");
+
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
                     b.Property<int?>("DailyDoNotDisturbTo");
