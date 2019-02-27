@@ -28,7 +28,8 @@ namespace Zeww.BusinessLogic.Controllers
            this._unitOfWork = unitOfWork;
         }
 
-        // GET: /<controller>/
+        // GET: /<controller>/ 
+        [HttpGet]
         public IEnumerable<Workspace> Index()
         {
             AddUserToWorkSpace(1, 1);
@@ -36,11 +37,9 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpGet]
-        [Route("name/{workspaceName}")]
-        public IActionResult GetWorkspaceName(string workspaceName)
-        {
-            if (!string.IsNullOrWhiteSpace(workspaceName))
-            {
+        [Route("GetWorkspaceName/{workspaceName}")]
+        public IActionResult GetWorkspaceName(string workspaceName) {
+            if (!string.IsNullOrWhiteSpace(workspaceName)) {
                 var query = _unitOfWork.Workspaces.Get();
                 if (query.Any(c => c.WorkspaceName.Contains(workspaceName)))
                     return Ok(workspaceName);
@@ -80,23 +79,22 @@ namespace Zeww.BusinessLogic.Controllers
 
         // POST api/NewWorkspace/workspacename
         [HttpPost]
-        [Route("NewWorkspace/{name}")]
-        public IActionResult AddNewWorkspaceByName(string name, [FromBody] [Bind] Optionals Optionals)
+        [Route("CreateWorkspace")]
+        public IActionResult CreateWorkspace([FromBody] Workspace newWorkspace)
         {
-            Workspace newWorkspace;
+            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", newWorkspace.WorkspaceName); ;
 
-            if (Optionals != null)
-                newWorkspace = new Workspace(Optionals) { WorkspaceName = name, DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy") };
-            else
-                newWorkspace = new Workspace { WorkspaceName = name, DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy"), CompanyName = Optionals.CompanyName };
+            newWorkspace.DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy");
+            newWorkspace.URL = location;
 
+            
             if (!TryValidateModel(newWorkspace))
                 return BadRequest(ModelState);
             else
                 _unitOfWork.Workspaces.Insert(newWorkspace);
             _unitOfWork.Save();
 
-            return Ok(newWorkspace);
+            return Created(location,newWorkspace);
         }
 
         [HttpPost]

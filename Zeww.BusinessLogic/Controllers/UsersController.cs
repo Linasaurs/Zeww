@@ -7,23 +7,28 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Zeww.BusinessLogic.DTOs;
 using Zeww.DAL;
 using Zeww.Models;
 using Zeww.Repository;
+using Zeww.BusinessLogic.ExtensionMethods;
+using Newtonsoft.Json;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Zeww.BusinessLogic.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : Controller
     {
         private IUnitOfWork _unitOfWork;
-   
+
 
         public UsersController(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
@@ -79,6 +84,7 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("SignUp")]
         public IActionResult SignUp([FromBody] User user)
@@ -107,6 +113,30 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest(ModelState);
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyUserNameIsUnique")]
+        public IActionResult VerifyUserNameIsUnique(UserNameDTO dto)
+        {
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
+            if (userNameExists)
+                return BadRequest("This username is already taken.");
+
+            return Ok("You can use this user name");
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyEmailIsUnique")]
+        public IActionResult VerifyEmailIsUnique(EmailDTO dto)
+        {
+            var emailExists = _unitOfWork.Users.GetUserByEmail(dto.Email) == null ? false : true;
+            if (emailExists)
+                return BadRequest("This email is already taken.");
+
+            return Ok("You can use this email");
+        }
+
         public static string getHomePath()
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -122,6 +152,85 @@ namespace Zeww.BusinessLogic.Controllers
             WebClient client = new WebClient();
             var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
             client.DownloadFile(fileToDownload.Source, (pathDownload +"/"+ DownloadedFileName));
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("login")]
+        public IActionResult Login([FromBody] UserSignInDTO userSignInDTO)
+        {
+            var userRepository = _unitOfWork.Users;
+            var user = userRepository.GetUserByEmail(userSignInDTO.Email);
+            if(user == null)
+            {
+                return BadRequest("Invalid email/username or password");
+            }
+            if(userRepository.Authenticate(user, userSignInDTO.Password))
+            {
+                return Ok(userRepository.GenerateJWTToken(user));
+            }
+            return BadRequest("Invalid email/username or password");
+        }
+
+        [HttpGet("profile/{id}")]
+        public string viewProfile(int id)
+        {
+            var user = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
+            string userJson = JsonConvert.SerializeObject(user);
+            return userJson;
+        }
+        [HttpPut("EditProfile")]
+        public void EditProfile([FromBody] User user)
+        {
+            var userToEdit = _unitOfWork.Users.Get().Where(u => u.Id == user.Id).FirstOrDefault();
+            userToEdit.Name = user.Name;
+            userToEdit.UserName = user.UserName;
+            userToEdit.Email = user.Email;
+            userToEdit.Password = user.Password;
+            userToEdit.PhoneNumber = user.PhoneNumber;
+            userToEdit.Status = user.Status;
+            userToEdit.UserWorkspaces = user.UserWorkspaces;
+            userToEdit.UserChats = user.UserChats;
+            _unitOfWork.Users.Update(userToEdit);
+            _unitOfWork.Save();
+        }
+
+        [HttpDelete("LeaveChannel/{userId}/{channelId}")]
+        public void LeaveChannel(int channelId, int userId)
+        {
+            //var userDeleteing = _unitOfWork.Users.Get().Where(u => u.Id == userId).FirstOrDefault();
+            var chatToBeDeleted = _unitOfWork.Chats.Get().Where(c => c.Id == channelId).FirstOrDefault();
+            var userChannel = _unitOfWork.UserChats.Get().Where(c => (c.ChatId == channelId) && ( c.UserId == userId)).FirstOrDefault();
+            if (!chatToBeDeleted.IsPrivate)
+            {
+                _unitOfWork.UserChats.Delete(userChannel);
+                _unitOfWork.Save();
+            }
+        }
+
+
+        [HttpPut]
+        [Route("AddDontDisturbPeriod")]
+        public IActionResult AddDontDisturbPeriod([FromBody] DoNotDisturbDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            var from = dto.DoNotDisturbFrom;
+            var to = dto.DoNotDisturbTo;
+
+            if (to <= from)
+                return BadRequest("The 'to' value can't be less than or equal the 'from' value");
+
+            if (ModelState.IsValid)
+            {
+                user.DailyDoNotDisturbFrom = from;
+                user.DailyDoNotDisturbTo = to;
+
+                _unitOfWork.Save();
+
+                return NoContent();
+            }
+
+            return BadRequest(ModelState);
         }
     }
 }
