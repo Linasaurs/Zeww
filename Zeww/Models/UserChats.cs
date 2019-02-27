@@ -8,9 +8,7 @@ namespace Zeww.Models
 {
     public class UserChats
     {
-        [Key]
         public int UserId { get; set; }
-        [Key]
         public int ChatId { get; set; }
     }
 }
