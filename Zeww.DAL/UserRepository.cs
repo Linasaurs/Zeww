@@ -17,10 +17,10 @@ namespace Zeww.DAL
         public UserRepository(ZewwDbContext context) : base(context) { }
 
         //Your methods go here
-        public User GetUserByUserName(string name)
+        public User GetUserByUserName(string userName)
         {
             IQueryable<User> query = dbSet;
-            return query.SingleOrDefault(u => u.Name == name);
+            return query.SingleOrDefault(u => u.UserName == userName);
         }
 
         public User GetUserByEmail(string email)
