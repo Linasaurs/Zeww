@@ -275,5 +275,20 @@ namespace Zeww.BusinessLogic.Controllers
 
             return BadRequest(ModelState);
         }
+
+        [HttpPut]
+        [Route("ToggleStarChat")]
+        public IActionResult ToggleStarChat([FromBody] ChatIdDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+            Chat chat = user.UserChats.Where(uc => uc.ChatId == dto.ChatID).Select(uc => uc.Chat).SingleOrDefault();
+
+            if(chat == null)
+                return BadRequest("This chat does not exist");
+
+            user.UserChats.Where(uc => uc.)
+            
+
+        }
     }
 }

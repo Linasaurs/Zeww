@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190227100852_CleanWiped")]
-    partial class CleanWiped
+    [Migration("20190227110559_updatedUserChatsModel")]
+    partial class updatedUserChatsModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -133,6 +133,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsStarred");
+
                     b.HasKey("ChatId", "UserId");
 
                     b.HasIndex("UserId");
@@ -198,12 +200,12 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.UserChats", b =>
                 {
-                    b.HasOne("Zeww.Models.Chat")
+                    b.HasOne("Zeww.Models.Chat", "Chat")
                         .WithMany("UserChats")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Zeww.Models.User")
+                    b.HasOne("Zeww.Models.User", "User")
                         .WithMany("UserChats")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

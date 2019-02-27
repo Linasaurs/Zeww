@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class CleanWiped : Migration
+    public partial class updatedUserChatsModel : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -121,7 +121,8 @@ namespace Zeww.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false),
-                    ChatId = table.Column<int>(nullable: false)
+                    ChatId = table.Column<int>(nullable: false),
+                    IsStarred = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
