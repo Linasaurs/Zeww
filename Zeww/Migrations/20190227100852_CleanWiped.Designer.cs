@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190227092728_dummydata6")]
-    partial class dummydata6
+    [Migration("20190227100852_CleanWiped")]
+    partial class CleanWiped
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -83,7 +83,11 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
+                    b.Property<bool>("isPinned");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
 
                     b.ToTable("Messages");
                 });
@@ -93,6 +97,8 @@ namespace Zeww.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ConnectionStatus");
 
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
@@ -179,6 +185,14 @@ namespace Zeww.Migrations
                     b.HasOne("Zeww.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Zeww.Models.Message", b =>
+                {
+                    b.HasOne("Zeww.Models.Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
