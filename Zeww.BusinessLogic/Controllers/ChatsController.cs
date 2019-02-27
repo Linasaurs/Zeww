@@ -52,27 +52,6 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
 
-        [HttpPut]
-        [Route("EditChannelDetails")]
-        public IActionResult EditChannelDetails([FromBody] Chat chat)
-        {
-            var detailsToEdit = _unitOfWork.Chats.Get().Where(c => c.Id == chat.Id).FirstOrDefault();
-            if (detailsToEdit != null)
-            {
-                detailsToEdit.Name = chat.Name;
-                detailsToEdit.Purpose = chat.Purpose;
-                detailsToEdit.Topic = chat.Topic;
-
-                _unitOfWork.Chats.Update(detailsToEdit);
-                _unitOfWork.Save();
-                return Ok("updated");
-            }
-            else
-            {
-                return NotFound("this channel wasn''found");
-            }
-        }
-           
 
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
         [HttpPost("PostChat")]

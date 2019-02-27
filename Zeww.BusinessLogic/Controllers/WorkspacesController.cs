@@ -35,21 +35,7 @@ namespace Zeww.BusinessLogic.Controllers
             return _unitOfWork.Workspaces.Get();
         }
         
-        [HttpGet]
-        [Route("GetWorkspaceName/{workspaceName}")]
-        public IActionResult GetWorkspaceName(string workspaceName) {
-            if (!string.IsNullOrWhiteSpace(workspaceName)) {
-                var query = _unitOfWork.Workspaces.Get();
-                if (query.Any(c => c.WorkspaceName.Contains(workspaceName)))
-                    return Ok(workspaceName);
-                else
-                    return NotFound("There's no existing workspace with the specified name.");
 
-            }
-            else
-                return BadRequest();
-
-        }
         [HttpGet("{id}")]
         public string GetById(int Id)
         {
