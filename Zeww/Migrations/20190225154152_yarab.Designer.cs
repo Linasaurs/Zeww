@@ -9,8 +9,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190225133216_pulllatest2")]
-    partial class pulllatest2
+    [Migration("20190225154152_yarab")]
+    partial class yarab
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -97,8 +97,7 @@ namespace Zeww.Migrations
                         .HasMaxLength(15);
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(15);
+                        .IsRequired();
 
                     b.Property<string>("PhoneNumber");
 

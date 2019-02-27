@@ -11,7 +11,7 @@ namespace Zeww.Repository
         User GetUserByUserName(string name);
 
         User GetUserByEmail(string email);
-
+       
 
     }
 }
