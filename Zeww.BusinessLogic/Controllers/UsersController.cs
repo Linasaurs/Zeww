@@ -66,6 +66,7 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("SignUp")]
         public IActionResult SignUp([FromBody] User user)
@@ -111,21 +112,52 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         public static string getHomePath()
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyUserNameIsUnique")]
+        public IActionResult VerifyUserNameIsUnique(UserNameDTO dto)
         {
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-                return Environment.GetEnvironmentVariable("HOME");
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
+            if (userNameExists)
+                return BadRequest("This username is already taken.");
 
-            return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+            return Ok("You can use this user name");
         }
-        [HttpGet("download/{filename}")]
-        public void DownloadFile(string filename)
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyEmailIsUnique")]
+        public IActionResult VerifyEmailIsUnique(EmailDTO dto)
         {
-            string pathDownload = Path.Combine(getHomePath(), "Downloads");
-            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.Name == filename).FirstOrDefault();
-            WebClient client = new WebClient();
-            var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
-            client.DownloadFile(fileToDownload.Source, (pathDownload +"/"+ DownloadedFileName));
+            var emailExists = _unitOfWork.Users.GetUserByEmail(dto.Email) == null ? false : true;
+            if (emailExists)
+                return BadRequest("This email is already taken.");
+
+            return Ok("You can use this email");
         }
+
+        [HttpGet("ShowConnectionStatusForLoggedInUser")]
+        public IActionResult ShowConnectionStatus() {
+            //Ziad is working on this method, please do not touch it!
+            User userToShowConnectionStatusFor = this.GetAuthenticatedUser();
+            var connectionStatus = userToShowConnectionStatusFor.ConnectionStatus;
+            return Ok(connectionStatus);
+        }
+
+        [HttpPut("ToggleUserConnectionStatusForLoggedInUser")]
+        public IActionResult ToggleUserConnectionStatus(int userId, ConnectionStatus newConnectionStatus) {
+            //Ziad is working on this method, please do not touch it!
+            var userToChangeConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
+            if (userToChangeConnectionStatusFor.ConnectionStatus == 0) {
+                userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Away;
+            } else {
+                userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Active;
+            }
+
+            userToChangeConnectionStatusFor.ConnectionStatus = newConnectionStatus;
+            return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
+         }
+
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
@@ -144,41 +176,121 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest("Invalid email/username or password");
         }
 
-        [HttpGet("profile/{id}")]
-        public string viewProfile(int id)
+        public static string getHomePath()
         {
-            var user = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
-            string userJson = JsonConvert.SerializeObject(user);
-            return userJson;
-        }
-        [HttpPut("EditProfile")]
-        public void EditProfile([FromBody] User user)
-        {
-            var userToEdit = _unitOfWork.Users.Get().Where(u => u.Id == user.Id).FirstOrDefault();
-            userToEdit.Name = user.Name;
-            userToEdit.UserName = user.UserName;
-            userToEdit.Email = user.Email;
-            userToEdit.Password = user.Password;
-            userToEdit.PhoneNumber = user.PhoneNumber;
-            userToEdit.Status = user.Status;
-            userToEdit.UserWorkspaces = user.UserWorkspaces;
-            userToEdit.UserChats = user.UserChats;
-            _unitOfWork.Users.Update(userToEdit);
-            _unitOfWork.Save();
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                return Environment.GetEnvironmentVariable("HOME");
+
+            return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
 
-        [HttpDelete("LeaveChannel/{userId}/{channelId}")]
-        public void LeaveChannel(int channelId, int userId)
+        [AllowAnonymous]
+        [HttpGet("download/{filename}")]
+        public IActionResult DownloadFile(string filename)
         {
-            //var userDeleteing = _unitOfWork.Users.Get().Where(u => u.Id == userId).FirstOrDefault();
-            var chatToBeDeleted = _unitOfWork.Chats.Get().Where(c => c.Id == channelId).FirstOrDefault();
-            var userChannel = _unitOfWork.UserChats.Get().Where(c => (c.ChatId == channelId) && ( c.UserId == userId)).FirstOrDefault();
-            if (!chatToBeDeleted.IsPrivate)
+            string pathDownload = Path.Combine(getHomePath(), "Downloads");
+            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.Name == filename).FirstOrDefault();
+
+            if (fileToDownload != null)
             {
-                _unitOfWork.UserChats.Delete(userChannel);
-                _unitOfWork.Save();
+                WebClient client = new WebClient();
+                var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
+                client.DownloadFile(fileToDownload.Source, (pathDownload + "/" + DownloadedFileName));
+                return Ok();
+            }
+            return NotFound("File not found");
+        }
+
+        [AllowAnonymous]
+        [HttpGet("profile/{id}")]
+        public IActionResult viewProfile(int id)
+        {
+            var user = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
+            if (user != null)
+            {
+                string userJson = JsonConvert.SerializeObject(user);
+                return Ok(userJson);
+            }
+            else
+            {
+                return NotFound();
             }
         }
 
+        [AllowAnonymous]
+        [HttpPut("EditProfile/{id}")]
+        public IActionResult EditProfile(int id, [FromBody] User user)
+        {
+            var userToEdit = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
+            if (userToEdit != null)
+            {
+                userToEdit.Name = user.Name;
+                userToEdit.UserName = user.UserName;
+                userToEdit.Email = user.Email;
+                userToEdit.Password = user.Password;
+                userToEdit.PhoneNumber = user.PhoneNumber;
+                userToEdit.Status = user.Status;
+                userToEdit.UserWorkspaces = user.UserWorkspaces;
+                userToEdit.UserChats = user.UserChats;
+                _unitOfWork.Users.Update(userToEdit);
+                _unitOfWork.Save();
+                return Ok(userToEdit);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpDelete("LeaveChannel/{userId}/{channelId}")]
+        public IActionResult LeaveChannel(int channelId, int userId)
+        {
+            var chatToBeDeleted = _unitOfWork.Chats.GetByID(channelId);
+            var userChannel = _unitOfWork.UserChats.Get().Where(c => (c.ChatId == chatToBeDeleted.Id) && (c.UserId == userId)).FirstOrDefault();
+            if (chatToBeDeleted == null || userChannel == null)
+            {
+                return NotFound("User is not a member in this channel");
+            }
+            else
+            {
+                if (!chatToBeDeleted.IsPrivate)
+                {
+                    _unitOfWork.UserChats.Delete(userChannel);
+                    _unitOfWork.Save();
+                    return Ok("User left chat");
+                }
+                else
+                {
+                    return BadRequest("You can't delete a private message");
+                }
+            }
+        }
+
+
+        [HttpPut]
+        [Route("AddDontDisturbPeriod")]
+        public IActionResult AddDontDisturbPeriod([FromBody] DoNotDisturbDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            var from = dto.DoNotDisturbFrom;
+            var to = dto.DoNotDisturbTo;
+
+            if (to <= from)
+                return BadRequest("The 'to' value can't be less than or equal the 'from' value");
+
+            if (ModelState.IsValid)
+            {
+                user.DailyDoNotDisturbFrom = from;
+                user.DailyDoNotDisturbTo = to;
+
+                _unitOfWork.Save();
+
+                return NoContent();
+            }
+
+            return BadRequest(ModelState);
+        }
     }
 }

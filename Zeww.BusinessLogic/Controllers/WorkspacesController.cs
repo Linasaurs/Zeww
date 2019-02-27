@@ -71,7 +71,7 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest(ModelState);
             else
                 _unitOfWork.Workspaces.Insert(newWorkspace);
-                _unitOfWork.Save(); 
+                _unitOfWork.Save();
 
             return Created(location,newWorkspace);
         }

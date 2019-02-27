@@ -31,6 +31,12 @@ namespace Zeww.Models
         public string PhoneNumber { get; set; }
 
         public Status Status { get; set; }
+        public ConnectionStatus ConnectionStatus { get; set; }
+
+        [Range(0,23)]
+        public int? DailyDoNotDisturbFrom { get; set; }
+        [Range(1, 23)]
+        public int? DailyDoNotDisturbTo { get; set; }
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
         public virtual ICollection<UserChats> UserChats { get; set; }
 
@@ -43,6 +49,11 @@ namespace Zeww.Models
     public enum Status {
         Available,
         Busy,
+        Away
+    }
+
+    public enum ConnectionStatus {
+        Active, 
         Away
     }
 }
