@@ -16,6 +16,12 @@ namespace Zeww.DAL {
             dbSet.Add(message);
         }
 
+        public void PinMessage(int messageId)
+        {
+            var messageToPin = GetByID(messageId);
+            messageToPin.isPinned = true;
+            Update(messageToPin);
+        }
     }
 
 
