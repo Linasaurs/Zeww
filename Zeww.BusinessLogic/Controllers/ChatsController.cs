@@ -118,5 +118,11 @@ namespace Zeww.BusinessLogic.Controllers
             else return BadRequest();
         }
 
+        [HttpGet("MessagesDate")]
+        public IActionResult viewMessagesDate()
+        {
+            return Ok();
+        }
+
     }
 }
