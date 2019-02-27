@@ -75,9 +75,15 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpPut]
         [Route("EditChannelPurpose/{channelId}")]
-        public IActionResult EditChannelPurpose(Chat chat, int channelId) {
+        public IActionResult EditChannelPurpose(int channelId, [FromBody] DTOs.EditChannelPurposeDTO newChannelPurpose) {
             //Ziad is still working on that method
-
+            var channelToChangePurposeOf = _unitOfWork.Chats.GetByID(channelId);
+            if(channelToChangePurposeOf == null) {
+                return BadRequest();
+            }
+            channelToChangePurposeOf.Purpose = newChannelPurpose.Purpose;
+            _unitOfWork.Chats.Update(channelToChangePurposeOf);
+            _unitOfWork.Save();
             return Ok();
         }
 
@@ -111,6 +117,22 @@ namespace Zeww.BusinessLogic.Controllers
 
             } else
                 return BadRequest();
+        }
+
+        [HttpPost("AddUserToChannel")]
+        public IActionResult AddUserToChannel([FromBody] UserChats UserChat)
+        {
+            User user = _unitOfWork.Users.GetByID(UserChat.UserId);
+            Chat chat = _unitOfWork.Chats.GetByID(UserChat.ChatId);
+
+            if (user != null && chat != null)
+            {
+                _unitOfWork.UserChats.Insert(UserChat);
+                _unitOfWork.Save();
+                //send message to channel ----- call taher's function
+                return Ok(UserChat);
+            }
+            else return BadRequest();
         }
 
     }
