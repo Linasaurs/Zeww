@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190227110559_updatedUserChatsModel")]
-    partial class updatedUserChatsModel
+    [Migration("20190227115634_afterchange")]
+    partial class afterchange
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
