@@ -103,14 +103,26 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpGet("user/ShowConnectionStatus/{userId}")]
-        public void ShowConnectionStatus(int userId) {
+        public IActionResult ShowConnectionStatus(int userId) {
             //Ziad is working on this method, please do not touch it!
+            var userToShowConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
+            if (userToShowConnectionStatusFor == null) {
+                return BadRequest("There is no such user");
+            }
+            var connectionStatus = userToShowConnectionStatusFor.ConnectionStatus;
+            return Ok(connectionStatus);
         }
 
         [HttpPut("user/ToggleUserConnectionStatus/{userId}")]
-        public void ToggleUserConnectionStatus(int UserId) {
+        public IActionResult ToggleUserConnectionStatus(int userId, ConnectionStatus newConnectionStatus) {
             //Ziad is working on this method, please do not touch it!
-        }
+            var userToChangeConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
+            if(userToChangeConnectionStatusFor == null) {
+                return BadRequest("There is no such user");
+            }
+            userToChangeConnectionStatusFor.ConnectionStatus = newConnectionStatus;
+            return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
+         }
 
         [HttpGet("download/{filename}")]
         public void DownloadFile(string filename)
