@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 namespace Zeww.Models
 {
     public class Workspace
-    {
-        public Workspace() {
+    {   
+        public Workspace()
+        {
             this.UserWorkspaces = new HashSet<UserWorkspace>();
         }
+  
 
         [Key]
         public int Id { get; set; }
@@ -19,7 +21,19 @@ namespace Zeww.Models
         [RegularExpression(@"^[A-Z]+[a-zA-Z0-9""'\s-]*$")]
         [Required]
         public string WorkspaceName { get; set; }
-        public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
 
+        public string CompanyName { get; set; } 
+
+        public string WorkspaceProjectName { get; set; }  
+
+        public string DateOfCreation { get; set; }
+
+        public string URL { get; set; }
+
+        public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
+         
+       
     }
+
+  
 }

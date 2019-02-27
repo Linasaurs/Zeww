@@ -5,9 +5,9 @@ using Zeww.Models;
 
 namespace Zeww.Repository
 {
-    public interface IWorkspaceRepository : IGenericRepository<Workspace> {
-
+    public interface IUserChatsRepository : IGenericRepository<UserChats>
+    {
         //Your method headers go here
-       
     }
 }
+

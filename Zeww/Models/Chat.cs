@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace Zeww.Models
 {
-    public class Chat
-    {
+    public class Chat {
         [Key]
         public int Id { get; set; }
         [ForeignKey("Workspace")]
@@ -20,6 +19,7 @@ namespace Zeww.Models
         public string Name { get; set; }
         //Purpose should only be added in the case pf group channels
         public string Purpose { get; set; }
+        public string Topic { get; set; }
         public virtual ICollection<UserChats> UserChats { get; set; }
 
         public Chat()

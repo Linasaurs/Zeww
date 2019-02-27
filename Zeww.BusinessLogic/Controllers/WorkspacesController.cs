@@ -8,6 +8,7 @@ using Zeww.Models;
 using Zeww.Repository;
 using System.Web.Http;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,22 +28,17 @@ namespace Zeww.BusinessLogic.Controllers
             this._unitOfWork = unitOfWork;
         }
 
-        // GET: /<controller>/
-        public string Index()
+        // GET: /<controller>/ 
+        [HttpGet]
+        public IEnumerable<Workspace> Index()
         {
-            return "Hello";
+            return _unitOfWork.Workspaces.Get();
         }
         
         [HttpGet]
-        [Route("name/{workspaceName}")]
-        public IActionResult GetWorkspaceName(string workspaceName)
-        {
-            // if(loginSuccessful){
-            // then check in the workspace in the workspaces list to 
-            // make sure that this workspace exists in his list of workspaces
-            // }
-            if (!string.IsNullOrWhiteSpace(workspaceName))
-            {
+        [Route("GetWorkspaceName/{workspaceName}")]
+        public IActionResult GetWorkspaceName(string workspaceName) {
+            if (!string.IsNullOrWhiteSpace(workspaceName)) {
                 var query = _unitOfWork.Workspaces.Get();
                 if (query.Any(c => c.WorkspaceName.Contains(workspaceName)))
                     return Ok(workspaceName);
@@ -60,13 +56,24 @@ namespace Zeww.BusinessLogic.Controllers
             return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
         }
 
-        // POST api/users
+        // POST api/CreateWorkspace/ 
         [HttpPost]
-        [Route("~/Post")]
-        public void Post([FromBody] Workspace workspace)
+        [Route("CreateWorkspace")]
+        public IActionResult CreateWorkspace([FromBody] Workspace newWorkspace)
         {
-            _unitOfWork.Workspaces.Insert(workspace);
-            _unitOfWork.Save();
+            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", newWorkspace.WorkspaceName); ;
+
+            newWorkspace.DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy");
+            newWorkspace.URL = location;
+
+            
+            if (!TryValidateModel(newWorkspace))
+                return BadRequest(ModelState);
+            else
+                _unitOfWork.Workspaces.Insert(newWorkspace);
+                _unitOfWork.Save(); 
+
+            return Created(location,newWorkspace);
         }
 
     }

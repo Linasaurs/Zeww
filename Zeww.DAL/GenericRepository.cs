@@ -52,6 +52,7 @@ namespace Zeww.DAL {
 
         public virtual void Delete(object id) {
             TEntity entityToDelete = dbSet.Find(id);
+            //_context.Entry(customer).State = EntityState.Deleted;
             Delete(entityToDelete);
         }
 
