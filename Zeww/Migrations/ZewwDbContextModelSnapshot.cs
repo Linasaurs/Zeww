@@ -68,6 +68,8 @@ namespace Zeww.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Files");
                 });
 
@@ -94,6 +96,10 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
+
                     b.Property<string>("Email")
                         .IsRequired();
 
@@ -103,6 +109,7 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired();
+
 
                     b.Property<string>("PhoneNumber");
 
@@ -153,6 +160,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
+                    b.Property<string>("URL");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
 
@@ -178,12 +187,12 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.UserChats", b =>
                 {
-                    b.HasOne("Zeww.Models.Chat", "UserChat")
+                    b.HasOne("Zeww.Models.Chat")
                         .WithMany("UserChats")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Zeww.Models.User", "User")
+                    b.HasOne("Zeww.Models.User")
                         .WithMany("UserChats")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
