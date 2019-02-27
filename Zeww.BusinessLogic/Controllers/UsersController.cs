@@ -94,6 +94,31 @@ namespace Zeww.BusinessLogic.Controllers
 
             return BadRequest(ModelState);
         }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyUserNameIsUnique")]
+        public IActionResult VerifyUserNameIsUnique(UserNameDTO dto)
+        {
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
+            if (userNameExists)
+                return BadRequest("This username is already taken.");
+
+            return Ok("You can use this user name");
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyEmailIsUnique")]
+        public IActionResult VerifyEmailIsUnique(EmailDTO dto)
+        {
+            var emailExists = _unitOfWork.Users.GetUserByEmail(dto.Email) == null ? false : true;
+            if (emailExists)
+                return BadRequest("This email is already taken.");
+
+            return Ok("You can use this email");
+        }
+
        
         [AllowAnonymous]
         [HttpPost]

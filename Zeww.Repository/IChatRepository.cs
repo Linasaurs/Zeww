@@ -10,5 +10,9 @@ namespace Zeww.Repository
         //Your method headers go here
         void Insert(User userToAdd);
         void addChat(Chat chatToAdd);
+
+        bool EditChatTopic(int channelId , string topic);
+
+        void EditChannelName(int channelId , string newName);
     }
 }
