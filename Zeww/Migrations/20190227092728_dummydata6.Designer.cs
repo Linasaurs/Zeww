@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190227090854_NewData")]
-    partial class NewData
+    [Migration("20190227092728_dummydata6")]
+    partial class dummydata6
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,8 +58,6 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<long>("Size");
-
                     b.Property<string>("Source");
 
                     b.Property<int>("UserId");
@@ -85,11 +83,7 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
-                    b.Property<bool>("isPinned");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
 
                     b.ToTable("Messages");
                 });
@@ -185,14 +179,6 @@ namespace Zeww.Migrations
                     b.HasOne("Zeww.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Zeww.Models.Message", b =>
-                {
-                    b.HasOne("Zeww.Models.Chat")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
