@@ -66,6 +66,7 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("SignUp")]
         public IActionResult SignUp([FromBody] User user)
@@ -92,6 +93,30 @@ namespace Zeww.BusinessLogic.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyUserNameIsUnique")]
+        public IActionResult VerifyUserNameIsUnique(UserNameDTO dto)
+        {
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
+            if (userNameExists)
+                return BadRequest("This username is already taken.");
+
+            return Ok("You can use this user name");
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyEmailIsUnique")]
+        public IActionResult VerifyEmailIsUnique(EmailDTO dto)
+        {
+            var emailExists = _unitOfWork.Users.GetUserByEmail(dto.Email) == null ? false : true;
+            if (emailExists)
+                return BadRequest("This email is already taken.");
+
+            return Ok("You can use this email");
         }
 
         public static string getHomePath()
@@ -187,5 +212,30 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
 
+
+        [HttpPut]
+        [Route("AddDontDisturbPeriod")]
+        public IActionResult AddDontDisturbPeriod([FromBody] DoNotDisturbDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            var from = dto.DoNotDisturbFrom;
+            var to = dto.DoNotDisturbTo;
+
+            if (to <= from)
+                return BadRequest("The 'to' value can't be less than or equal the 'from' value");
+
+            if (ModelState.IsValid)
+            {
+                user.DailyDoNotDisturbFrom = from;
+                user.DailyDoNotDisturbTo = to;
+
+                _unitOfWork.Save();
+
+                return NoContent();
+            }
+
+            return BadRequest(ModelState);
+        }
     }
 }

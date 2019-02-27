@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class migr : Migration
+    public partial class migrationURLWS : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -65,7 +65,8 @@ namespace Zeww.Migrations
                     WorkspaceName = table.Column<string>(nullable: false),
                     CompanyName = table.Column<string>(nullable: true),
                     WorkspaceProjectName = table.Column<string>(nullable: true),
-                    DateOfCreation = table.Column<string>(nullable: true)
+                    DateOfCreation = table.Column<string>(nullable: true),
+                    URL = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
