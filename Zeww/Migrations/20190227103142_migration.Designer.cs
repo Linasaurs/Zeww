@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190227100852_CleanWiped")]
-    partial class CleanWiped
+    [Migration("20190227103142_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,6 +58,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<long>("Size");
+
                     b.Property<string>("Source");
 
                     b.Property<int>("UserId");
@@ -97,8 +99,6 @@ namespace Zeww.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ConnectionStatus");
 
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
