@@ -294,6 +294,45 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest(ModelState);
         }
 
+        [AllowAnonymous]
+        [HttpGet("userDirectChats/{userId}")]
+        public IActionResult GetUserDirectChats(int userId)
+        {
+            List<int> userDirectChats = new List<int>();
+
+            var allUserChatIDs = _unitOfWork.UserChats.Get()
+                .Where(a=> a.UserId== userId)
+                .Select(a=> a.ChatId)
+                .ToList();
+
+            foreach(var chatID in allUserChatIDs)
+            {
+               if( _unitOfWork.Chats.GetByID(chatID).IsPrivate)
+                    userDirectChats.Add(chatID);
+            }
+            return Ok(userDirectChats);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("userChannelChats/{userId}")]
+        public IActionResult GetUserChannelChats(int userId)
+        {
+            List<int> userChannelChats = new List<int>();
+
+            var allUserChatIDs = _unitOfWork.UserChats.Get()
+                .Where(a => a.UserId == userId)
+                .Select(a => a.ChatId)
+                .ToList();
+
+            foreach (var chatID in allUserChatIDs)
+            {
+                if (!_unitOfWork.Chats.GetByID(chatID).IsPrivate)
+                    userChannelChats.Add(chatID);
+            }
+            return Ok(userChannelChats);
+        }
+
+
         [HttpPut]
         [Route("ToggleStarChat")]
         public IActionResult ToggleStarChat([FromBody] ChatIdDTO dto)
