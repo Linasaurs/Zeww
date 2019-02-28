@@ -36,11 +36,13 @@ namespace Zeww.BusinessLogic.Controllers
             //AddUserToWorkSpace(1, 1);
             return _unitOfWork.Workspaces.Get();
         }
-        
+
         [HttpGet]
         [Route("GetWorkspaceName/{workspaceName}")]
-        public IActionResult GetWorkspaceName(string workspaceName) {
-            if (!string.IsNullOrWhiteSpace(workspaceName)) {
+        public IActionResult GetWorkspaceName(string workspaceName)
+        {
+            if (!string.IsNullOrWhiteSpace(workspaceName))
+            {
                 var query = _unitOfWork.Workspaces.Get();
                 if (query.Any(c => c.WorkspaceName.Contains(workspaceName)))
                     return Ok(workspaceName);
@@ -50,6 +52,7 @@ namespace Zeww.BusinessLogic.Controllers
             }
             else
                 return BadRequest();
+        }
 
         [HttpGet("{id}")]
         public string GetById(int Id)
