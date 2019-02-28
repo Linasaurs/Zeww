@@ -159,6 +159,12 @@ namespace Zeww.Migrations
 
                     b.Property<string>("CompanyName");
 
+                    b.Property<int>("CreatorID");
+
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
+
                     b.Property<string>("DateOfCreation");
 
                     b.Property<string>("URL");
