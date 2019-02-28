@@ -10,10 +10,8 @@ namespace Zeww.Models
     {
         [Key]
         public int UserId { get; set; }
-        public User User { get; set; }
         [Key]
         public int ChatId { get; set; }
-        public Chat Chat { get; set; }
         public bool IsStarred { get; set; }
     }
 }
