@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Linq;
 using Zeww.Models;
 using Zeww.Repository;
 using Microsoft.AspNetCore.Identity;
