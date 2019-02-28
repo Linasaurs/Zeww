@@ -62,8 +62,10 @@ namespace Zeww.DAL
         {
             IQueryable<User> query = dbSet;
 
-            return query.Where(u => u.Id == id).Include(u => u.UserChats).SingleOrDefault();
-
+            return query.Where(u => u.Id == id)
+                .Include(u => u.UserChats)
+                .Include(u => u.UserWorkspaces)
+                .SingleOrDefault();
         }
     }
 }
