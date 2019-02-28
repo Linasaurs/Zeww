@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class createAgain : Migration
+    public partial class migartion : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -55,13 +55,10 @@ namespace Zeww.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     WorkspaceName = table.Column<string>(nullable: false),
-                    CreatorID = table.Column<int>(nullable: false),
                     CompanyName = table.Column<string>(nullable: true),
                     WorkspaceProjectName = table.Column<string>(nullable: true),
                     DateOfCreation = table.Column<string>(nullable: true),
-                    URL = table.Column<string>(nullable: true),
-                    DailyDoNotDisturbFrom = table.Column<int>(nullable: true),
-                    DailyDoNotDisturbTo = table.Column<int>(nullable: true)
+                    URL = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
