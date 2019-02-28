@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Zeww.Models;
 
@@ -12,6 +13,6 @@ namespace Zeww.Repository
         User GetUserByEmail(string email);
         bool Authenticate(User user, string claimedPassword);
         string GenerateJWTToken(User user);
-        User EagerLoadUserById(int id);
+        IQueryable<int> GetChatsIdsByUserId(int id);
     }
 }

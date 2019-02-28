@@ -300,19 +300,19 @@ namespace Zeww.BusinessLogic.Controllers
         {
             User user = this.GetAuthenticatedUser();
 
-            User eagerLoadedUser = _unitOfWork.Users.EagerLoadUserById(user.Id);
+            IQueryable<int> userChatsIds = _unitOfWork.Users.GetChatsIdsByUserId(user.Id);
 
-            UserChats chat = user.UserChats.Where(uc => uc.ChatId == dto.ChatID).SingleOrDefault();
+            UserChats userChat = userChatsIds.Any(uci=>uci==dto.ChatID)? _unitOfWork.UserChats.GetUserChatByIds(user.Id, dto.ChatID) : null;
 
-            if (chat == null)
+            if (userChat == null)
                 return BadRequest("This chat either does not exist or the user is not allowed to view this chat");
 
-            chat.IsStarred = !chat.IsStarred;
+            userChat.IsStarred = !userChat.IsStarred;
 
             _unitOfWork.Users.Update(user);
             _unitOfWork.Save();
 
-            return NoContent();
+            return Ok(new { isStarred= userChat.IsStarred });
         }
     }
 }

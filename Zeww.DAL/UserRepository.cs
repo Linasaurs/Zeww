@@ -58,14 +58,13 @@ namespace Zeww.DAL
             return tokenHandler.WriteToken(token);
         }
 
-        public User EagerLoadUserById(int id)
+        public IQueryable<int> GetChatsIdsByUserId(int id)
         {
             IQueryable<User> query = dbSet;
 
-            return query.Where(u => u.Id == id)
-                .Include(u => u.UserChats)
-                .Include(u => u.UserWorkspaces)
-                .SingleOrDefault();
+            var userChats = query.Where(u => u.Id == id).Include(u => u.UserChats).Select(uc=> uc.UserChats);
+            return userChats.SelectMany(uc => uc.Select(u => u.ChatId));
+           
         }
     }
 }
