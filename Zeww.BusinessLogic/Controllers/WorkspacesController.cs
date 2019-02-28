@@ -9,6 +9,8 @@ using Zeww.Repository;
 using System.Web.Http;
 using System.Net.Http;
 using Newtonsoft.Json;
+using Zeww.BusinessLogic.DTOs;
+using Zeww.BusinessLogic.ExtensionMethods;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -34,7 +36,7 @@ namespace Zeww.BusinessLogic.Controllers
         {
             return _unitOfWork.Workspaces.Get();
         }
-        
+
 
         [HttpGet("{id}")]
         public string GetById(int Id)
@@ -52,14 +54,54 @@ namespace Zeww.BusinessLogic.Controllers
             newWorkspace.DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy");
             newWorkspace.URL = location;
 
-            
+
             if (!TryValidateModel(newWorkspace))
                 return BadRequest(ModelState);
             else
                 _unitOfWork.Workspaces.Insert(newWorkspace);
-                _unitOfWork.Save();
+            _unitOfWork.Save();
 
-            return Created(location,newWorkspace);
+            return Created(location, newWorkspace);
+        }
+
+        [HttpPut("{workspaceId}")]
+        [Route("WorkspaceDoNotDisturbPeriod/{workspaceId}")]
+        public IActionResult WorkspaceDoNotDisturbPeriod([FromBody] DoNotDisturbDTO dto, int? workspaceId)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            var WorkspaceDoNotDisturbHours = _unitOfWork.Workspaces.GetByID(workspaceId);
+
+            var from = dto.DoNotDisturbFrom;
+            var to = dto.DoNotDisturbTo;
+
+            if (WorkspaceDoNotDisturbHours != null)
+            {
+                return NotFound("this workspace id doesn't exist");
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (WorkspaceDoNotDisturbHours.CreatorID == user.Id)
+                {
+                    WorkspaceDoNotDisturbHours.DailyDoNotDisturbFrom = from;
+                    WorkspaceDoNotDisturbHours.DailyDoNotDisturbTo = to;
+
+                    _unitOfWork.Save();
+
+                    return NoContent();
+                }
+                else
+                {
+                    return BadRequest("not the correct user Id");
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+
+            
         }
 
         [HttpPut]
