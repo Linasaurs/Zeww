@@ -13,6 +13,7 @@ namespace Zeww.Repository
         bool Authenticate(User user, string claimedPassword);
         string GenerateJWTToken(User user);
 
+        User EagerLoadUserById(int id);
 
 
     }

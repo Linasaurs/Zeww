@@ -276,19 +276,25 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest(ModelState);
         }
 
-        //[HttpPut]
-        //[Route("ToggleStarChat")]
-        //public IActionResult ToggleStarChat([FromBody] ChatIdDTO dto)
-        //{
-        //    User user = this.GetAuthenticatedUser();
-        //    Chat chat = user.UserChats.Where(uc => uc.ChatId == dto.ChatID).Select(uc => uc.Chat).SingleOrDefault();
+        [HttpPut]
+        [Route("ToggleStarChat")]
+        public IActionResult ToggleStarChat([FromBody] ChatIdDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
 
-        //    if(chat == null)
-        //        return BadRequest("This chat does not exist");
+            User eagerLoadedUser = _unitOfWork.Users.EagerLoadUserById(user.Id);
 
-        //    user.UserChats.Where(uc => uc.)
-            
+            UserChats chat = user.UserChats.Where(uc => uc.ChatId == dto.ChatID).SingleOrDefault();
 
-        //}
+            if (chat == null)
+                return BadRequest("This chat either does not exist or the user is not allowed to view this chat");
+
+            chat.IsStarred = !chat.IsStarred;
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return NoContent();
+        }
     }
 }

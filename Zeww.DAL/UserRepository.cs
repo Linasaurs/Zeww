@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Zeww.DAL
 {
@@ -57,5 +58,12 @@ namespace Zeww.DAL
             return tokenHandler.WriteToken(token);
         }
 
+        public User EagerLoadUserById(int id)
+        {
+            IQueryable<User> query = dbSet;
+
+            return query.Where(u => u.Id == id).Include(u => u.UserChats).SingleOrDefault();
+
+        }
     }
 }
