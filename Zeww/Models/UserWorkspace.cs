@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,9 +11,11 @@ namespace Zeww.Models
     {
         [Key]
         public int UserId { get; set; }
-        public User User { get; set; }
+        //[ForeignKey("UserId")]
+        //public User User { get; set; }
         [Key]
         public int WorkspaceId { get; set; }
-        public Workspace Workspace { get; set; }
+        //[ForeignKey("WorkspaceId")]
+        //public Workspace Workspace { get; set; }
     }
 }

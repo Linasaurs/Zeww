@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190227142819_Ayhaga")]
-    partial class Ayhaga
+    [Migration("20190227121924_AddedUserWorkspaceRelations")]
+    partial class AddedUserWorkspaceRelations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -98,16 +98,12 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ConnectionStatus");
-
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
                     b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("Email")
                         .IsRequired();
-
-                    b.Property<string>("Language");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -117,8 +113,6 @@ namespace Zeww.Migrations
                         .IsRequired();
 
                     b.Property<string>("PhoneNumber");
-
-                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
@@ -154,7 +148,7 @@ namespace Zeww.Migrations
 
                     b.HasAlternateKey("UserId", "WorkspaceId");
 
-                    b.ToTable("UserWorkspace");
+                    b.ToTable("UserWorkspaces");
                 });
 
             modelBuilder.Entity("Zeww.Models.Workspace", b =>

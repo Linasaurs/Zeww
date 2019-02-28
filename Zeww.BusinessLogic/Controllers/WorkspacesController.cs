@@ -22,19 +22,19 @@ namespace Zeww.BusinessLogic.Controllers
 
         private IUnitOfWork _unitOfWork;
 
-
         public WorkspacesController(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+           this._unitOfWork = unitOfWork;
         }
 
         // GET: /<controller>/ 
         [HttpGet]
         public IEnumerable<Workspace> Index()
         {
+            //AddUserToWorkSpace(1, 1);
             return _unitOfWork.Workspaces.Get();
         }
-        
+
         [HttpGet]
         [Route("GetWorkspaceName/{workspaceName}")]
         public IActionResult GetWorkspaceName(string workspaceName) {
@@ -56,7 +56,29 @@ namespace Zeww.BusinessLogic.Controllers
             return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
         }
 
-        // POST api/CreateWorkspace/ 
+        [HttpGet("GetUsersByWorkspaceId/{id}")]
+        public ActionResult GetUsersByWorkspaceId(int Id)
+        {
+            if (Id < 1)
+            {
+                return BadRequest();
+            }
+
+
+            if (_unitOfWork.Workspaces.GetByID(Id) == null)
+            {
+                return NotFound();
+            }
+            var ListOfUsersIds = _unitOfWork.Workspaces.GetUsersIdInWorkspace(Id);
+            var ListOfUsers = new List<User>();
+            foreach (var userId in ListOfUsersIds) {
+                ListOfUsers.Add(_unitOfWork.Users.GetByID(userId));
+            }
+            return Ok(ListOfUsers);
+
+        }
+
+        // POST api/NewWorkspace/workspacename
         [HttpPost]
         [Route("CreateWorkspace")]
         public IActionResult CreateWorkspace([FromBody] Workspace newWorkspace)
@@ -71,7 +93,7 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest(ModelState);
             else
                 _unitOfWork.Workspaces.Insert(newWorkspace);
-                _unitOfWork.Save();
+            _unitOfWork.Save();
 
             return Created(location,newWorkspace);
         }
@@ -93,6 +115,28 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
             return NoContent();
+        }
+
+        [HttpPost]
+        public void AddUserToWorkSpace(int userId, int workspaceId)
+        {
+            var workspace = _unitOfWork.Workspaces.GetByID(workspaceId);
+            var user = _unitOfWork.Users.GetByID(userId);
+            var uw = new UserWorkspace
+            {
+                UserId = userId,
+                //User = user,
+                WorkspaceId = workspaceId
+                //,
+                //Workspace = workspace
+            };
+            user.UserWorkspaces.Add(uw);
+            workspace.UserWorkspaces.Add(uw);
+            _unitOfWork.UserWorkspaces.Insert(uw);
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Workspaces.Update(workspace);
+            _unitOfWork.Save();
+
         }
     }
 }
