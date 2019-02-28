@@ -281,9 +281,6 @@ namespace Zeww.BusinessLogic.Controllers
             var from = dto.DoNotDisturbFrom;
             var to = dto.DoNotDisturbTo;
 
-            if (to <= from)
-                return BadRequest("The 'to' value can't be less than or equal the 'from' value");
-
             if (ModelState.IsValid)
             {
                 user.DailyDoNotDisturbFrom = from;
