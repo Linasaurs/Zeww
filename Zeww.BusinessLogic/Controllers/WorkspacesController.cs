@@ -75,7 +75,7 @@ namespace Zeww.BusinessLogic.Controllers
             var from = dto.DoNotDisturbFrom;
             var to = dto.DoNotDisturbTo;
 
-            if (WorkspaceDoNotDisturbHours != null)
+            if (WorkspaceDoNotDisturbHours == null)
             {
                 return NotFound("this workspace id doesn't exist");
             }
@@ -105,10 +105,10 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpPut]
-        [Route("EditWorkspaceName/{workspace.Id}")]
+        [Route("EditWorkspaceName")]
         public IActionResult EditWorkspaceName([FromBody] Workspace workspace)
         {
-            var workspaceNameToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
+            var workspaceNameToEdit = _unitOfWork.Workspaces.GetByID(workspace.Id);
             if (workspaceNameToEdit == null)
             {
                 return BadRequest();
