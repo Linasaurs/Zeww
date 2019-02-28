@@ -311,7 +311,7 @@ namespace Zeww.BusinessLogic.Controllers
 
             _unitOfWork.Users.Update(user);
             _unitOfWork.Save();
-            //testComment
+            
             return Ok(new { isStarred= userChat.IsStarred });
         }
     }
