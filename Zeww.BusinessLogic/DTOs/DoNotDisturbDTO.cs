@@ -12,7 +12,7 @@ namespace Zeww.BusinessLogic.DTOs
         [Range(0, 23)]
         public int DoNotDisturbFrom { get; set; }
         [Required]
-        [Range(1, 23)]
+        [Range(0, 23)]
         public int DoNotDisturbTo { get; set; }
     }
 }
