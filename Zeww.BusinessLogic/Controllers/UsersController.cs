@@ -41,14 +41,35 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult GetById(int Id) {
+        public ActionResult GetById(int Id)
+        {
+            User _ = this.GetAuthenticatedUser();
             if (Id < 1)
             {
                 return BadRequest();
             }
 
-          
-            if (_unitOfWork.Users.GetByID(Id)  == null)
+
+            if (_unitOfWork.Users.GetByID(Id) == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(_unitOfWork.Users.GetByID(Id));
+
+        }
+
+        [HttpGet("withoutPasswords/{id}")]
+        public ActionResult GetByIdWithoutPassword(int Id)
+        {
+            User _ = this.GetAuthenticatedUser();
+            if (Id < 1)
+            {
+                return BadRequest();
+            }
+
+
+            if (_unitOfWork.Users.GetByID(Id) == null)
             {
                 return NotFound();
             }
@@ -280,5 +301,44 @@ namespace Zeww.BusinessLogic.Controllers
 
             return BadRequest(ModelState);
         }
+
+        [AllowAnonymous]
+        [HttpGet("userDirectChats/{userId}")]
+        public IActionResult GetUserDirectChats(int userId)
+        {
+            List<int> userDirectChats = new List<int>();
+
+            var allUserChatIDs = _unitOfWork.UserChats.Get()
+                .Where(a=> a.UserId== userId)
+                .Select(a=> a.ChatId)
+                .ToList();
+
+            foreach(var chatID in allUserChatIDs)
+            {
+               if( _unitOfWork.Chats.GetByID(chatID).IsPrivate)
+                    userDirectChats.Add(chatID);
+            }
+            return Ok(userDirectChats);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("userChannelChats/{userId}")]
+        public IActionResult GetUserChannelChats(int userId)
+        {
+            List<int> userChannelChats = new List<int>();
+
+            var allUserChatIDs = _unitOfWork.UserChats.Get()
+                .Where(a => a.UserId == userId)
+                .Select(a => a.ChatId)
+                .ToList();
+
+            foreach (var chatID in allUserChatIDs)
+            {
+                if (!_unitOfWork.Chats.GetByID(chatID).IsPrivate)
+                    userChannelChats.Add(chatID);
+            }
+            return Ok(userChannelChats);
+        }
+
     }
 }

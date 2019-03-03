@@ -41,6 +41,25 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(returnedChat);
         }
 
+        [HttpGet]
+        [Route("GetChannelDetails/{chatID}")]
+        public IActionResult GetChannelDetails(int? chatID)
+        {
+            var chatDetails = _unitOfWork.Chats.GetByID(chatID);
+            if (chatDetails==null)
+            {
+                return NotFound();
+            }
+           else if (chatDetails.Id.Equals(chatID))
+            {
+                return Ok(chatDetails);
+            }
+            return NotFound();
+
+        }
+
+
+
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
         [HttpPost("PostChat")]
         public IActionResult PostChat([FromBody]Chat chat)
@@ -81,22 +100,6 @@ namespace Zeww.BusinessLogic.Controllers
 
 
         [HttpPut]
-        [Route("EditChannelPurpose/{channelId}")]
-        public IActionResult EditChannelPurpose(int channelId, [FromBody] DTOs.EditChannelPurposeDTO newChannelPurpose)
-        {
-            //Ziad is still working on that method
-            var channelToChangePurposeOf = _unitOfWork.Chats.GetByID(channelId);
-            if (channelToChangePurposeOf == null)
-            {
-                return BadRequest();
-            }
-            channelToChangePurposeOf.Purpose = newChannelPurpose.Purpose;
-            _unitOfWork.Chats.Update(channelToChangePurposeOf);
-            _unitOfWork.Save();
-            return Ok();
-        }
-
-        [HttpPut]
         [Route("EditChannelTopic/{channelId}")]
         public IActionResult EditChannelTopic(int channelId, [FromQuery]string topic)
         {
@@ -131,18 +134,22 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest();
         }
 
-        [HttpPost("AddUserToChannel")]
-        public IActionResult AddUserToChannel([FromBody] UserChats UserChat)
+        [AllowAnonymous]
+        [HttpPost("AddUserToChannel/{channelId}")]
+        public IActionResult AddUserToChannel(int channelId, [FromBody] string UserName)
         {
-            User user = _unitOfWork.Users.GetByID(UserChat.UserId);
-            Chat chat = _unitOfWork.Chats.GetByID(UserChat.ChatId);
+            UserChats userChat = new UserChats();
+            User user = _unitOfWork.Users.GetUserByUserName(UserName);
+            Chat chat = _unitOfWork.Chats.GetByID(channelId);
 
             if (user != null && chat != null)
             {
-                _unitOfWork.UserChats.Insert(UserChat);
+                userChat.ChatId = channelId;
+                userChat.UserId = user.Id;
+                _unitOfWork.UserChats.Insert(userChat);
                 _unitOfWork.Save();
                 //send message to channel ----- call taher's function
-                return Ok(UserChat);
+                return Ok(userChat);
             }
             else return BadRequest();
         }

@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190227100852_CleanWiped")]
-    partial class CleanWiped
+    [Migration("20190227121924_AddedUserWorkspaceRelations")]
+    partial class AddedUserWorkspaceRelations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -98,8 +98,6 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ConnectionStatus");
-
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
                     b.Property<int?>("DailyDoNotDisturbTo");
@@ -150,7 +148,7 @@ namespace Zeww.Migrations
 
                     b.HasAlternateKey("UserId", "WorkspaceId");
 
-                    b.ToTable("UserWorkspace");
+                    b.ToTable("UserWorkspaces");
                 });
 
             modelBuilder.Entity("Zeww.Models.Workspace", b =>

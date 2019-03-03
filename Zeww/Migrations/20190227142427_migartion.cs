@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class CleanWiped : Migration
+    public partial class migartion : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
