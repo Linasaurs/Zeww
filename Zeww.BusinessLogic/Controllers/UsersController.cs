@@ -124,7 +124,6 @@ namespace Zeww.BusinessLogic.Controllers
             var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
             if (userNameExists)
                 return BadRequest("This username is already taken.");
-
             return Ok("You can use this user name");
         }
 
@@ -160,11 +159,26 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
          }
 
-        [HttpGet("ShowStatusById/{userId}")]
-        public IActionResult ShowStatusById(int userId) {
+        public Status ShowStatusById(int userId) {
             var userToShowStatusFor = _unitOfWork.Users.GetByID(userId);
             var userStatus = userToShowStatusFor.Status;
-            return Ok(userStatus);
+            return userStatus;
+        }
+
+        [HttpGet("ShowStatusToAllUsersInWorkspace")]
+        public IActionResult ShowStatusToAllUsersInWorkspace(int[] userIds) {
+            var dictionary = new Dictionary<int, Status>();
+            var allUsersInCurrentWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(1);
+            //Will have to change this method to be used to get the current workspace
+            if (allUsersInCurrentWorkspace == null) {
+                return BadRequest("No users in this workspace");
+            }
+
+            foreach(int userId in allUsersInCurrentWorkspace) {
+                var userStatus = _unitOfWork.Users.GetByID(userId).Status;
+                dictionary.Add(userId, userStatus);
+            }
+            return Ok(dictionary);
         }
 
         [AllowAnonymous]
