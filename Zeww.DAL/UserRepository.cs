@@ -62,5 +62,13 @@ namespace Zeww.DAL
             return users.SelectMany(uw => uw.Select(w=>w.WorkspaceId));
         }
 
+        public IQueryable<int> GetChatsIdsByUserId(int id)
+        {
+            IQueryable<User> query = dbSet;
+
+            var userChats = query.Where(u => u.Id == id).Include(u => u.UserChats).Select(uc=> uc.UserChats);
+            return userChats.SelectMany(uc => uc.Select(u => u.ChatId));
+           
+        }
     }
 }

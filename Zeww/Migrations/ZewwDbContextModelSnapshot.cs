@@ -131,6 +131,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsStarred");
+
                     b.HasKey("ChatId", "UserId");
 
                     b.HasIndex("UserId");

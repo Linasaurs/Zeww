@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190228095547_test1")]
-    partial class test1
+    [Migration("20190228094008_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -132,6 +132,8 @@ namespace Zeww.Migrations
                     b.Property<int>("ChatId");
 
                     b.Property<int>("UserId");
+
+                    b.Property<bool>("IsStarred");
 
                     b.HasKey("ChatId", "UserId");
 
