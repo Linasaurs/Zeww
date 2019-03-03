@@ -2,7 +2,7 @@
 
 namespace Zeww.Migrations
 {
-    public partial class deletedUserandworkspaceobjectFromuserworkspace : Migration
+    public partial class test1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
