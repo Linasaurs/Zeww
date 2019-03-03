@@ -56,6 +56,12 @@ namespace Zeww.DAL
             return tokenHandler.WriteToken(token);
         }
 
+        public IQueryable<int> GetWorkspaceIdsByUserId(int id) {
+            IQueryable<User> query = dbSet;
+            var users = query.Where(u => u.Id == id).Include(u => u.UserWorkspaces).Select(uw => uw.UserWorkspaces);
+            return users.SelectMany(uw => uw.Select(w=>w.WorkspaceId));
+        }
+
         public IQueryable<int> GetChatsIdsByUserId(int id)
         {
             IQueryable<User> query = dbSet;

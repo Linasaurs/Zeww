@@ -14,5 +14,9 @@ namespace Zeww.Repository
         bool Authenticate(User user, string claimedPassword);
         string GenerateJWTToken(User user);
         IQueryable<int> GetChatsIdsByUserId(int id);
+        IQueryable<int> GetWorkspaceIdsByUserId(int id);
+
+
+
     }
 }

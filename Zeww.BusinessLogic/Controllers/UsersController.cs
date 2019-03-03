@@ -220,6 +220,21 @@ namespace Zeww.BusinessLogic.Controllers
                 return NotFound();
             }
         }
+        [AllowAnonymous]
+        [HttpGet("workspaces/{id}")]
+        public IActionResult GetworkspacesbyUserId(int id)
+        {
+            var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
+            if (user != null)
+            {
+                string userJson = JsonConvert.SerializeObject(user);
+                return Ok(userJson);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
 
         [AllowAnonymous]
         [HttpPut("EditProfile/{id}")]

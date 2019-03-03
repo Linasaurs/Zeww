@@ -14,16 +14,11 @@ namespace Zeww.DAL
         public WorkspaceRepository(ZewwDbContext context) : base(context) { }
 
         //Your methods go here 
-        public List<int> GetUsersIdInWorkspace(int id)
+        public IQueryable<int> GetUsersIdInWorkspace(int id)
         {
             IQueryable<Workspace> queryWorksapces = dbSet;
-            var workspaces= queryWorksapces.Include(w=>w.UserWorkspaces).ToList();
-            var listOfUsersIds = new List<int>();
-            foreach (var userWorkspace in workspaces[0].UserWorkspaces)
-            {
-                listOfUsersIds.Add(userWorkspace.UserId);
-            }
-            return listOfUsersIds;
+            var workspaces= queryWorksapces.Where(w=>w.Id==id).Include(w=>w.UserWorkspaces).Select(uw => uw.UserWorkspaces);
+            return workspaces.SelectMany(uw=>uw.Select(u=>u.UserId));
         }
 
     }
