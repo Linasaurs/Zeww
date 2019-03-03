@@ -17,24 +17,20 @@ namespace Zeww.BusinessLogic.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WorkspacesController : Controller
-    {
+    public class WorkspacesController : Controller {
 
         private IUnitOfWork _unitOfWork;
 
-
-        public WorkspacesController(IUnitOfWork unitOfWork)
-        {
+        public WorkspacesController(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
         }
 
         // GET: /<controller>/ 
         [HttpGet]
-        public IEnumerable<Workspace> Index()
-        {
+        public IEnumerable<Workspace> Index() {
             return _unitOfWork.Workspaces.Get();
         }
-        
+
         [HttpGet]
         [Route("GetWorkspaceName/{workspaceName}")]
         public IActionResult GetWorkspaceName(string workspaceName) {
@@ -45,35 +41,32 @@ namespace Zeww.BusinessLogic.Controllers
                 else
                     return NotFound("There's no existing workspace with the specified name.");
 
-            }
-            else
+            } else
                 return BadRequest();
 
         }
+
         [HttpGet("{id}")]
-        public string GetById(int Id)
-        {
+        public string GetById(int Id) {
             return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
         }
 
         // POST api/CreateWorkspace/ 
         [HttpPost]
         [Route("CreateWorkspace")]
-        public IActionResult CreateWorkspace([FromBody] Workspace newWorkspace)
-        {
+        public IActionResult CreateWorkspace([FromBody] Workspace newWorkspace) {
             var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", newWorkspace.WorkspaceName); ;
 
             newWorkspace.DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy");
             newWorkspace.URL = location;
 
-            
             if (!TryValidateModel(newWorkspace))
                 return BadRequest(ModelState);
             else
                 _unitOfWork.Workspaces.Insert(newWorkspace);
-                _unitOfWork.Save(); 
+            _unitOfWork.Save();
 
-            return Created(location,newWorkspace);
+            return Created(location, newWorkspace);
         }
 
     }
