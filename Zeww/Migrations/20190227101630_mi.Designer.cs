@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190227101630_mi")]
+    partial class mi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,9 +157,7 @@ namespace Zeww.Migrations
 
                     b.Property<string>("URL");
 
-                    b.Property<string>("WorkspaceImageId");
-
-                    b.Property<string>("WorkspaceImageName");
+                    b.Property<byte[]>("WorkspaceImage");
 
                     b.Property<string>("WorkspaceName")
                         .IsRequired();

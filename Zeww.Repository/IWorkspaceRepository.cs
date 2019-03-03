@@ -8,6 +8,6 @@ namespace Zeww.Repository
     public interface IWorkspaceRepository : IGenericRepository<Workspace> {
 
         //Your method headers go here
-       
+        Workspace GetWorkspaceByName(string name);
     }
 }

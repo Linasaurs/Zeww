@@ -30,6 +30,10 @@ namespace Zeww.Models
 
         public string URL { get; set; }
 
+        public string WorkspaceImageId { get; set; }
+
+        public string WorkspaceImageName { get; set; }
+
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
          
        
