@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class migartion : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -141,7 +141,7 @@ namespace Zeww.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserWorkspace",
+                name: "UserWorkspaces",
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false),
@@ -149,16 +149,16 @@ namespace Zeww.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserWorkspace", x => new { x.WorkspaceId, x.UserId });
-                    table.UniqueConstraint("AK_UserWorkspace_UserId_WorkspaceId", x => new { x.UserId, x.WorkspaceId });
+                    table.PrimaryKey("PK_UserWorkspaces", x => new { x.WorkspaceId, x.UserId });
+                    table.UniqueConstraint("AK_UserWorkspaces_UserId_WorkspaceId", x => new { x.UserId, x.WorkspaceId });
                     table.ForeignKey(
-                        name: "FK_UserWorkspace_Users_UserId",
+                        name: "FK_UserWorkspaces_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserWorkspace_Workspaces_WorkspaceId",
+                        name: "FK_UserWorkspaces_Workspaces_WorkspaceId",
                         column: x => x.WorkspaceId,
                         principalTable: "Workspaces",
                         principalColumn: "Id",
@@ -198,7 +198,7 @@ namespace Zeww.Migrations
                 name: "UserChats");
 
             migrationBuilder.DropTable(
-                name: "UserWorkspace");
+                name: "UserWorkspaces");
 
             migrationBuilder.DropTable(
                 name: "Chats");

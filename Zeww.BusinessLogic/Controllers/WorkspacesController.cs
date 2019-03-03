@@ -185,10 +185,7 @@ namespace Zeww.BusinessLogic.Controllers
             var uw = new UserWorkspace
             {
                 UserId = userId,
-                //User = user,
                 WorkspaceId = workspaceId
-                //,
-                //Workspace = workspace
             };
             user.UserWorkspaces.Add(uw);
             workspace.UserWorkspaces.Add(uw);
