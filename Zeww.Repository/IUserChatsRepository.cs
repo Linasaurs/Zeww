@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Zeww.Models;
 
 namespace Zeww.Repository
 {
-    public interface IWorkspaceRepository : IGenericRepository<Workspace> {
-
+    public interface IUserChatsRepository : IGenericRepository<UserChats>
+    {
         //Your method headers go here
-        IQueryable<int> GetUsersIdInWorkspace(int id);
+        UserChats GetUserChatByIds(int userID, int chatId);
     }
 }
+

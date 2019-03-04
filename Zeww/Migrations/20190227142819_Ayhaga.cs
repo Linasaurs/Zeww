@@ -2,12 +2,17 @@
 
 namespace Zeww.Migrations
 {
-    public partial class TestEmail : Migration
+    public partial class Ayhaga : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "email",
+                name: "Language",
+                table: "Users",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Region",
                 table: "Users",
                 nullable: true);
         }
@@ -15,7 +20,11 @@ namespace Zeww.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "email",
+                name: "Language",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "Region",
                 table: "Users");
         }
     }

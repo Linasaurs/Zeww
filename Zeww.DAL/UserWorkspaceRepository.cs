@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Zeww.Models;
 using Zeww.Repository;
 
@@ -11,5 +12,15 @@ namespace Zeww.DAL
         public UserWorkspaceRepository(ZewwDbContext context) : base(context) { }
 
         //This is a junction table, no methods go here!
+        public IQueryable<UserWorkspace> GetWorkspacesByUserId(int id)
+        {
+            IQueryable<UserWorkspace> query = dbSet;
+            return query.Where(u => u.UserId == id);
+        }
+        public IQueryable<UserWorkspace> GetUsersByWorkspaceId(int id)
+        {
+            IQueryable<UserWorkspace> query = dbSet;
+            return query.Where(w => w.WorkspaceId == id);
+        }
     }
 }

@@ -25,9 +25,17 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CreatorID");
+
+                    b.Property<DateTime>("DateCreated");
+
                     b.Property<bool>("IsPrivate");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("Purpose");
+
+                    b.Property<string>("Topic");
 
                     b.Property<int>("WorkspaceId");
 
@@ -38,19 +46,23 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ChatId");
+
                     b.Property<string>("Extension");
 
-                    b.Property<long>("Size");
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Source");
 
                     b.Property<int>("UserId");
 
-                    b.Property<string>("source");
+                    b.HasKey("Id");
 
-                    b.HasKey("id");
+                    b.HasIndex("ChatId");
 
                     b.HasIndex("UserId");
 
@@ -69,9 +81,11 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
-                    b.Property<DateTime>("dateTime");
+                    b.Property<bool>("isPinned");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
 
                     b.ToTable("Messages");
                 });
@@ -82,18 +96,27 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ConnectionStatus");
+
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
+
                     b.Property<string>("Email")
                         .IsRequired();
+
+                    b.Property<string>("Language");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(15);
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(15);
+                        .IsRequired();
 
                     b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
@@ -112,6 +135,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsStarred");
+
                     b.HasKey("ChatId", "UserId");
 
                     b.HasIndex("UserId");
@@ -129,7 +154,7 @@ namespace Zeww.Migrations
 
                     b.HasAlternateKey("UserId", "WorkspaceId");
 
-                    b.ToTable("UserWorkspace");
+                    b.ToTable("UserWorkspaces");
                 });
 
             modelBuilder.Entity("Zeww.Models.Workspace", b =>
@@ -138,8 +163,22 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CompanyName");
+
+                    b.Property<int>("CreatorID");
+
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
+
+                    b.Property<string>("DateOfCreation");
+
+                    b.Property<string>("URL");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
+
+                    b.Property<string>("WorkspaceProjectName");
 
                     b.HasKey("Id");
 
@@ -148,20 +187,33 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
+                    b.HasOne("Zeww.Models.Chat", "Chat")
+                        .WithMany()
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Zeww.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Zeww.Models.Message", b =>
+                {
+                    b.HasOne("Zeww.Models.Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Zeww.Models.UserChats", b =>
                 {
-                    b.HasOne("Zeww.Models.Chat", "UserChat")
+                    b.HasOne("Zeww.Models.Chat")
                         .WithMany("UserChats")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Zeww.Models.User", "User")
+                    b.HasOne("Zeww.Models.User")
                         .WithMany("UserChats")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -169,12 +221,12 @@ namespace Zeww.Migrations
 
             modelBuilder.Entity("Zeww.Models.UserWorkspace", b =>
                 {
-                    b.HasOne("Zeww.Models.User", "User")
+                    b.HasOne("Zeww.Models.User")
                         .WithMany("UserWorkspaces")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Zeww.Models.Workspace", "Workspace")
+                    b.HasOne("Zeww.Models.Workspace")
                         .WithMany("UserWorkspaces")
                         .HasForeignKey("WorkspaceId")
                         .OnDelete(DeleteBehavior.Cascade);
