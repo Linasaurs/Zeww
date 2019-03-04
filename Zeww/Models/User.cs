@@ -42,6 +42,7 @@ namespace Zeww.Models
         public int? DailyDoNotDisturbTo { get; set; }
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
         public virtual ICollection<UserChats> UserChats { get; set; }
+        public String Customstatus { get; set; }
 
         public User() {
             this.UserWorkspaces = new HashSet<UserWorkspace>();
@@ -52,7 +53,8 @@ namespace Zeww.Models
     public enum Status {
         Available,
         Busy,
-        Away
+        Away,
+        CustomStatus
     }
 
     public enum ConnectionStatus {

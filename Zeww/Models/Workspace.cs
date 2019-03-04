@@ -40,6 +40,9 @@ namespace Zeww.Models
         public ShowHideEmails ShowHideEmails { get; set; }
 
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
+        public bool CanInviteUsersToWorkspace { get; set; }
+
+
 
 }
 
