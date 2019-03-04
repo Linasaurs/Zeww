@@ -29,7 +29,6 @@ namespace Zeww.BusinessLogic.Controllers
     {
         private IUnitOfWork _unitOfWork;
 
-
         public UsersController(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
         }
@@ -37,8 +36,10 @@ namespace Zeww.BusinessLogic.Controllers
         // GET: /<controller>/
         public string Index()
         {
+       
             return "Hello";
         }
+
 
         [HttpGet("{id}")]
         public ActionResult GetById(int Id)
@@ -349,6 +350,42 @@ namespace Zeww.BusinessLogic.Controllers
 
 
         [HttpPut]
+        [Route("AddCustomStatus")]
+        public IActionResult AddCustomStatus([FromBody] CustomStatusDTO CustomStatus)
+        {
+            User user = this.GetAuthenticatedUser();
+            if (CustomStatus.status == null)
+            {
+                return BadRequest("Invalid Request");
+            }
+            switch (CustomStatus.status.ToLower())
+            {
+                case "available":
+                    user.Status = Status.Available;
+                    break;
+                case "busy":
+                    user.Status = Status.Busy;
+                    break;
+                case "away":
+                    user.Status = Status.Away;
+                    break;
+                case "customstatus":
+                    if (CustomStatus.customStatus == null) {
+                        return BadRequest("Invalid Custom Status");
+                    }
+                    user.Status = Status.CustomStatus;
+                    user.Customstatus = CustomStatus.customStatus;
+                    break;
+
+                default:
+                    return BadRequest("Not a Vaild Status");
+            }
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+            
+            return Ok("Status Changed");
+        }
+        [HttpPut]
         [Route("ToggleStarChat")]
         public IActionResult ToggleStarChat([FromBody] ChatIdDTO dto)
         {
@@ -356,7 +393,7 @@ namespace Zeww.BusinessLogic.Controllers
 
             IQueryable<int> userChatsIds = _unitOfWork.Users.GetChatsIdsByUserId(user.Id);
 
-            UserChats userChat = userChatsIds.Any(uci=>uci==dto.ChatID)? _unitOfWork.UserChats.GetUserChatByIds(user.Id, dto.ChatID) : null;
+            UserChats userChat = userChatsIds.Any(uci => uci == dto.ChatID) ? _unitOfWork.UserChats.GetUserChatByIds(user.Id, dto.ChatID) : null;
 
             if (userChat == null)
                 return BadRequest("This chat either does not exist or the user is not allowed to view this chat");
@@ -365,8 +402,8 @@ namespace Zeww.BusinessLogic.Controllers
 
             _unitOfWork.Users.Update(user);
             _unitOfWork.Save();
-            
-            return Ok(new { isStarred= userChat.IsStarred });
+
+            return Ok(new { isStarred = userChat.IsStarred });
         }
     }
 }
