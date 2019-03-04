@@ -116,6 +116,45 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest(ModelState);
         }
 
+        //Not Done Yet "Get User Channels"
+        [HttpGet]
+        [Route("GetChannels")]
+        public IActionResult GetUserChannels()
+        {
+            User user = this.GetAuthenticatedUser();
+            //if (user.Id <= 0)
+            //{
+            //    return BadRequest("ID must be greater than zero");
+            //}
+            var chat = user.UserChats;
+            if (chat == null)
+            {
+                return NotFound();
+            }      
+            return Ok(chat);
+        }
+
+        [HttpPut]
+        [Route("ChangeLanguageRegion")]
+        public IActionResult ChangeLanguageRegion([FromBody]LanguageRegionDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+            if (user.Language != null && user.Region!=null)
+            {
+                user.Language = dto.Language;
+                user.Region = dto.Region;
+               
+                _unitOfWork.Users.Update(user);
+                _unitOfWork.Save();
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyUserNameIsUnique")]
