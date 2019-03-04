@@ -107,6 +107,8 @@ namespace Zeww.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
+                    b.Property<string>("Language");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(15);
@@ -115,6 +117,8 @@ namespace Zeww.Migrations
                         .IsRequired();
 
                     b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
