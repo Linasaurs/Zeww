@@ -33,12 +33,16 @@ namespace Zeww.Models
         public Status Status { get; set; }
         public ConnectionStatus ConnectionStatus { get; set; }
 
+        public string Language { get; set; }
+        public string Region { get; set; }
+
         [Range(0,23)]
         public int? DailyDoNotDisturbFrom { get; set; }
         [Range(1, 23)]
         public int? DailyDoNotDisturbTo { get; set; }
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
         public virtual ICollection<UserChats> UserChats { get; set; }
+        public String Customstatus { get; set; }
 
         public User() {
             this.UserWorkspaces = new HashSet<UserWorkspace>();
@@ -51,11 +55,24 @@ namespace Zeww.Models
         InMeeting,
         Vacation,
         Busy,
-        Away
+        Away,
+        CustomStatus
     }
 
     public enum ConnectionStatus {
         Active, 
         Away
+    }
+
+    public enum Language{
+        English,
+        Arabic,
+        French
+    }
+
+    public enum Region{
+        Egypt,
+        Germany,
+        France
     }
 }

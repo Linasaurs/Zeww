@@ -8,6 +8,7 @@ namespace Zeww.Repository
     public interface IUserChatsRepository : IGenericRepository<UserChats>
     {
         //Your method headers go here
+        UserChats GetUserChatByIds(int userID, int chatId);
     }
 }
 

@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190227133805_deletedUserandworkspaceobjectFromuserworkspace")]
-    partial class deletedUserandworkspaceobjectFromuserworkspace
+    [Migration("20190304122207_workspace")]
+    partial class workspace
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -98,6 +98,10 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ConnectionStatus");
+
+                    b.Property<string>("Customstatus");
+
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
                     b.Property<int?>("DailyDoNotDisturbTo");
@@ -131,6 +135,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsStarred");
+
                     b.HasKey("ChatId", "UserId");
 
                     b.HasIndex("UserId");
@@ -157,7 +163,15 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("CanInviteUsersToWorkspace");
+
                     b.Property<string>("CompanyName");
+
+                    b.Property<int>("CreatorID");
+
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("DateOfCreation");
 

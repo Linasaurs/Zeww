@@ -98,12 +98,16 @@ namespace Zeww.Migrations
 
                     b.Property<int>("ConnectionStatus");
 
+                    b.Property<string>("Customstatus");
+
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
                     b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("Email")
                         .IsRequired();
+
+                    b.Property<string>("Language");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -113,6 +117,8 @@ namespace Zeww.Migrations
                         .IsRequired();
 
                     b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
@@ -130,6 +136,8 @@ namespace Zeww.Migrations
                     b.Property<int>("ChatId");
 
                     b.Property<int>("UserId");
+
+                    b.Property<bool>("IsStarred");
 
                     b.HasKey("ChatId", "UserId");
 
@@ -156,6 +164,8 @@ namespace Zeww.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("CanInviteUsersToWorkspace");
 
                     b.Property<string>("CompanyName");
 

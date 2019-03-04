@@ -29,7 +29,6 @@ namespace Zeww.BusinessLogic.Controllers
     {
         private IUnitOfWork _unitOfWork;
 
-
         public UsersController(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
         }
@@ -37,8 +36,10 @@ namespace Zeww.BusinessLogic.Controllers
         // GET: /<controller>/
         public string Index()
         {
+       
             return "Hello";
         }
+
 
         [HttpGet("{id}")]
         public ActionResult GetById(int Id)
@@ -115,6 +116,45 @@ namespace Zeww.BusinessLogic.Controllers
 
             return BadRequest(ModelState);
         }
+
+        //Not Done Yet "Get User Channels"
+        [HttpGet]
+        [Route("GetChannels")]
+        public IActionResult GetUserChannels()
+        {
+            User user = this.GetAuthenticatedUser();
+            //if (user.Id <= 0)
+            //{
+            //    return BadRequest("ID must be greater than zero");
+            //}
+            var chat = user.UserChats;
+            if (chat == null)
+            {
+                return NotFound();
+            }      
+            return Ok(chat);
+        }
+
+        [HttpPut]
+        [Route("ChangeLanguageRegion")]
+        public IActionResult ChangeLanguageRegion([FromBody]LanguageRegionDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+            if (user.Language != null && user.Region!=null)
+            {
+                user.Language = dto.Language;
+                user.Region = dto.Region;
+               
+                _unitOfWork.Users.Update(user);
+                _unitOfWork.Save();
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
 
         [AllowAnonymous]
         [HttpGet]
@@ -239,6 +279,21 @@ namespace Zeww.BusinessLogic.Controllers
                 return NotFound();
             }
         }
+        [AllowAnonymous]
+        [HttpGet("workspaces/{id}")]
+        public IActionResult GetworkspacesbyUserId(int id)
+        {
+            var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
+            if (user != null)
+            {
+                string userJson = JsonConvert.SerializeObject(user);
+                return Ok(userJson);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
 
         [AllowAnonymous]
         [HttpPut("EditProfile/{id}")]
@@ -300,9 +355,6 @@ namespace Zeww.BusinessLogic.Controllers
             var from = dto.DoNotDisturbFrom;
             var to = dto.DoNotDisturbTo;
 
-            if (to <= from)
-                return BadRequest("The 'to' value can't be less than or equal the 'from' value");
-
             if (ModelState.IsValid)
             {
                 user.DailyDoNotDisturbFrom = from;
@@ -354,5 +406,62 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(userChannelChats);
         }
 
+
+        [HttpPut]
+        [Route("AddCustomStatus")]
+        public IActionResult AddCustomStatus([FromBody] CustomStatusDTO CustomStatus)
+        {
+            User user = this.GetAuthenticatedUser();
+            if (CustomStatus.status == null)
+            {
+                return BadRequest("Invalid Request");
+            }
+            switch (CustomStatus.status.ToLower())
+            {
+                case "available":
+                    user.Status = Status.Available;
+                    break;
+                case "busy":
+                    user.Status = Status.Busy;
+                    break;
+                case "away":
+                    user.Status = Status.Away;
+                    break;
+                case "customstatus":
+                    if (CustomStatus.customStatus == null) {
+                        return BadRequest("Invalid Custom Status");
+                    }
+                    user.Status = Status.CustomStatus;
+                    user.Customstatus = CustomStatus.customStatus;
+                    break;
+
+                default:
+                    return BadRequest("Not a Vaild Status");
+            }
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+            
+            return Ok("Status Changed");
+        }
+        [HttpPut]
+        [Route("ToggleStarChat")]
+        public IActionResult ToggleStarChat([FromBody] ChatIdDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userChatsIds = _unitOfWork.Users.GetChatsIdsByUserId(user.Id);
+
+            UserChats userChat = userChatsIds.Any(uci => uci == dto.ChatID) ? _unitOfWork.UserChats.GetUserChatByIds(user.Id, dto.ChatID) : null;
+
+            if (userChat == null)
+                return BadRequest("This chat either does not exist or the user is not allowed to view this chat");
+
+            userChat.IsStarred = !userChat.IsStarred;
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return Ok(new { isStarred = userChat.IsStarred });
+        }
     }
 }
