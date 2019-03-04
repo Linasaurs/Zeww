@@ -137,9 +137,7 @@ namespace Zeww.BusinessLogic.Controllers
             else
             {
                 return BadRequest(ModelState);
-            }
-
-            
+            }            
         }
 
         [HttpPut]
@@ -164,7 +162,6 @@ namespace Zeww.BusinessLogic.Controllers
             var workspaceURLToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
             if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName== workspace.WorkspaceName)
             {
-
                 workspaceURLToEdit.URL = workspace.URL;
                 _unitOfWork.Workspaces.Update(workspaceURLToEdit);
                 _unitOfWork.Save();
@@ -173,8 +170,7 @@ namespace Zeww.BusinessLogic.Controllers
             else
             {
                 return BadRequest();
-            }
-            
+            }         
         }
 
         //Delete Workspace
@@ -212,7 +208,28 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Users.Update(user);
             _unitOfWork.Workspaces.Update(workspace);
             _unitOfWork.Save();
-
         }
+
+        //[HttpPost]
+        //[Route("ToggleDisplayEmailsInMembersProfile")]
+        //public IActionResult ToggleDisplayEmailsInMembersProfile(ShowHideEmails mails)
+        //{
+        //    User user = this.GetAuthenticatedUser();
+
+        //    var displayEmails = _unitOfWork.Workspaces.GetByID(user);
+        //    if (displayEmails.ShowHideEmails == 0)
+        //    {
+        //        displayEmails.ShowHideEmails = ShowHideEmails.Visible;
+        //    }
+        //    else
+        //    {
+        //        displayEmails.ShowHideEmails = ShowHideEmails.Hidden;
+        //    }
+        //    displayEmails.ShowHideEmails = mails;
+        //    return Ok(displayEmails.ShowHideEmails);
+        //}
     }
+
+
+
 }

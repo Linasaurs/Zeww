@@ -154,7 +154,6 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
 
-
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyUserNameIsUnique")]

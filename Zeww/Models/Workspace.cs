@@ -37,10 +37,16 @@ namespace Zeww.Models
         [Range(1, 23)]
         public int? DailyDoNotDisturbTo { get; set; }
 
+        public ShowHideEmails ShowHideEmails { get; set; }
+
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
-         
-       
+
+}
+
+    public enum ShowHideEmails
+    {
+        Visible,
+        Hidden
     }
 
-  
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190304113844_Yaraby")]
+    partial class Yaraby
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,7 +175,7 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
-                    b.Property<int>("ShowHideEmails");
+                    b.Property<int>("ShowHideMails");
 
                     b.Property<string>("URL");
 
