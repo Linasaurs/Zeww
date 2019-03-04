@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Linq;
 using Zeww.Models;
 using Zeww.Repository;
 using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Zeww.DAL
 {
@@ -57,5 +56,19 @@ namespace Zeww.DAL
             return tokenHandler.WriteToken(token);
         }
 
+        public IQueryable<int> GetWorkspaceIdsByUserId(int id) {
+            IQueryable<User> query = dbSet;
+            var users = query.Where(u => u.Id == id).Include(u => u.UserWorkspaces).Select(uw => uw.UserWorkspaces);
+            return users.SelectMany(uw => uw.Select(w=>w.WorkspaceId));
+        }
+
+        public IQueryable<int> GetChatsIdsByUserId(int id)
+        {
+            IQueryable<User> query = dbSet;
+
+            var userChats = query.Where(u => u.Id == id).Include(u => u.UserChats).Select(uc=> uc.UserChats);
+            return userChats.SelectMany(uc => uc.Select(u => u.ChatId));
+           
+        }
     }
 }

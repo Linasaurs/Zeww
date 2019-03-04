@@ -259,6 +259,21 @@ namespace Zeww.BusinessLogic.Controllers
                 return NotFound();
             }
         }
+        [AllowAnonymous]
+        [HttpGet("workspaces/{id}")]
+        public IActionResult GetworkspacesbyUserId(int id)
+        {
+            var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
+            if (user != null)
+            {
+                string userJson = JsonConvert.SerializeObject(user);
+                return Ok(userJson);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
 
         [AllowAnonymous]
         [HttpPut("EditProfile/{id}")]
@@ -320,9 +335,6 @@ namespace Zeww.BusinessLogic.Controllers
             var from = dto.DoNotDisturbFrom;
             var to = dto.DoNotDisturbTo;
 
-            if (to <= from)
-                return BadRequest("The 'to' value can't be less than or equal the 'from' value");
-
             if (ModelState.IsValid)
             {
                 user.DailyDoNotDisturbFrom = from;
@@ -334,6 +346,66 @@ namespace Zeww.BusinessLogic.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("userDirectChats/{userId}")]
+        public IActionResult GetUserDirectChats(int userId)
+        {
+            List<int> userDirectChats = new List<int>();
+
+            var allUserChatIDs = _unitOfWork.UserChats.Get()
+                .Where(a=> a.UserId== userId)
+                .Select(a=> a.ChatId)
+                .ToList();
+
+            foreach(var chatID in allUserChatIDs)
+            {
+               if( _unitOfWork.Chats.GetByID(chatID).IsPrivate)
+                    userDirectChats.Add(chatID);
+            }
+            return Ok(userDirectChats);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("userChannelChats/{userId}")]
+        public IActionResult GetUserChannelChats(int userId)
+        {
+            List<int> userChannelChats = new List<int>();
+
+            var allUserChatIDs = _unitOfWork.UserChats.Get()
+                .Where(a => a.UserId == userId)
+                .Select(a => a.ChatId)
+                .ToList();
+
+            foreach (var chatID in allUserChatIDs)
+            {
+                if (!_unitOfWork.Chats.GetByID(chatID).IsPrivate)
+                    userChannelChats.Add(chatID);
+            }
+            return Ok(userChannelChats);
+        }
+
+
+        [HttpPut]
+        [Route("ToggleStarChat")]
+        public IActionResult ToggleStarChat([FromBody] ChatIdDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userChatsIds = _unitOfWork.Users.GetChatsIdsByUserId(user.Id);
+
+            UserChats userChat = userChatsIds.Any(uci=>uci==dto.ChatID)? _unitOfWork.UserChats.GetUserChatByIds(user.Id, dto.ChatID) : null;
+
+            if (userChat == null)
+                return BadRequest("This chat either does not exist or the user is not allowed to view this chat");
+
+            userChat.IsStarred = !userChat.IsStarred;
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+            
+            return Ok(new { isStarred= userChat.IsStarred });
         }
     }
 }

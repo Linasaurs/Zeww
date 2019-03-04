@@ -135,6 +135,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsStarred");
+
                     b.HasKey("ChatId", "UserId");
 
                     b.HasIndex("UserId");
@@ -162,6 +164,12 @@ namespace Zeww.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CompanyName");
+
+                    b.Property<int>("CreatorID");
+
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("DateOfCreation");
 

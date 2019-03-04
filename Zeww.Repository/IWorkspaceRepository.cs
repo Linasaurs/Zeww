@@ -9,6 +9,6 @@ namespace Zeww.Repository
     public interface IWorkspaceRepository : IGenericRepository<Workspace> {
 
         //Your method headers go here
-        List<int> GetUsersIdInWorkspace(int id);
+        IQueryable<int> GetUsersIdInWorkspace(int id);
     }
 }
