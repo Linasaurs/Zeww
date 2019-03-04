@@ -38,8 +38,9 @@ namespace Zeww.Models
         public int? DailyDoNotDisturbTo { get; set; }
 
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
-         
-       
+        public bool CanInviteUsersToWorkspace { get; set; }
+
+
     }
 
   
