@@ -39,6 +39,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("WorkspaceId");
 
+                    b.Property<int>("skip");
+
                     b.HasKey("Id");
 
                     b.ToTable("Chats");
@@ -80,6 +82,8 @@ namespace Zeww.Migrations
                     b.Property<string>("MessageContent");
 
                     b.Property<int>("SenderID");
+
+                    b.Property<DateTime>("dateTime");
 
                     b.Property<bool>("isPinned");
 
