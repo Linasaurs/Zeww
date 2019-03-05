@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190304122207_workspace")]
+    partial class workspace
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,8 +40,6 @@ namespace Zeww.Migrations
                     b.Property<string>("Topic");
 
                     b.Property<int>("WorkspaceId");
-
-                    b.Property<int>("skip");
 
                     b.HasKey("Id");
 
@@ -83,8 +83,6 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
-                    b.Property<DateTime>("dateTime");
-
                     b.Property<bool>("isPinned");
 
                     b.HasKey("Id");
@@ -111,8 +109,6 @@ namespace Zeww.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
-                    b.Property<string>("Language");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(15);
@@ -121,8 +117,6 @@ namespace Zeww.Migrations
                         .IsRequired();
 
                     b.Property<string>("PhoneNumber");
-
-                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
