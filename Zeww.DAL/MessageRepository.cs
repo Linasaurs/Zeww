@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Zeww.Models;
 using Zeww.Repository;
@@ -13,10 +14,25 @@ namespace Zeww.DAL {
 
         public void Add(Message message)
         {
+            message.dateTime = DateTime.Now;
             dbSet.Add(message);
         }
 
-        public void PinMessage(int messageId)
+        public IQueryable<Message> GetMessagesbyChatId(int id, int n)
+        {
+            IQueryable<Message> MessageList = dbSet.Where(c => c.ChatId == id).Skip(n).Take(5);
+            return MessageList;
+
+        }
+
+        //ERROR HERE, Message returns null
+        public void DeleteMessage(int id)
+        {
+            Message message = dbSet.SingleOrDefault(m => m.Id == id);
+            dbSet.Remove(message);
+        }
+
+    public void PinMessage(int messageId)
         {
             var messageToPin = GetByID(messageId);
             messageToPin.isPinned = true;

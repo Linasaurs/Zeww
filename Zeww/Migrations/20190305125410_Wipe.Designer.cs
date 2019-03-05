@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190228094008_migration")]
-    partial class migration
+    [Migration("20190305125410_Wipe")]
+    partial class Wipe
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,8 @@ namespace Zeww.Migrations
                     b.Property<string>("Topic");
 
                     b.Property<int>("WorkspaceId");
+
+                    b.Property<int>("skip");
 
                     b.HasKey("Id");
 
@@ -83,6 +85,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
+                    b.Property<DateTime>("dateTime");
+
                     b.Property<bool>("isPinned");
 
                     b.HasKey("Id");
@@ -107,6 +111,8 @@ namespace Zeww.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
+                    b.Property<string>("Language");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(15);
@@ -115,6 +121,8 @@ namespace Zeww.Migrations
                         .IsRequired();
 
                     b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
@@ -162,6 +170,12 @@ namespace Zeww.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CompanyName");
+
+                    b.Property<int>("CreatorID");
+
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("DateOfCreation");
 
