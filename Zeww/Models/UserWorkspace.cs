@@ -17,5 +17,6 @@ namespace Zeww.Models
         public int WorkspaceId { get; set; }
         //[ForeignKey("WorkspaceId")]
         //public Workspace Workspace { get; set; }
+        public DateTime TimeToWhichNotificationsAreMuted { get; set; }
     }
 }

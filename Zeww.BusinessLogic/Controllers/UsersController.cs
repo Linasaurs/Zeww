@@ -464,5 +464,25 @@ namespace Zeww.BusinessLogic.Controllers
 
             return Ok(new { isMuted = userChat.IsMuted });
         }
+        [HttpPut]
+        [Route("MuteWorkspaceForAmountOfHours")]
+        public IActionResult MuteWorkspaceForAmountOfHours([FromBody] MuteWorspaceForHoursDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userWorkspaceIds = _unitOfWork.Users.GetWorkspaceIdsByUserId(user.Id);
+
+            var userWorkspaces = userWorkspaceIds.Any(uci => uci == dto.WorkspaceID) ? _unitOfWork.UserWorkspaces.GetUserWorkspaceByIds(user.Id, dto.WorkspaceID) : null;
+
+            if (userWorkspaces == null)
+                return BadRequest("This workspace either does not exist or the user is not allowed to edit this workspace");
+
+            userWorkspaces.TimeToWhichNotificationsAreMuted = DateTime.Now.AddHours(dto.HoursToBeMuted);
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return Ok(new { Workpace = userWorkspaces.WorkspaceId, MutedUntil = userWorkspaces.TimeToWhichNotificationsAreMuted });
+        }
     }
 }

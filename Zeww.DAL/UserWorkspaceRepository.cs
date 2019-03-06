@@ -22,5 +22,11 @@ namespace Zeww.DAL
             IQueryable<UserWorkspace> query = dbSet;
             return query.Where(w => w.WorkspaceId == id);
         }
+        public UserWorkspace GetUserWorkspaceByIds(int userId, int workspaceId)
+        {
+            IQueryable<UserWorkspace> query = dbSet;
+
+            return query.Where(uc => uc.UserId == userId && uc.WorkspaceId == workspaceId).SingleOrDefault();
+        }
     }
 }
