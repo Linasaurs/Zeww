@@ -444,5 +444,25 @@ namespace Zeww.BusinessLogic.Controllers
 
             return Ok(new { isStarred = userChat.IsStarred });
         }
+        [HttpPut]
+        [Route("ToggleMuteChat")]
+        public IActionResult ToggleMuteChat([FromBody] ChatIdDTO chat)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userChatsIds = _unitOfWork.Users.GetChatsIdsByUserId(user.Id);
+
+            UserChats userChat = userChatsIds.Any(uci => uci == chat.ChatID) ? _unitOfWork.UserChats.GetUserChatByIds(user.Id, chat.ChatID) : null;
+
+            if (userChat == null)
+                return BadRequest("This chat either does not exist or the user is not allowed to edit this chat");
+
+            userChat.IsMuted = !userChat.IsMuted;
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return Ok(new { isMuted = userChat.IsMuted });
+        }
     }
 }

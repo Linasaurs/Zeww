@@ -141,6 +141,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsMuted");
+
                     b.Property<bool>("IsStarred");
 
                     b.HasKey("ChatId", "UserId");
