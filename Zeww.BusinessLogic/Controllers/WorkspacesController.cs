@@ -204,7 +204,13 @@ namespace Zeww.BusinessLogic.Controllers
             var uw = new UserWorkspace
             {
                 UserId = userId,
-                WorkspaceId = workspaceId
+                WorkspaceId = workspaceId,
+                /* 
+                 * The -1 subtracts 1 hour from the current time,
+                 * this makes notifications enabled by default.
+                 */
+                TimeToWhichNotificationsAreMuted = DateTime.Now.AddHours(-1),
+                UserRoleInWorkspace = UserRoleInWorkspace.Member
             };
             user.UserWorkspaces.Add(uw);
             workspace.UserWorkspaces.Add(uw);
