@@ -14,7 +14,6 @@ namespace Zeww.Models
             this.UserWorkspaces = new HashSet<UserWorkspace>();
         }
   
-
         [Key]
         public int Id { get; set; }
 
@@ -37,6 +36,8 @@ namespace Zeww.Models
         [Range(1, 23)]
         public int? DailyDoNotDisturbTo { get; set; }
 
+        public bool IsEmailVisible { get; set; }
+
         public string WorkspaceImageId { get; set; }
 
         public string WorkspaceImageName { get; set; }
@@ -44,8 +45,6 @@ namespace Zeww.Models
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
         public bool CanInviteUsersToWorkspace { get; set; }
 
+}
 
-    }
-
-  
 }

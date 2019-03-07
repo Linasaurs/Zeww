@@ -155,7 +155,6 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
 
-
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyUserNameIsUnique")]
@@ -326,7 +325,6 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
 
-
         [HttpPut]
         [Route("AddDontDisturbPeriod")]
         public IActionResult AddDontDisturbPeriod([FromBody] DoNotDisturbDTO dto)
@@ -386,7 +384,6 @@ namespace Zeww.BusinessLogic.Controllers
             }
             return Ok(userChannelChats);
         }
-
 
         [HttpPut]
         [Route("AddCustomStatus")]

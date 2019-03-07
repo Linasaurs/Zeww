@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190306124919_workspaceMuteTime")]
-    partial class workspaceMuteTime
+    [Migration("20190307091924_NewDB")]
+    partial class NewDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,8 +40,6 @@ namespace Zeww.Migrations
                     b.Property<string>("Topic");
 
                     b.Property<int>("WorkspaceId");
-
-                    b.Property<int>("skip");
 
                     b.HasKey("Id");
 
@@ -84,8 +82,6 @@ namespace Zeww.Migrations
                     b.Property<string>("MessageContent");
 
                     b.Property<int>("SenderID");
-
-                    b.Property<DateTime>("dateTime");
 
                     b.Property<bool>("isPinned");
 
@@ -143,8 +139,6 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
-                    b.Property<bool>("IsMuted");
-
                     b.Property<bool>("IsStarred");
 
                     b.HasKey("ChatId", "UserId");
@@ -159,8 +153,6 @@ namespace Zeww.Migrations
                     b.Property<int>("WorkspaceId");
 
                     b.Property<int>("UserId");
-
-                    b.Property<DateTime>("TimeToWhichNotificationsAreMuted");
 
                     b.HasKey("WorkspaceId", "UserId");
 
@@ -186,6 +178,8 @@ namespace Zeww.Migrations
                     b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("DateOfCreation");
+
+                    b.Property<bool>("IsEmailVisible");
 
                     b.Property<string>("URL");
 

@@ -187,6 +187,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
+                    b.Property<bool>("IsEmailVisible");
+
                     b.Property<string>("URL");
 
                     b.Property<string>("WorkspaceImageId");
