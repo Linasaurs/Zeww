@@ -65,7 +65,6 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest();
             }
 
-
             if (_unitOfWork.Workspaces.GetByID(Id) == null)
             {
                 return NotFound();

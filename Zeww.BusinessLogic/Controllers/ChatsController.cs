@@ -123,6 +123,7 @@ namespace Zeww.BusinessLogic.Controllers
             //This code is written by Hanna and replicated here
             if (!string.IsNullOrWhiteSpace(channelName))
             {
+                //Needs to be adjusted to search against the workspace only
                 var query = _unitOfWork.Chats.Get();
                 if (query.Any(c => c.Name.Contains(channelName)))
                     return Ok(channelName);
@@ -132,6 +133,13 @@ namespace Zeww.BusinessLogic.Controllers
             }
             else
                 return BadRequest();
+        }
+
+        [HttpGet]
+        [Route("SearchByUserName/{userName}")]
+        public IActionResult SearchByUserName(string userName, int workspaceId) {
+            var listOfUsersInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
+            return BadRequest();
         }
 
         [AllowAnonymous]
