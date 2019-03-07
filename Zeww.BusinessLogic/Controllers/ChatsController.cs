@@ -118,17 +118,18 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet]
         [Route("SearchByChannelName/{channelName}")]
-        public IActionResult SearchByChannelName(String channelName)
+        public IActionResult SearchByChannelName(String channelName, int workspaceId)
         {
             //This code is written by Hanna and replicated here
             if (!string.IsNullOrWhiteSpace(channelName))
             {
                 //Needs to be adjusted to search against the workspace only
+                var currentWorkspace = _unitOfWork.Workspaces.GetByID(workspaceId);
                 var query = _unitOfWork.Chats.Get();
                 if (query.Any(c => c.Name.Contains(channelName)))
                     return Ok(channelName);
                 else
-                    return NotFound("Could ot find a channel with that name, Sorry!");
+                    return NotFound("Could not find a channel with that name, Sorry!");
 
             }
             else
@@ -138,8 +139,15 @@ namespace Zeww.BusinessLogic.Controllers
         [HttpGet]
         [Route("SearchByUserName/{userName}")]
         public IActionResult SearchByUserName(string userName, int workspaceId) {
-            var listOfUsersInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
-            return BadRequest();
+            var listOfUsersIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
+            if (listOfUsersIdsInWorkspace == null) {
+                return Ok("No users in passed workspace");
+            }
+            var listOfUsersInWorkspace = new List<User>();
+            foreach(int userId in listOfUsersIdsInWorkspace) {
+                listOfUsersInWorkspace.Add(_unitOfWork.Users.GetByID(userId));
+            }
+            return Ok(listOfUsersInWorkspace);
         }
 
         [AllowAnonymous]

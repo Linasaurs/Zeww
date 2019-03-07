@@ -120,7 +120,6 @@ namespace Zeww.BusinessLogic.Controllers
             
         }
 
-
         [HttpPut("{workspaceId}")]
         [Route("WorkspaceDoNotDisturbPeriod/{workspaceId}")]
         public IActionResult WorkspaceDoNotDisturbPeriod([FromBody] DoNotDisturbDTO dto, int? workspaceId)
@@ -157,8 +156,6 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            
         }
 
         [HttpPut]
@@ -216,7 +213,8 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpPost]
-        public void AddUserToWorkSpace(int userId, int workspaceId)
+        [Route("AddUserToWorkspace")]
+        public void AddUserToWorkspace(int userId, int workspaceId)
         {
             var workspace = _unitOfWork.Workspaces.GetByID(workspaceId);
             var user = _unitOfWork.Users.GetByID(userId);
