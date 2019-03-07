@@ -9,6 +9,11 @@ using Zeww.Repository;
 using System.Web.Http;
 using System.Net.Http;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
+using System.Net.Http.Headers;
 using Zeww.BusinessLogic.DTOs;
 using Zeww.BusinessLogic.ExtensionMethods;
 
@@ -22,10 +27,12 @@ namespace Zeww.BusinessLogic.Controllers
     public class WorkspacesController : Controller {
 
         private IUnitOfWork _unitOfWork;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public WorkspacesController(IUnitOfWork unitOfWork)
+        public WorkspacesController(IHostingEnvironment hostingEnvironment, IUnitOfWork unitOfWork)
         {
-           this._unitOfWork = unitOfWork;
+            this._unitOfWork = unitOfWork;
+            this._hostingEnvironment = hostingEnvironment;
         }
 
         // GET: /<controller>/ 
@@ -81,11 +88,17 @@ namespace Zeww.BusinessLogic.Controllers
         // POST api/NewWorkspace/workspacename
         [HttpPost]
         [Route("CreateWorkspace")]
-        public IActionResult CreateWorkspace([FromBody] Workspace newWorkspace) {
-            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", newWorkspace.WorkspaceName); ;
+        public IActionResult CreateWorkspace([FromBody] Workspace newWorkspace)
+        {
+            if (!TryValidateModel(newWorkspace))
+                return BadRequest(ModelState);
+
+            var exist = _unitOfWork.Workspaces.GetWorkspaceByName(newWorkspace.WorkspaceName);
+
+            if (exist != null)
+                return BadRequest("Workspace name already exist");
 
             newWorkspace.DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy");
-            newWorkspace.URL = location;
 
             if (!TryValidateModel(newWorkspace))
                 return BadRequest(ModelState);
@@ -93,8 +106,20 @@ namespace Zeww.BusinessLogic.Controllers
                 _unitOfWork.Workspaces.Insert(newWorkspace);
             _unitOfWork.Save();
 
-            return Created(location, newWorkspace);
+            var addedWorkspace = _unitOfWork.Workspaces.GetWorkspaceByName(newWorkspace.WorkspaceName);
+            var workspaceReference = newWorkspace.WorkspaceName + "/" + addedWorkspace.Id;
+
+            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", workspaceReference);
+
+            addedWorkspace.URL = location;
+            _unitOfWork.Workspaces.Update(addedWorkspace);
+            _unitOfWork.Save();
+
+            return Created(location, addedWorkspace);
+
+            
         }
+
 
         [HttpPut("{workspaceId}")]
         [Route("WorkspaceDoNotDisturbPeriod/{workspaceId}")]
@@ -156,7 +181,7 @@ namespace Zeww.BusinessLogic.Controllers
         public IActionResult EditWorkspaceURL([FromBody] Workspace workspace)
         {
             var workspaceURLToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
-            if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName== workspace.WorkspaceName)
+            if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName == workspace.WorkspaceName)
             {
 
                 workspaceURLToEdit.URL = workspace.URL;
@@ -168,7 +193,7 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return BadRequest();
             }
-            
+
         }
 
         //Delete Workspace
@@ -180,8 +205,8 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest("ID must be greater than zero");
 
             var workspace = _unitOfWork.Workspaces.GetByID(id);
- 
-            if (workspace==null)
+
+            if (workspace == null)
                 return NotFound();
 
             _unitOfWork.Workspaces.Delete(id);
@@ -214,23 +239,24 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
         }
+
         [HttpPut]
         [Route("ChangeWorkspaceMemberRole/{workspaceId}")]
         public IActionResult ChangeWorkspaceMemberRole(int workspaceId, [FromBody] WorkspaceRoleDTO dto)
         {
             var user = this.GetAuthenticatedUser();
             var workspace = _unitOfWork.Workspaces.GetByID(workspaceId);
-            if(workspace == null)
+            if (workspace == null)
             {
                 return BadRequest("This workspace does not exist");
             }
             var userToBeChanged = _unitOfWork.Users.GetByID(dto.UserToBeChangedId);
-            if(userToBeChanged == null)
+            if (userToBeChanged == null)
             {
                 return BadRequest("The user to be changed does not exist");
             }
             var userWorkspace = _unitOfWork.UserWorkspaces.GetUserWorkspaceByIds(user.Id, workspaceId);
-            if(userWorkspace == null)
+            if (userWorkspace == null)
             {
                 return BadRequest("The authenticated user is not a member of this workspace or does not have admin privileges to it.");
             }
@@ -249,5 +275,52 @@ namespace Zeww.BusinessLogic.Controllers
 
             return Ok(userWorkspace);
         }
+
+
+        [HttpPost]
+        [Route("Upload/{id}")]
+        public async Task<IActionResult> UploadWorkspaceImageAsync(int id)
+        {
+            long size = 0;
+
+            Workspace workspace = _unitOfWork.Workspaces.GetByID(id);
+
+            var originalImageName = "";
+            string imageId = Guid.NewGuid().ToString().Replace("-", "");
+
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "Images", imageId); 
+
+            var files = Request.Form.Files;
+            var file = files.FirstOrDefault(); 
+
+            originalImageName = Path.GetFileName(file.FileName); 
+
+            var fileExtension = Path.GetExtension(file.FileName);
+            var fullPath = $"{path}{fileExtension}"; 
+
+            if (file.Length > 0)
+            {
+                using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+            }
+
+            var returnedPath = Request.Scheme + "://" + Request.Host + "/Images/" + imageId + fileExtension; 
+
+            workspace.WorkspaceImageId = returnedPath;
+            workspace.WorkspaceImageName = originalImageName;
+
+            _unitOfWork.Workspaces.Update(workspace);
+            _unitOfWork.Save();
+
+            string message = $"{files.Count} {size} bytes uploaded successfully!";
+
+            return Json(returnedPath);
+        }
+
     }
+
+
+
 }

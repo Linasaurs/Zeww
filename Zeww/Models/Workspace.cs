@@ -37,6 +37,10 @@ namespace Zeww.Models
         [Range(1, 23)]
         public int? DailyDoNotDisturbTo { get; set; }
 
+        public string WorkspaceImageId { get; set; }
+
+        public string WorkspaceImageName { get; set; }
+
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
         public bool CanInviteUsersToWorkspace { get; set; }
 
