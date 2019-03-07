@@ -15,7 +15,7 @@ namespace Zeww.Models
         [Url]
         public string Source { get; set; }
         public string Name { get; set; }
-        public long Size { get; set; }
+        //public long Size { get; set; }
         public string Extension { get; set; }
         [ForeignKey("User")]
         public int UserId { get; set; }

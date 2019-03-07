@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190306124919_workspaceMuteTime")]
+    partial class workspaceMuteTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,8 +162,6 @@ namespace Zeww.Migrations
 
                     b.Property<DateTime>("TimeToWhichNotificationsAreMuted");
 
-                    b.Property<int>("UserRoleInWorkspace");
-
                     b.HasKey("WorkspaceId", "UserId");
 
                     b.HasAlternateKey("UserId", "WorkspaceId");
@@ -188,10 +188,6 @@ namespace Zeww.Migrations
                     b.Property<string>("DateOfCreation");
 
                     b.Property<string>("URL");
-
-                    b.Property<string>("WorkspaceImageId");
-
-                    b.Property<string>("WorkspaceImageName");
 
                     b.Property<string>("WorkspaceName")
                         .IsRequired();

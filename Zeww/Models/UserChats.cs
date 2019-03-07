@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,5 +12,7 @@ namespace Zeww.Models
         public int UserId { get; set; }
         [Key]
         public int ChatId { get; set; }
+        public bool IsStarred { get; set; }
+        public bool IsMuted { get; set; }
     }
 }

@@ -25,10 +25,9 @@ namespace Zeww.BusinessLogic.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : Controller
     {
         private IUnitOfWork _unitOfWork;
-
 
         public UsersController(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
@@ -37,18 +36,41 @@ namespace Zeww.BusinessLogic.Controllers
         // GET: /<controller>/
         public string Index()
         {
+       
             return "Hello";
         }
 
+
         [HttpGet("{id}")]
-        public ActionResult GetById(int Id) {
+        public ActionResult GetById(int Id)
+        {
+            User _ = this.GetAuthenticatedUser();
             if (Id < 1)
             {
                 return BadRequest();
             }
 
-          
-            if (_unitOfWork.Users.GetByID(Id)  == null)
+
+            if (_unitOfWork.Users.GetByID(Id) == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(_unitOfWork.Users.GetByID(Id));
+
+        }
+
+        [HttpGet("withoutPasswords/{id}")]
+        public ActionResult GetByIdWithoutPassword(int Id)
+        {
+            User _ = this.GetAuthenticatedUser();
+            if (Id < 1)
+            {
+                return BadRequest();
+            }
+
+
+            if (_unitOfWork.Users.GetByID(Id) == null)
             {
                 return NotFound();
             }
@@ -66,6 +88,7 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("SignUp")]
         public IActionResult SignUp([FromBody] User user)
@@ -94,22 +117,91 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest(ModelState);
         }
 
-        public static string getHomePath()
+        //Not Done Yet "Get User Channels"
+        [HttpGet]
+        [Route("GetChannels")]
+        public IActionResult GetUserChannels()
         {
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-                return Environment.GetEnvironmentVariable("HOME");
+            User user = this.GetAuthenticatedUser();
+            //if (user.Id <= 0)
+            //{
+            //    return BadRequest("ID must be greater than zero");
+            //}
+            var chat = user.UserChats;
+            if (chat == null)
+            {
+                return NotFound();
+            }      
+            return Ok(chat);
+        }
 
-            return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
-        }
-        [HttpGet("download/{filename}")]
-        public void DownloadFile(string filename)
+        [HttpPut]
+        [Route("ChangeLanguageRegion")]
+        public IActionResult ChangeLanguageRegion([FromBody]LanguageRegionDTO dto)
         {
-            string pathDownload = Path.Combine(getHomePath(), "Downloads");
-            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.Name == filename).FirstOrDefault();
-            WebClient client = new WebClient();
-            var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
-            client.DownloadFile(fileToDownload.Source, (pathDownload +"/"+ DownloadedFileName));
+            User user = this.GetAuthenticatedUser();
+            if (user.Language != null && user.Region!=null)
+            {
+                user.Language = dto.Language;
+                user.Region = dto.Region;
+               
+                _unitOfWork.Users.Update(user);
+                _unitOfWork.Save();
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
         }
+
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyUserNameIsUnique")]
+        public IActionResult VerifyUserNameIsUnique(UserNameDTO dto)
+        {
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
+            if (userNameExists)
+                return BadRequest("This username is already taken.");
+
+            return Ok("You can use this user name");
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("VerifyEmailIsUnique")]
+        public IActionResult VerifyEmailIsUnique(EmailDTO dto)
+        {
+            var emailExists = _unitOfWork.Users.GetUserByEmail(dto.Email) == null ? false : true;
+            if (emailExists)
+                return BadRequest("This email is already taken.");
+
+            return Ok("You can use this email");
+        }
+
+        [HttpGet("ShowConnectionStatusForLoggedInUser")]
+        public IActionResult ShowConnectionStatus() {
+            //Ziad is working on this method, please do not touch it!
+            User userToShowConnectionStatusFor = this.GetAuthenticatedUser();
+            var connectionStatus = userToShowConnectionStatusFor.ConnectionStatus;
+            return Ok(connectionStatus);
+        }
+
+        [HttpPut("ToggleUserConnectionStatusForLoggedInUser")]
+        public IActionResult ToggleUserConnectionStatus(int userId, ConnectionStatus newConnectionStatus) {
+            //Ziad is working on this method, please do not touch it!
+            var userToChangeConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
+            if (userToChangeConnectionStatusFor.ConnectionStatus == 0) {
+                userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Away;
+            } else {
+                userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Active;
+            }
+
+            userToChangeConnectionStatusFor.ConnectionStatus = newConnectionStatus;
+            return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
+         }
+
         [AllowAnonymous]
         [HttpPost]
         [Route("login")]
@@ -128,41 +220,269 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest("Invalid email/username or password");
         }
 
-        [HttpGet("profile/{id}")]
-        public string viewProfile(int id)
+        public static string getHomePath()
         {
-            var user = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
-            string userJson = JsonConvert.SerializeObject(user);
-            return userJson;
-        }
-        [HttpPut("EditProfile")]
-        public void EditProfile([FromBody] User user)
-        {
-            var userToEdit = _unitOfWork.Users.Get().Where(u => u.Id == user.Id).FirstOrDefault();
-            userToEdit.Name = user.Name;
-            userToEdit.UserName = user.UserName;
-            userToEdit.Email = user.Email;
-            userToEdit.Password = user.Password;
-            userToEdit.PhoneNumber = user.PhoneNumber;
-            userToEdit.Status = user.Status;
-            userToEdit.UserWorkspaces = user.UserWorkspaces;
-            userToEdit.UserChats = user.UserChats;
-            _unitOfWork.Users.Update(userToEdit);
-            _unitOfWork.Save();
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                return Environment.GetEnvironmentVariable("HOME");
+
+            return Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
         }
 
-        [HttpDelete("LeaveChannel/{userId}/{channelId}")]
-        public void LeaveChannel(int channelId, int userId)
+        [AllowAnonymous]
+        [HttpGet("download/{filename}")]
+        public IActionResult DownloadFile(string filename)
         {
-            //var userDeleteing = _unitOfWork.Users.Get().Where(u => u.Id == userId).FirstOrDefault();
-            var chatToBeDeleted = _unitOfWork.Chats.Get().Where(c => c.Id == channelId).FirstOrDefault();
-            var userChannel = _unitOfWork.UserChats.Get().Where(c => (c.ChatId == channelId) && ( c.UserId == userId)).FirstOrDefault();
-            if (!chatToBeDeleted.IsPrivate)
+            string pathDownload = Path.Combine(getHomePath(), "Downloads");
+            var fileToDownload = _unitOfWork.Files.Get().Where(f => f.Name == filename).FirstOrDefault();
+
+            if (fileToDownload != null)
             {
-                _unitOfWork.UserChats.Delete(userChannel);
-                _unitOfWork.Save();
+                WebClient client = new WebClient();
+                var DownloadedFileName = fileToDownload.Name + fileToDownload.Extension;
+                client.DownloadFile(fileToDownload.Source, (pathDownload + "/" + DownloadedFileName));
+                return Ok();
+            }
+            return NotFound("File not found");
+        }
+
+        [AllowAnonymous]
+        [HttpGet("profile/{id}")]
+        public IActionResult viewProfile(int id)
+        {
+            var user = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
+            if (user != null)
+            {
+                string userJson = JsonConvert.SerializeObject(user);
+                return Ok(userJson);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [AllowAnonymous]
+        [HttpGet("workspaces/{id}")]
+        public IActionResult GetworkspacesbyUserId(int id)
+        {
+            var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
+            if (user != null)
+            {
+                string userJson = JsonConvert.SerializeObject(user);
+                return Ok(userJson);
+            }
+            else
+            {
+                return NotFound();
             }
         }
 
+        [AllowAnonymous]
+        [HttpPut("EditProfile/{id}")]
+        public IActionResult EditProfile(int id, [FromBody] User user)
+        {
+            var userToEdit = _unitOfWork.Users.Get().Where(u => u.Id == id).FirstOrDefault();
+            if (userToEdit != null)
+            {
+                userToEdit.Name = user.Name;
+                userToEdit.UserName = user.UserName;
+                userToEdit.Email = user.Email;
+                userToEdit.Password = user.Password;
+                userToEdit.PhoneNumber = user.PhoneNumber;
+                userToEdit.Status = user.Status;
+                userToEdit.UserWorkspaces = user.UserWorkspaces;
+                userToEdit.UserChats = user.UserChats;
+                _unitOfWork.Users.Update(userToEdit);
+                _unitOfWork.Save();
+                return Ok(userToEdit);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpDelete("LeaveChannel/{userId}/{channelId}")]
+        public IActionResult LeaveChannel(int channelId, int userId)
+        {
+            var chatToBeDeleted = _unitOfWork.Chats.GetByID(channelId);
+            var userChannel = _unitOfWork.UserChats.Get().Where(c => (c.ChatId == chatToBeDeleted.Id) && (c.UserId == userId)).FirstOrDefault();
+            if (chatToBeDeleted == null || userChannel == null)
+            {
+                return NotFound("User is not a member in this channel");
+            }
+            else
+            {
+                if (!chatToBeDeleted.IsPrivate)
+                {
+                    _unitOfWork.UserChats.Delete(userChannel);
+                    _unitOfWork.Save();
+                    return Ok("User left chat");
+                }
+                else
+                {
+                    return BadRequest("You can't delete a private message");
+                }
+            }
+        }
+
+
+        [HttpPut]
+        [Route("AddDontDisturbPeriod")]
+        public IActionResult AddDontDisturbPeriod([FromBody] DoNotDisturbDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            var from = dto.DoNotDisturbFrom;
+            var to = dto.DoNotDisturbTo;
+
+            if (ModelState.IsValid)
+            {
+                user.DailyDoNotDisturbFrom = from;
+                user.DailyDoNotDisturbTo = to;
+
+                _unitOfWork.Save();
+
+                return NoContent();
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("userDirectChats/{userId}")]
+        public IActionResult GetUserDirectChats(int userId)
+        {
+            List<int> userDirectChats = new List<int>();
+
+            var allUserChatIDs = _unitOfWork.UserChats.Get()
+                .Where(a=> a.UserId== userId)
+                .Select(a=> a.ChatId)
+                .ToList();
+
+            foreach(var chatID in allUserChatIDs)
+            {
+               if( _unitOfWork.Chats.GetByID(chatID).IsPrivate)
+                    userDirectChats.Add(chatID);
+            }
+            return Ok(userDirectChats);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("userChannelChats/{userId}")]
+        public IActionResult GetUserChannelChats(int userId)
+        {
+            List<int> userChannelChats = new List<int>();
+
+            var allUserChatIDs = _unitOfWork.UserChats.Get()
+                .Where(a => a.UserId == userId)
+                .Select(a => a.ChatId)
+                .ToList();
+
+            foreach (var chatID in allUserChatIDs)
+            {
+                if (!_unitOfWork.Chats.GetByID(chatID).IsPrivate)
+                    userChannelChats.Add(chatID);
+            }
+            return Ok(userChannelChats);
+        }
+
+
+        [HttpPut]
+        [Route("AddCustomStatus")]
+        public IActionResult AddCustomStatus([FromBody] CustomStatusDTO CustomStatus)
+        {
+            User user = this.GetAuthenticatedUser();
+            if (CustomStatus.status == null)
+            {
+                return BadRequest("Invalid Request");
+            }
+            switch (CustomStatus.status.ToLower())
+            {
+                case "available":
+                    user.Status = Status.Available;
+                    break;
+                case "busy":
+                    user.Status = Status.Busy;
+                    break;
+                case "away":
+                    user.Status = Status.Away;
+                    break;
+                case "customstatus":
+                    if (CustomStatus.customStatus == null) {
+                        return BadRequest("Invalid Custom Status");
+                    }
+                    user.Status = Status.CustomStatus;
+                    user.Customstatus = CustomStatus.customStatus;
+                    break;
+
+                default:
+                    return BadRequest("Not a Vaild Status");
+            }
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+            
+            return Ok("Status Changed");
+        }
+        [HttpPut]
+        [Route("ToggleStarChat")]
+        public IActionResult ToggleStarChat([FromBody] ChatIdDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userChatsIds = _unitOfWork.Users.GetChatsIdsByUserId(user.Id);
+
+            UserChats userChat = userChatsIds.Any(uci => uci == dto.ChatID) ? _unitOfWork.UserChats.GetUserChatByIds(user.Id, dto.ChatID) : null;
+
+            if (userChat == null)
+                return BadRequest("This chat either does not exist or the user is not allowed to view this chat");
+
+            userChat.IsStarred = !userChat.IsStarred;
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return Ok(new { isStarred = userChat.IsStarred });
+        }
+        [HttpPut]
+        [Route("ToggleMuteChat")]
+        public IActionResult ToggleMuteChat([FromBody] ChatIdDTO chat)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userChatsIds = _unitOfWork.Users.GetChatsIdsByUserId(user.Id);
+
+            UserChats userChat = userChatsIds.Any(uci => uci == chat.ChatID) ? _unitOfWork.UserChats.GetUserChatByIds(user.Id, chat.ChatID) : null;
+
+            if (userChat == null)
+                return BadRequest("This chat either does not exist or the user is not allowed to edit this chat");
+
+            userChat.IsMuted = !userChat.IsMuted;
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return Ok(new { isMuted = userChat.IsMuted });
+        }
+        [HttpPut]
+        [Route("MuteWorkspaceForAmountOfHours")]
+        public IActionResult MuteWorkspaceForAmountOfHours([FromBody] MuteWorspaceForHoursDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userWorkspaceIds = _unitOfWork.Users.GetWorkspaceIdsByUserId(user.Id);
+
+            var userWorkspaces = userWorkspaceIds.Any(uci => uci == dto.WorkspaceID) ? _unitOfWork.UserWorkspaces.GetUserWorkspaceByIds(user.Id, dto.WorkspaceID) : null;
+
+            if (userWorkspaces == null)
+                return BadRequest("This workspace either does not exist or the user is not allowed to edit this workspace");
+
+            userWorkspaces.TimeToWhichNotificationsAreMuted = DateTime.Now.AddHours(dto.HoursToBeMuted);
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return Ok(new { Workpace = userWorkspaces.WorkspaceId, MutedUntil = userWorkspaces.TimeToWhichNotificationsAreMuted });
+        }
     }
 }
