@@ -11,12 +11,14 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Zeww.BusinessLogic.DTOs;
 using Zeww.BusinessLogic.ExtensionMethods;
+using Microsoft.AspNetCore.Authorization;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Zeww.BusinessLogic.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkspacesController : Controller
@@ -210,26 +212,32 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
         }
 
-        //[HttpPost]
-        //[Route("ToggleDisplayEmailsInMembersProfile")]
-        //public IActionResult ToggleDisplayEmailsInMembersProfile(ShowHideEmails mails)
-        //{
-        //    User user = this.GetAuthenticatedUser();
+        [HttpPut]
+        [Route("ToggleDisplayEmailsInMembersProfile")]
+        public IActionResult ToggleDisplayEmailsInMembersProfile([FromBody] WorkspaceIdDto dto)
+        {
+            User user = this.GetAuthenticatedUser();
+            Workspace workspace = _unitOfWork.Workspaces.GetByID(dto.WorkspaceId);
+            if(workspace == null)
+            {
+                return NotFound();
+            }
+            if (workspace.CreatorID != user.Id)
+            {
+                return Unauthorized("You are not the Workspace Admin");
+            }
+            if (workspace.CreatorID == user.Id)
+            {
+                workspace.IsEmailVisible = !workspace.IsEmailVisible;             
+            }
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+            return Ok(new { isVisible = workspace.IsEmailVisible });
+        }            
+        }
 
-        //    var displayEmails = _unitOfWork.Workspaces.GetByID(user);
-        //    if (displayEmails.ShowHideEmails == 0)
-        //    {
-        //        displayEmails.ShowHideEmails = ShowHideEmails.Visible;
-        //    }
-        //    else
-        //    {
-        //        displayEmails.ShowHideEmails = ShowHideEmails.Hidden;
-        //    }
-        //    displayEmails.ShowHideEmails = mails;
-        //    return Ok(displayEmails.ShowHideEmails);
-        //}
     }
 
 
 
-}
+

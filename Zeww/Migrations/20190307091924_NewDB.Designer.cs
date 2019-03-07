@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190304104340_addedCustomStatus")]
-    partial class addedCustomStatus
+    [Migration("20190307091924_NewDB")]
+    partial class NewDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -109,6 +109,8 @@ namespace Zeww.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
+                    b.Property<string>("Language");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(15);
@@ -117,6 +119,8 @@ namespace Zeww.Migrations
                         .IsRequired();
 
                     b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
@@ -163,6 +167,8 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("CanInviteUsersToWorkspace");
+
                     b.Property<string>("CompanyName");
 
                     b.Property<int>("CreatorID");
@@ -172,6 +178,8 @@ namespace Zeww.Migrations
                     b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("DateOfCreation");
+
+                    b.Property<bool>("IsEmailVisible");
 
                     b.Property<string>("URL");
 

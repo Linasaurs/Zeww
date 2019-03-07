@@ -177,7 +177,7 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
-                    b.Property<int>("ShowHideEmails");
+                    b.Property<bool>("IsEmailVisible");
 
                     b.Property<string>("URL");
 
