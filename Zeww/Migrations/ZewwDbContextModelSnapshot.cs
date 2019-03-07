@@ -39,6 +39,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("WorkspaceId");
 
+                    b.Property<int>("skip");
+
                     b.HasKey("Id");
 
                     b.ToTable("Chats");
@@ -80,6 +82,8 @@ namespace Zeww.Migrations
                     b.Property<string>("MessageContent");
 
                     b.Property<int>("SenderID");
+
+                    b.Property<DateTime>("dateTime");
 
                     b.Property<bool>("isPinned");
 
@@ -137,6 +141,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsMuted");
+
                     b.Property<bool>("IsStarred");
 
                     b.HasKey("ChatId", "UserId");
@@ -151,6 +157,10 @@ namespace Zeww.Migrations
                     b.Property<int>("WorkspaceId");
 
                     b.Property<int>("UserId");
+
+                    b.Property<DateTime>("TimeToWhichNotificationsAreMuted");
+
+                    b.Property<int>("UserRoleInWorkspace");
 
                     b.HasKey("WorkspaceId", "UserId");
 

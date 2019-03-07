@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190228094008_migration")]
-    partial class migration
+    [Migration("20190306114045_cleanMigration")]
+    partial class cleanMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,8 @@ namespace Zeww.Migrations
                     b.Property<string>("Topic");
 
                     b.Property<int>("WorkspaceId");
+
+                    b.Property<int>("skip");
 
                     b.HasKey("Id");
 
@@ -83,6 +85,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
+                    b.Property<DateTime>("dateTime");
+
                     b.Property<bool>("isPinned");
 
                     b.HasKey("Id");
@@ -100,12 +104,16 @@ namespace Zeww.Migrations
 
                     b.Property<int>("ConnectionStatus");
 
+                    b.Property<string>("Customstatus");
+
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
                     b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("Email")
                         .IsRequired();
+
+                    b.Property<string>("Language");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -115,6 +123,8 @@ namespace Zeww.Migrations
                         .IsRequired();
 
                     b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
@@ -132,6 +142,8 @@ namespace Zeww.Migrations
                     b.Property<int>("ChatId");
 
                     b.Property<int>("UserId");
+
+                    b.Property<bool>("IsMuted");
 
                     b.Property<bool>("IsStarred");
 
@@ -161,7 +173,15 @@ namespace Zeww.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("CanInviteUsersToWorkspace");
+
                     b.Property<string>("CompanyName");
+
+                    b.Property<int>("CreatorID");
+
+                    b.Property<int?>("DailyDoNotDisturbFrom");
+
+                    b.Property<int?>("DailyDoNotDisturbTo");
 
                     b.Property<string>("DateOfCreation");
 
