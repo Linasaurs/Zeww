@@ -38,6 +38,10 @@ namespace Zeww.Models
 
         public bool IsEmailVisible { get; set; }
 
+        public string WorkspaceImageId { get; set; }
+
+        public string WorkspaceImageName { get; set; }
+
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
         public bool CanInviteUsersToWorkspace { get; set; }
 

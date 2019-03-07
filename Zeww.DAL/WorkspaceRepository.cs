@@ -13,6 +13,14 @@ namespace Zeww.DAL
         //This sets the context of the child class to the context of the super class
         public WorkspaceRepository(ZewwDbContext context) : base(context) { }
 
+        //Your methods go here  
+        public Workspace GetWorkspaceByName(string name)
+        {     
+            IQueryable<Workspace> query = dbSet;
+            return query.SingleOrDefault(ws => ws.WorkspaceName == name);
+        }
+
+
         //Your methods go here 
         public IQueryable<int> GetUsersIdInWorkspace(int id)
         {
