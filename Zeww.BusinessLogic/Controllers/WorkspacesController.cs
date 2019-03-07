@@ -204,7 +204,13 @@ namespace Zeww.BusinessLogic.Controllers
             var uw = new UserWorkspace
             {
                 UserId = userId,
-                WorkspaceId = workspaceId
+                WorkspaceId = workspaceId,
+                /* 
+                 * The -1 subtracts 1 hour from the current time,
+                 * this makes notifications enabled by default.
+                 */
+                TimeToWhichNotificationsAreMuted = DateTime.Now.AddHours(-1),
+                UserRoleInWorkspace = UserRoleInWorkspace.Member
             };
             user.UserWorkspaces.Add(uw);
             workspace.UserWorkspaces.Add(uw);
@@ -213,6 +219,41 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Workspaces.Update(workspace);
             _unitOfWork.Save();
 
+        }
+        [HttpPut]
+        [Route("ChangeWorkspaceMemberRole/{workspaceId}")]
+        public IActionResult ChangeWorkspaceMemberRole(int workspaceId, [FromBody] WorkspaceRoleDTO dto)
+        {
+            var user = this.GetAuthenticatedUser();
+            var workspace = _unitOfWork.Workspaces.GetByID(workspaceId);
+            if(workspace == null)
+            {
+                return BadRequest("This workspace does not exist");
+            }
+            var userToBeChanged = _unitOfWork.Users.GetByID(dto.UserToBeChangedId);
+            if(userToBeChanged == null)
+            {
+                return BadRequest("The user to be changed does not exist");
+            }
+            var userWorkspace = _unitOfWork.UserWorkspaces.GetUserWorkspaceByIds(user.Id, workspaceId);
+            if(userWorkspace == null)
+            {
+                return BadRequest("The authenticated user is not a member of this workspace or does not have admin privileges to it.");
+            }
+            if (userWorkspace.UserRoleInWorkspace != UserRoleInWorkspace.Owner && userWorkspace.UserRoleInWorkspace != UserRoleInWorkspace.Admin)
+            {
+                return BadRequest("The authenticated user is not a member of this workspace or does not have admin privileges to it.");
+            }
+            userWorkspace = _unitOfWork.UserWorkspaces.GetUserWorkspaceByIds(dto.UserToBeChangedId, workspaceId);
+            if (userWorkspace == null)
+            {
+                return BadRequest("The user to be changed does not exist in this workspace");
+            }
+            userWorkspace.UserRoleInWorkspace = dto.UserRoleInWorkspace;
+            _unitOfWork.UserWorkspaces.Update(userWorkspace);
+            _unitOfWork.Save();
+
+            return Ok(userWorkspace);
         }
     }
 }

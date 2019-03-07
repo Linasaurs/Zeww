@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190305125410_Wipe")]
-    partial class Wipe
+    [Migration("20190306114045_cleanMigration")]
+    partial class cleanMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -104,6 +104,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("ConnectionStatus");
 
+                    b.Property<string>("Customstatus");
+
                     b.Property<int?>("DailyDoNotDisturbFrom");
 
                     b.Property<int?>("DailyDoNotDisturbTo");
@@ -141,6 +143,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsMuted");
+
                     b.Property<bool>("IsStarred");
 
                     b.HasKey("ChatId", "UserId");
@@ -168,6 +172,8 @@ namespace Zeww.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("CanInviteUsersToWorkspace");
 
                     b.Property<string>("CompanyName");
 

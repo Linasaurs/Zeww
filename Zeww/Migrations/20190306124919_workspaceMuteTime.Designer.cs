@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190304104340_addedCustomStatus")]
-    partial class addedCustomStatus
+    [Migration("20190306124919_workspaceMuteTime")]
+    partial class workspaceMuteTime
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,8 @@ namespace Zeww.Migrations
                     b.Property<string>("Topic");
 
                     b.Property<int>("WorkspaceId");
+
+                    b.Property<int>("skip");
 
                     b.HasKey("Id");
 
@@ -83,6 +85,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
+                    b.Property<DateTime>("dateTime");
+
                     b.Property<bool>("isPinned");
 
                     b.HasKey("Id");
@@ -109,6 +113,8 @@ namespace Zeww.Migrations
                     b.Property<string>("Email")
                         .IsRequired();
 
+                    b.Property<string>("Language");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(15);
@@ -117,6 +123,8 @@ namespace Zeww.Migrations
                         .IsRequired();
 
                     b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("Region");
 
                     b.Property<int>("Status");
 
@@ -135,6 +143,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<bool>("IsMuted");
+
                     b.Property<bool>("IsStarred");
 
                     b.HasKey("ChatId", "UserId");
@@ -150,6 +160,8 @@ namespace Zeww.Migrations
 
                     b.Property<int>("UserId");
 
+                    b.Property<DateTime>("TimeToWhichNotificationsAreMuted");
+
                     b.HasKey("WorkspaceId", "UserId");
 
                     b.HasAlternateKey("UserId", "WorkspaceId");
@@ -162,6 +174,8 @@ namespace Zeww.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("CanInviteUsersToWorkspace");
 
                     b.Property<string>("CompanyName");
 

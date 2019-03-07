@@ -2,22 +2,22 @@
 
 namespace Zeww.Migrations
 {
-    public partial class workspace : Migration
+    public partial class AddUserRoleToUserWorkspace : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "CanInviteUsersToWorkspace",
-                table: "Workspaces",
+            migrationBuilder.AddColumn<int>(
+                name: "UserRoleInWorkspace",
+                table: "UserWorkspaces",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: 0);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "CanInviteUsersToWorkspace",
-                table: "Workspaces");
+                name: "UserRoleInWorkspace",
+                table: "UserWorkspaces");
         }
     }
 }

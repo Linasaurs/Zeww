@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class Wipe : Migration
+    public partial class cleanMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,7 +44,8 @@ namespace Zeww.Migrations
                     Language = table.Column<string>(nullable: true),
                     Region = table.Column<string>(nullable: true),
                     DailyDoNotDisturbFrom = table.Column<int>(nullable: true),
-                    DailyDoNotDisturbTo = table.Column<int>(nullable: true)
+                    DailyDoNotDisturbTo = table.Column<int>(nullable: true),
+                    Customstatus = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,7 +65,8 @@ namespace Zeww.Migrations
                     DateOfCreation = table.Column<string>(nullable: true),
                     URL = table.Column<string>(nullable: true),
                     DailyDoNotDisturbFrom = table.Column<int>(nullable: true),
-                    DailyDoNotDisturbTo = table.Column<int>(nullable: true)
+                    DailyDoNotDisturbTo = table.Column<int>(nullable: true),
+                    CanInviteUsersToWorkspace = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -129,7 +131,8 @@ namespace Zeww.Migrations
                 {
                     UserId = table.Column<int>(nullable: false),
                     ChatId = table.Column<int>(nullable: false),
-                    IsStarred = table.Column<bool>(nullable: false)
+                    IsStarred = table.Column<bool>(nullable: false),
+                    IsMuted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
