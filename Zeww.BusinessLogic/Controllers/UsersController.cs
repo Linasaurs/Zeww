@@ -280,7 +280,7 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
         [AllowAnonymous]
-        [HttpGet("workspaces/{id}")]
+        [HttpGet("GetworkspacesbyUserId/{id}")]
         public IActionResult GetworkspacesbyUserId(int id)
         {
             var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
