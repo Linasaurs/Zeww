@@ -14,6 +14,8 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using System.Net.Http.Headers;
+using Zeww.BusinessLogic.DTOs;
+using Zeww.BusinessLogic.ExtensionMethods;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -103,14 +105,23 @@ namespace Zeww.BusinessLogic.Controllers
             newWorkspace.DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy");
 
 
-            if (!TryValidateModel(newWorkspace))
-                return BadRequest(ModelState);
-            else
-                _unitOfWork.Workspaces.Insert(newWorkspace);
+            _unitOfWork.Workspaces.Insert(newWorkspace);
             _unitOfWork.Save();
 
-            return Created(location, newWorkspace);
+            var addedWorkspace = _unitOfWork.Workspaces.GetWorkspaceByName(newWorkspace.WorkspaceName);
+            var workspaceReference = newWorkspace.WorkspaceName + "/" + addedWorkspace.Id;
+
+            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", workspaceReference);
+
+            addedWorkspace.URL = location;
+            _unitOfWork.Workspaces.Update(addedWorkspace);
+            _unitOfWork.Save();
+
+            return Created(location, addedWorkspace);
+
+            
         }
+
 
         [HttpPut("{workspaceId}")]
         [Route("WorkspaceDoNotDisturbPeriod/{workspaceId}")]
@@ -149,7 +160,7 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest(ModelState);
             }
 
-            
+
         }
 
         [HttpPut]
@@ -167,24 +178,14 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok();
         }
 
-            _unitOfWork.Workspaces.Insert(newWorkspace);
-            _unitOfWork.Save();
-
-            var addedWorkspace = _unitOfWork.Workspaces.GetWorkspaceByName(newWorkspace.WorkspaceName);
-            var workspaceReference = newWorkspace.WorkspaceName + "/" + addedWorkspace.Id;
-
-            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", workspaceReference);
-
-            addedWorkspace.URL = location;
-            _unitOfWork.Workspaces.Update(addedWorkspace);
-            _unitOfWork.Save();
+          
 
         [HttpPut]
         [Route("EditWorkspaceURL/{workspace.Id}")]
         public IActionResult EditWorkspaceURL([FromBody] Workspace workspace)
         {
             var workspaceURLToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
-            if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName== workspace.WorkspaceName)
+            if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName == workspace.WorkspaceName)
             {
 
                 workspaceURLToEdit.URL = workspace.URL;
@@ -196,7 +197,7 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return BadRequest();
             }
-            
+
         }
 
         //Delete Workspace
@@ -208,8 +209,8 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest("ID must be greater than zero");
 
             var workspace = _unitOfWork.Workspaces.GetByID(id);
- 
-            if (workspace==null)
+
+            if (workspace == null)
                 return NotFound();
 
             _unitOfWork.Workspaces.Delete(id);
@@ -242,23 +243,24 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
         }
+
         [HttpPut]
         [Route("ChangeWorkspaceMemberRole/{workspaceId}")]
         public IActionResult ChangeWorkspaceMemberRole(int workspaceId, [FromBody] WorkspaceRoleDTO dto)
         {
             var user = this.GetAuthenticatedUser();
             var workspace = _unitOfWork.Workspaces.GetByID(workspaceId);
-            if(workspace == null)
+            if (workspace == null)
             {
                 return BadRequest("This workspace does not exist");
             }
             var userToBeChanged = _unitOfWork.Users.GetByID(dto.UserToBeChangedId);
-            if(userToBeChanged == null)
+            if (userToBeChanged == null)
             {
                 return BadRequest("The user to be changed does not exist");
             }
             var userWorkspace = _unitOfWork.UserWorkspaces.GetUserWorkspaceByIds(user.Id, workspaceId);
-            if(userWorkspace == null)
+            if (userWorkspace == null)
             {
                 return BadRequest("The authenticated user is not a member of this workspace or does not have admin privileges to it.");
             }
@@ -274,7 +276,8 @@ namespace Zeww.BusinessLogic.Controllers
             userWorkspace.UserRoleInWorkspace = dto.UserRoleInWorkspace;
             _unitOfWork.UserWorkspaces.Update(userWorkspace);
             _unitOfWork.Save();
-            return Created(location, addedWorkspace);
+
+            return Ok(userWorkspace);
         }
 
 
@@ -320,8 +323,6 @@ namespace Zeww.BusinessLogic.Controllers
             return Json(returnedPath);
         }
 
-            return Ok(userWorkspace);
-        }
     }
 
 
