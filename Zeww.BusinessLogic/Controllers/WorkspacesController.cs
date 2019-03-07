@@ -28,7 +28,7 @@ namespace Zeww.BusinessLogic.Controllers
         private IUnitOfWork _unitOfWork;
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public WorkspacesController(IUnitOfWork unitOfWork, IHostingEnvironment hostingEnvironment)
+        public WorkspacesController(IHostingEnvironment hostingEnvironment, IUnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
             this._hostingEnvironment = hostingEnvironment;
@@ -40,11 +40,13 @@ namespace Zeww.BusinessLogic.Controllers
         {
             return _unitOfWork.Workspaces.Get();
         }
-        
+
         [HttpGet]
         [Route("GetWorkspaceName/{workspaceName}")]
-        public IActionResult GetWorkspaceName(string workspaceName) {
-            if (!string.IsNullOrWhiteSpace(workspaceName)) {
+        public IActionResult GetWorkspaceName(string workspaceName)
+        {
+            if (!string.IsNullOrWhiteSpace(workspaceName))
+            {
                 var query = _unitOfWork.Workspaces.Get();
                 if (query.Any(c => c.WorkspaceName.Contains(workspaceName)))
                     return Ok(workspaceName);
@@ -74,111 +76,71 @@ namespace Zeww.BusinessLogic.Controllers
 
             if (exist != null)
                 return BadRequest("Workspace name already exist");
-         
+
             newWorkspace.DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy");
-            
-        
-                _unitOfWork.Workspaces.Insert(newWorkspace);
-                _unitOfWork.Save();
+
+
+            _unitOfWork.Workspaces.Insert(newWorkspace);
+            _unitOfWork.Save();
 
             var addedWorkspace = _unitOfWork.Workspaces.GetWorkspaceByName(newWorkspace.WorkspaceName);
-            var workspaceReference = newWorkspace.WorkspaceName + "/" + addedWorkspace.Id; 
+            var workspaceReference = newWorkspace.WorkspaceName + "/" + addedWorkspace.Id;
 
-            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace",workspaceReference);
+            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", workspaceReference);
 
             addedWorkspace.URL = location;
             _unitOfWork.Workspaces.Update(addedWorkspace);
-            _unitOfWork.Save(); 
+            _unitOfWork.Save();
 
-            return Created(location,addedWorkspace);
+            return Created(location, addedWorkspace);
         }
-
-
-        //[HttpPost]
-        //[Route("Upload/{id}")]
-        //public async Task<IActionResult> UploadWorkspaceImageAsync(int id)
-        //{
-        //    //var sentFiles = Request.Form.Files;
-
-        //    //IFormFile imageFile = sentFiles[0];
-        //    Workspace workspace = _unitOfWork.Workspaces.GetByID(id);
-
-        //    string generatedFileName = Guid.NewGuid().ToString();
-
-        //    var originalImageName = ""; 
-        //    string imageId = Guid.NewGuid().ToString().Replace("-", "");
-
-        //    var path = Path.Combine(
-        //                   Directory.GetCurrentDirectory(),
-        //                   "Images", generatedFileName);
-
-        //    var files = Request.Form.Files; 
-
-        //    foreach (var file in files)
-        //    {
-        //        originalImageName = Path.GetFileName(file.FileName);
-        //        if (file.Length > 0)
-        //        {
-        //            using (var fileStream = new FileStream(path, FileMode.Create))
-        //            {
-        //                await file.CopyToAsync(fileStream);
-        //            }
-        //        }
-        //    }
-        //    workspace.WorkspaceImageId = path;
-        //    workspace.WorkspaceImageName = originalImageName;
-
-        //    _unitOfWork.Workspaces.Update(workspace);
-        //    _unitOfWork.Save();
-        //    return Ok(Request.Form.Files);
-        //}
-
 
 
         [HttpPost]
         [Route("Upload/{id}")]
         public async Task<IActionResult> UploadWorkspaceImageAsync(int id)
-        { 
+        {
             long size = 0;
-        
-            Workspace workspace = _unitOfWork.Workspaces.GetByID(id);
 
-            string generatedFileName = Guid.NewGuid().ToString();
+            Workspace workspace = _unitOfWork.Workspaces.GetByID(id);
 
             var originalImageName = "";
             string imageId = Guid.NewGuid().ToString().Replace("-", "");
 
-            var path = Path.Combine(
-                           Directory.GetCurrentDirectory(),
-                           "Images", generatedFileName);
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "Images", imageId); 
 
             var files = Request.Form.Files;
+            var file = files.FirstOrDefault(); 
 
-            foreach (var file in files)
+            originalImageName = Path.GetFileName(file.FileName); 
+
+            var fileExtension = Path.GetExtension(file.FileName);
+            var fullPath = $"{path}{fileExtension}"; 
+
+            if (file.Length > 0)
             {
-                originalImageName = Path.GetFileName(file.FileName);
-                if (file.Length > 0)
+                using (var fileStream = new FileStream(fullPath, FileMode.Create))
                 {
-                    using (var fileStream = new FileStream(path, FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    }
+                    await file.CopyToAsync(fileStream);
                 }
             }
 
-            var returnedPath = Request.Scheme + "://" + Request.Host + "/Images/" + generatedFileName;
+            var returnedPath = Request.Scheme + "://" + Request.Host + "/Images/" + imageId + fileExtension; 
+
             workspace.WorkspaceImageId = returnedPath;
             workspace.WorkspaceImageName = originalImageName;
 
             _unitOfWork.Workspaces.Update(workspace);
-            _unitOfWork.Save(); 
+            _unitOfWork.Save();
 
-            string message = $"{files.Count} {size} bytes uploaded successfully!"; 
+            string message = $"{files.Count} {size} bytes uploaded successfully!";
 
             return Json(returnedPath);
         }
 
-    } 
+
+
+    }
 
 
 

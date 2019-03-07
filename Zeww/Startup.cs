@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -10,12 +11,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Zeww.Models;
 
 namespace Zeww
 {
     public class Startup
     {
+        public static string rootPath { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -39,11 +42,16 @@ namespace Zeww
             var connection = @"Server=.\SQLEXPRESS;Database=ZewwDatabase;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<ZewwDbContext>
                 (options => options.UseSqlServer(connection));
+
+            services.AddSingleton<IFileProvider>(
+            new PhysicalFileProvider(
+               Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -54,7 +62,7 @@ namespace Zeww
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
