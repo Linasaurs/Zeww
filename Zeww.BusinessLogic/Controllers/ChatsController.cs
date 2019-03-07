@@ -118,13 +118,6 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpGet]
-        [Route("GetAllChannelsInAWorkspace")]
-        public Chat GetAllChannelsInAworkspace(int workspaceId) {
-
-            return new Chat();
-        }
-
-        [HttpGet]
         [Route("SearchByUserName/{userName}")]
         public IActionResult SearchByUserName(string userName, int workspaceId) {
             var listOfUsersIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
