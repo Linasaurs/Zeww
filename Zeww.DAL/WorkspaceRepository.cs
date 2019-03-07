@@ -24,9 +24,19 @@ namespace Zeww.DAL
         //Your methods go here 
         public IQueryable<int> GetUsersIdInWorkspace(int id)
         {
-            IQueryable<Workspace> queryWorksapces = dbSet;
-            var workspaces= queryWorksapces.Where(w=>w.Id==id).Include(w=>w.UserWorkspaces).Select(uw => uw.UserWorkspaces);
+            IQueryable<Workspace> queryWorkspaces = dbSet;
+            var workspaces= queryWorkspaces.Where(w=>w.Id==id).Include(w=>w.UserWorkspaces).Select(uw => uw.UserWorkspaces);
             return workspaces.SelectMany(uw=>uw.Select(u=>u.UserId));
+        }
+
+        public List<Chat> GetAllChannelsInAworkspace(int workspaceId) {
+            IQueryable<Workspace> queryWorkspaces = dbSet;
+            var workspaceToGetChatsIn = queryWorkspaces.FirstOrDefault(w => w.Id == workspaceId);
+            var listOfChatsInWorkspace = new List<Chat>();
+            foreach (Chat chat in workspaceToGetChatsIn.Chats) {
+                listOfChatsInWorkspace.Add(chat);
+            }
+            return listOfChatsInWorkspace;
         }
 
     }

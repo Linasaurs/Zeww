@@ -14,27 +14,23 @@ namespace Zeww.BusinessLogic.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ChatsController : Controller
-    {
+    public class ChatsController : Controller {
         private IUnitOfWork _unitOfWork;
 
-        public ChatsController(IUnitOfWork unitOfWork)
-        {
+        public ChatsController(IUnitOfWork unitOfWork) {
             this._unitOfWork = unitOfWork;
         }
 
         // GET: /<controller>/
         [HttpGet]
-        public string Index()
-        {
+        public string Index() {
             return "Hello";
         }
 
 
         [HttpPost]
         [Route("CreateNewChannel")]
-        public IActionResult CreateNewChannel(Chat chat)
-        {
+        public IActionResult CreateNewChannel(Chat chat) {
             _unitOfWork.Chats.Insert(chat);
             _unitOfWork.Save();
             var returnedChat = _unitOfWork.Chats.Get(ch => ch.Name == chat.Name && ch.WorkspaceId == chat.WorkspaceId);
@@ -43,15 +39,11 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet]
         [Route("GetChannelDetails/{chatID}")]
-        public IActionResult GetChannelDetails(int? chatID)
-        {
+        public IActionResult GetChannelDetails(int? chatID) {
             var chatDetails = _unitOfWork.Chats.GetByID(chatID);
-            if (chatDetails==null)
-            {
+            if (chatDetails == null) {
                 return NotFound();
-            }
-           else if (chatDetails.Id.Equals(chatID))
-            {
+            } else if (chatDetails.Id.Equals(chatID)) {
                 return Ok(chatDetails);
             }
             return NotFound();
@@ -62,10 +54,8 @@ namespace Zeww.BusinessLogic.Controllers
 
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
         [HttpPost("PostChat")]
-        public IActionResult PostChat([FromBody]Chat chat)
-        {
-            if (chat != null)
-            {
+        public IActionResult PostChat([FromBody]Chat chat) {
+            if (chat != null) {
                 _unitOfWork.Chats.Insert(chat);
                 _unitOfWork.Save();
                 var insertedChat = _unitOfWork.Chats.Get().Where(element => element.Name == chat.Name);
@@ -77,8 +67,7 @@ namespace Zeww.BusinessLogic.Controllers
 
 
         [HttpGet("GetFiles/{chatName}")]
-        public IActionResult GetFiles(string chatName, [FromQuery]string SenderName, [FromQuery]string topic)
-        {
+        public IActionResult GetFiles(string chatName, [FromQuery]string SenderName, [FromQuery]string topic) {
             var returnedFileList = _unitOfWork.Files.GetFiles(chatName, SenderName, topic);
             if (returnedFileList != null)
                 return Ok(returnedFileList);
@@ -86,10 +75,8 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpPost("PostFile")]
-        public IActionResult PostFile([FromBody]File file)
-        {
-            if (file != null)
-            {
+        public IActionResult PostFile([FromBody]File file) {
+            if (file != null) {
                 _unitOfWork.Files.Add(file);
                 _unitOfWork.Save();
                 var insertedFile = _unitOfWork.Files.GetByID(_unitOfWork.Files.Get().Count());
@@ -101,14 +88,11 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpPut]
         [Route("EditChannelTopic/{channelId}")]
-        public IActionResult EditChannelTopic(int channelId, [FromQuery]string topic)
-        {
-            if (!String.IsNullOrEmpty(topic) && channelId != 0)
-            {
+        public IActionResult EditChannelTopic(int channelId, [FromQuery]string topic) {
+            if (!String.IsNullOrEmpty(topic) && channelId != 0) {
                 var success = _unitOfWork.Chats.EditChatTopic(channelId, topic);
                 _unitOfWork.Save();
-                if (success)
-                {
+                if (success) {
                     return Ok(_unitOfWork.Chats.GetByID(channelId));
                 }
                 return NotFound();
@@ -118,11 +102,9 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet]
         [Route("SearchByChannelName/{channelName}")]
-        public IActionResult SearchByChannelName(String channelName, int workspaceId)
-        {
-            //This code is written by Hanna and replicated here
-            if (!string.IsNullOrWhiteSpace(channelName))
-            {
+        public IActionResult SearchByChannelName(String channelName, int workspaceId) {
+
+            if (!string.IsNullOrWhiteSpace(channelName)) {
                 //Needs to be adjusted to search against the workspace only
                 var currentWorkspace = _unitOfWork.Workspaces.GetByID(workspaceId);
                 var query = _unitOfWork.Chats.Get();
@@ -131,9 +113,15 @@ namespace Zeww.BusinessLogic.Controllers
                 else
                     return NotFound("Could not find a channel with that name, Sorry!");
 
-            }
-            else
+            } else
                 return BadRequest();
+        }
+
+        [HttpGet]
+        [Route("GetAllChannelsInAWorkspace")]
+        public Chat GetAllChannelsInAworkspace(int workspaceId) {
+
+            return new Chat();
         }
 
         [HttpGet]
