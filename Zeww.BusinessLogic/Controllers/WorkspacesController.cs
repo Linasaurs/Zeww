@@ -238,13 +238,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
-        [HttpGet]
-        [Route("GetAllChannelsInWorkspace")]
-        public List<Chat> GetAllChannelsInWorkspace(int workspaceId) {
-            var listOfChannelsInAWorkspace = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
-            return listOfChannelsInAWorkspace;
-        }
-
         [HttpPut]
         [Route("ChangeWorkspaceMemberRole/{workspaceId}")]
         public IActionResult ChangeWorkspaceMemberRole(int workspaceId, [FromBody] WorkspaceRoleDTO dto)

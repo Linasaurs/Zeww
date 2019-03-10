@@ -295,6 +295,20 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("SearchByUserName/{userName}")]
+        public IActionResult SearchByUserName(string userName, int workspaceId) {
+            var listOfUsersIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
+            if (listOfUsersIdsInWorkspace == null) {
+                return Ok("No users in passed workspace");
+            }
+            var listOfUsersInWorkspace = new List<User>();
+            foreach (int userId in listOfUsersIdsInWorkspace) {
+                listOfUsersInWorkspace.Add(_unitOfWork.Users.GetByID(userId));
+            }
+            return Ok(listOfUsersInWorkspace);
+        }
+
         [AllowAnonymous]
         [HttpPut("EditProfile/{id}")]
         public IActionResult EditProfile(int id, [FromBody] User user)

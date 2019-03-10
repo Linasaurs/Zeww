@@ -50,8 +50,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
-
-
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
         [HttpPost("PostChat")]
         public IActionResult PostChat([FromBody]Chat chat) {
@@ -101,34 +99,25 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllChannelsInWorkspace")]
+        public ICollection<Chat> GetAllChannelsInWorkspace(int workspaceId) {
+            var listOfChannelsInAWorkspace = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
+            return listOfChannelsInAWorkspace;
+        }
+
+        [HttpGet]
         [Route("SearchByChannelName/{channelName}")]
         public IActionResult SearchByChannelName(String channelName, int workspaceId) {
 
             if (!string.IsNullOrWhiteSpace(channelName)) {
                 //Needs to be adjusted to search against the workspace only
-                var currentWorkspace = _unitOfWork.Workspaces.GetByID(workspaceId);
-                var query = _unitOfWork.Chats.Get();
-                if (query.Any(c => c.Name.Contains(channelName)))
-                    return Ok(channelName);
+                var queryOfChannels = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
+                if (queryOfChannels.Any(c => c.Name.ToLower().Contains(channelName)))
+                    return Ok(queryOfChannels);
                 else
                     return NotFound("Could not find a channel with that name, Sorry!");
-
             } else
                 return BadRequest();
-        }
-
-        [HttpGet]
-        [Route("SearchByUserName/{userName}")]
-        public IActionResult SearchByUserName(string userName, int workspaceId) {
-            var listOfUsersIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
-            if (listOfUsersIdsInWorkspace == null) {
-                return Ok("No users in passed workspace");
-            }
-            var listOfUsersInWorkspace = new List<User>();
-            foreach(int userId in listOfUsersIdsInWorkspace) {
-                listOfUsersInWorkspace.Add(_unitOfWork.Users.GetByID(userId));
-            }
-            return Ok(listOfUsersInWorkspace);
         }
 
         [AllowAnonymous]
