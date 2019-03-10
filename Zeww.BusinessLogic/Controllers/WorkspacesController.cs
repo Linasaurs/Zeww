@@ -16,12 +16,14 @@ using Microsoft.AspNetCore.Hosting.Server;
 using System.Net.Http.Headers;
 using Zeww.BusinessLogic.DTOs;
 using Zeww.BusinessLogic.ExtensionMethods;
+using Microsoft.AspNetCore.Authorization;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Zeww.BusinessLogic.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkspacesController : Controller {
@@ -78,11 +80,11 @@ namespace Zeww.BusinessLogic.Controllers
             }
             var ListOfUsersIds = _unitOfWork.Workspaces.GetUsersIdInWorkspace(Id);
             var ListOfUsers = new List<User>();
-            foreach (var userId in ListOfUsersIds) {
+            foreach (var userId in ListOfUsersIds)
+            {
                 ListOfUsers.Add(_unitOfWork.Users.GetByID(userId));
             }
             return Ok(ListOfUsers);
-
         }
 
         // POST api/NewWorkspace/workspacename
@@ -117,7 +119,7 @@ namespace Zeww.BusinessLogic.Controllers
 
             return Created(location, addedWorkspace);
 
-            
+
         }
 
         [HttpPut("{workspaceId}")]
@@ -173,6 +175,8 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok();
         }
 
+
+
         [HttpPut]
         [Route("EditWorkspaceURL/{workspace.Id}")]
         public IActionResult EditWorkspaceURL([FromBody] Workspace workspace)
@@ -180,7 +184,6 @@ namespace Zeww.BusinessLogic.Controllers
             var workspaceURLToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
             if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName == workspace.WorkspaceName)
             {
-
                 workspaceURLToEdit.URL = workspace.URL;
                 _unitOfWork.Workspaces.Update(workspaceURLToEdit);
                 _unitOfWork.Save();
@@ -190,8 +193,9 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return BadRequest();
             }
-
         }
+
+        //}
 
         //Delete Workspace
         [HttpDelete]
@@ -211,6 +215,7 @@ namespace Zeww.BusinessLogic.Controllers
 
             return NoContent();
         }
+
 
         [HttpPost]
         [Route("AddUserToWorkspace")]
@@ -237,6 +242,7 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
         }
+
 
         [HttpPut]
         [Route("ChangeWorkspaceMemberRole/{workspaceId}")]
@@ -286,15 +292,15 @@ namespace Zeww.BusinessLogic.Controllers
             var originalImageName = "";
             string imageId = Guid.NewGuid().ToString().Replace("-", "");
 
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, "Images", imageId); 
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "Images", imageId);
 
             var files = Request.Form.Files;
-            var file = files.FirstOrDefault(); 
+            var file = files.FirstOrDefault();
 
-            originalImageName = Path.GetFileName(file.FileName); 
+            originalImageName = Path.GetFileName(file.FileName);
 
             var fileExtension = Path.GetExtension(file.FileName);
-            var fullPath = $"{path}{fileExtension}"; 
+            var fullPath = $"{path}{fileExtension}";
 
             if (file.Length > 0)
             {
@@ -304,7 +310,7 @@ namespace Zeww.BusinessLogic.Controllers
                 }
             }
 
-            var returnedPath = Request.Scheme + "://" + Request.Host + "/Images/" + imageId + fileExtension; 
+            var returnedPath = Request.Scheme + "://" + Request.Host + "/Images/" + imageId + fileExtension;
 
             workspace.WorkspaceImageId = returnedPath;
             workspace.WorkspaceImageName = originalImageName;
@@ -317,8 +323,33 @@ namespace Zeww.BusinessLogic.Controllers
             return Json(returnedPath);
         }
 
+        [HttpPut]
+        [Route("ToggleDisplayEmailsInMembersProfile")]
+        public IActionResult ToggleDisplayEmailsInMembersProfile([FromBody] WorkspaceIdDto dto)
+        {
+            User user = this.GetAuthenticatedUser();
+            Workspace workspace = _unitOfWork.Workspaces.GetByID(dto.WorkspaceId);
+            if (workspace == null)
+            {
+                return NotFound();
+            }
+            if (workspace.CreatorID != user.Id)
+            {
+                return Unauthorized("You are not the Workspace Admin");
+            }
+            if (workspace.CreatorID == user.Id)
+            {
+                workspace.IsEmailVisible = !workspace.IsEmailVisible;
+            }
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+            return Ok(new { isVisible = workspace.IsEmailVisible });
+        }
     }
-
-
-
 }
+
+    
+
+
+
+
