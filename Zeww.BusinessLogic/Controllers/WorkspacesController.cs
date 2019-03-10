@@ -26,8 +26,7 @@ namespace Zeww.BusinessLogic.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class WorkspacesController : Controller
-    {
+    public class WorkspacesController : Controller {
 
         private IUnitOfWork _unitOfWork;
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -58,14 +57,12 @@ namespace Zeww.BusinessLogic.Controllers
                 else
                     return NotFound("There's no existing workspace with the specified name.");
 
-            }
-            else
+            } else
                 return BadRequest();
         }
 
         [HttpGet("{id}")]
-        public string GetById(int Id)
-        {
+        public string GetById(int Id) {
             return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
         }
 
@@ -76,7 +73,6 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return BadRequest();
             }
-
 
             if (_unitOfWork.Workspaces.GetByID(Id) == null)
             {
@@ -106,8 +102,10 @@ namespace Zeww.BusinessLogic.Controllers
 
             newWorkspace.DateOfCreation = DateTime.Now.ToString("MM/dd/yyyy");
 
-
-            _unitOfWork.Workspaces.Insert(newWorkspace);
+            if (!TryValidateModel(newWorkspace))
+                return BadRequest(ModelState);
+            else
+                _unitOfWork.Workspaces.Insert(newWorkspace);
             _unitOfWork.Save();
 
             var addedWorkspace = _unitOfWork.Workspaces.GetWorkspaceByName(newWorkspace.WorkspaceName);
@@ -220,7 +218,8 @@ namespace Zeww.BusinessLogic.Controllers
 
 
         [HttpPost]
-        public void AddUserToWorkSpace(int userId, int workspaceId)
+        [Route("AddUserToWorkspace")]
+        public void AddUserToWorkspace(int userId, int workspaceId)
         {
             var workspace = _unitOfWork.Workspaces.GetByID(workspaceId);
             var user = _unitOfWork.Users.GetByID(userId);

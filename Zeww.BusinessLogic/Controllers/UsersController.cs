@@ -163,7 +163,6 @@ namespace Zeww.BusinessLogic.Controllers
             var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
             if (userNameExists)
                 return BadRequest("This username is already taken.");
-
             return Ok("You can use this user name");
         }
 
@@ -181,7 +180,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet("ShowConnectionStatusForLoggedInUser")]
         public IActionResult ShowConnectionStatus() {
-            //Ziad is working on this method, please do not touch it!
             User userToShowConnectionStatusFor = this.GetAuthenticatedUser();
             var connectionStatus = userToShowConnectionStatusFor.ConnectionStatus;
             return Ok(connectionStatus);
@@ -189,7 +187,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpPut("ToggleUserConnectionStatusForLoggedInUser")]
         public IActionResult ToggleUserConnectionStatus(int userId, ConnectionStatus newConnectionStatus) {
-            //Ziad is working on this method, please do not touch it!
             var userToChangeConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
             if (userToChangeConnectionStatusFor.ConnectionStatus == 0) {
                 userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Away;
@@ -200,6 +197,28 @@ namespace Zeww.BusinessLogic.Controllers
             userToChangeConnectionStatusFor.ConnectionStatus = newConnectionStatus;
             return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
          }
+
+        public Status ShowStatusById(int userId) {
+            var userToShowStatusFor = _unitOfWork.Users.GetByID(userId);
+            var userStatus = userToShowStatusFor.Status;
+            return userStatus;
+        }
+
+        [HttpGet("ShowStatusToAllUsersInWorkspace")]
+        public IActionResult ShowStatusToAllUsersInWorkspace(int[] userIds) {
+            var dictionary = new Dictionary<int, Status>();
+            var allUsersInCurrentWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(1);
+            //Will have to change this method to be used to get the current workspace
+            if (allUsersInCurrentWorkspace == null) {
+                return BadRequest("No users in this workspace");
+            }
+
+            foreach(int userId in allUsersInCurrentWorkspace) {
+                var userStatus = _unitOfWork.Users.GetByID(userId).Status;
+                dictionary.Add(userId, userStatus);
+            }
+            return Ok(dictionary);
+        }
 
         [AllowAnonymous]
         [HttpPost]
@@ -260,7 +279,7 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
         [AllowAnonymous]
-        [HttpGet("workspaces/{id}")]
+        [HttpGet("GetworkspacesbyUserId/{id}")]
         public IActionResult GetworkspacesbyUserId(int id)
         {
             var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
@@ -273,6 +292,20 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpGet]
+        [Route("SearchByUserName/{userName}")]
+        public IActionResult SearchByUserName(string userName, int workspaceId) {
+            var listOfUsersIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
+            if (listOfUsersIdsInWorkspace == null) {
+                return Ok("No users in passed workspace");
+            }
+            var listOfUsersInWorkspace = new List<User>();
+            foreach (int userId in listOfUsersIdsInWorkspace) {
+                listOfUsersInWorkspace.Add(_unitOfWork.Users.GetByID(userId));
+            }
+            return Ok(listOfUsersInWorkspace);
         }
 
         [AllowAnonymous]

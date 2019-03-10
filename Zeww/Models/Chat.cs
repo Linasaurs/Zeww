@@ -21,7 +21,7 @@ namespace Zeww.Models
         //For viewing message threads
         public int skip { get; set; } = 0;
 
-        //Purpose should only be added in the case pf group channels
+        //Purpose should only be added in the case of group channels
         public string Purpose { get; set; }
         public string Topic { get; set; }
         public virtual ICollection<UserChats> UserChats { get; set; }
