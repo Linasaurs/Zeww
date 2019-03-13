@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190306124919_workspaceMuteTime")]
-    partial class workspaceMuteTime
+    [Migration("20190312161251_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -161,6 +161,8 @@ namespace Zeww.Migrations
                     b.Property<int>("UserId");
 
                     b.Property<DateTime>("TimeToWhichNotificationsAreMuted");
+
+                    b.Property<int>("UserRoleInWorkspace");
 
                     b.HasKey("WorkspaceId", "UserId");
 
