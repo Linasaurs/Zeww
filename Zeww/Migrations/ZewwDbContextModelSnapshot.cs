@@ -43,6 +43,8 @@ namespace Zeww.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("WorkspaceId");
+
                     b.ToTable("Chats");
                 });
 
@@ -187,7 +189,13 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
+                    b.Property<bool>("IsEmailVisible");
+
                     b.Property<string>("URL");
+
+                    b.Property<string>("WorkspaceImageId");
+
+                    b.Property<string>("WorkspaceImageName");
 
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
@@ -197,6 +205,14 @@ namespace Zeww.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("Zeww.Models.Chat", b =>
+                {
+                    b.HasOne("Zeww.Models.Workspace")
+                        .WithMany("Chats")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Zeww.Models.File", b =>
