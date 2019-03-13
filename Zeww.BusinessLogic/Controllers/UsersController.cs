@@ -109,7 +109,7 @@ namespace Zeww.BusinessLogic.Controllers
                 _unitOfWork.Users.Insert(user);
                 _unitOfWork.Save();
 
-                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("SignUp", user.Id.ToString());
+                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).ToLower().Replace("signup", user.Id.ToString());
 
                 return Created(location, user);
             }
