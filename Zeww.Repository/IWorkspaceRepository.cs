@@ -11,6 +11,7 @@ namespace Zeww.Repository
         //Your method headers go here
         Workspace GetWorkspaceByName(string name);
         IQueryable<int> GetUsersIdInWorkspace(int id);
-        ICollection <Chat> GetAllChannelsInAworkspace(int workspaceId);
+        IQueryable <Chat> GetAllChannelsInAworkspace(int workspaceId);
+        IQueryable<Chat> SearchForChannelInWorkspace(string queryString, int workspaceId);
     }
 }
