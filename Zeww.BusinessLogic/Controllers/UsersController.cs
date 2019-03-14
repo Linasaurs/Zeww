@@ -109,7 +109,7 @@ namespace Zeww.BusinessLogic.Controllers
                 _unitOfWork.Users.Insert(user);
                 _unitOfWork.Save();
 
-                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("SignUp", user.Id.ToString());
+                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).ToLower().Replace("signup", user.Id.ToString());
 
                 return Created(location, user);
             }
@@ -158,9 +158,9 @@ namespace Zeww.BusinessLogic.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyUserNameIsUnique")]
-        public IActionResult VerifyUserNameIsUnique(UserNameDTO dto)
+        public IActionResult VerifyUserNameIsUnique([FromQuery]string userName)
         {
-            var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(userName) == null ? false : true;
             if (userNameExists)
                 return BadRequest("This username is already taken.");
             return Ok("You can use this user name");
@@ -169,9 +169,9 @@ namespace Zeww.BusinessLogic.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyEmailIsUnique")]
-        public IActionResult VerifyEmailIsUnique(EmailDTO dto)
+        public IActionResult VerifyEmailIsUnique([FromQuery]string email)
         {
-            var emailExists = _unitOfWork.Users.GetUserByEmail(dto.Email) == null ? false : true;
+            var emailExists = _unitOfWork.Users.GetUserByEmail(email) == null ? false : true;
             if (emailExists)
                 return BadRequest("This email is already taken.");
 
