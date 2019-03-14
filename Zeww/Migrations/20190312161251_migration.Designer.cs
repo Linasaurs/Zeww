@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190307100848_UserLocationregion2")]
-    partial class UserLocationregion2
+    [Migration("20190312161251_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -190,10 +190,6 @@ namespace Zeww.Migrations
                     b.Property<string>("DateOfCreation");
 
                     b.Property<string>("URL");
-
-                    b.Property<string>("WorkspaceImageId");
-
-                    b.Property<string>("WorkspaceImageName");
 
                     b.Property<string>("WorkspaceName")
                         .IsRequired();

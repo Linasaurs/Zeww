@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class NewDB : Migration
+    public partial class migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,6 +19,7 @@ namespace Zeww.Migrations
                     DateCreated = table.Column<DateTime>(nullable: false),
                     IsPrivate = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: true),
+                    skip = table.Column<int>(nullable: false),
                     Purpose = table.Column<string>(nullable: true),
                     Topic = table.Column<string>(nullable: true)
                 },
@@ -65,7 +66,6 @@ namespace Zeww.Migrations
                     URL = table.Column<string>(nullable: true),
                     DailyDoNotDisturbFrom = table.Column<int>(nullable: true),
                     DailyDoNotDisturbTo = table.Column<int>(nullable: true),
-                    IsEmailVisible = table.Column<bool>(nullable: false),
                     CanInviteUsersToWorkspace = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -82,7 +82,8 @@ namespace Zeww.Migrations
                     SenderID = table.Column<int>(nullable: false),
                     ChatId = table.Column<int>(nullable: false),
                     MessageContent = table.Column<string>(nullable: true),
-                    isPinned = table.Column<bool>(nullable: false)
+                    isPinned = table.Column<bool>(nullable: false),
+                    dateTime = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,7 +131,8 @@ namespace Zeww.Migrations
                 {
                     UserId = table.Column<int>(nullable: false),
                     ChatId = table.Column<int>(nullable: false),
-                    IsStarred = table.Column<bool>(nullable: false)
+                    IsStarred = table.Column<bool>(nullable: false),
+                    IsMuted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -154,7 +156,9 @@ namespace Zeww.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false),
-                    WorkspaceId = table.Column<int>(nullable: false)
+                    WorkspaceId = table.Column<int>(nullable: false),
+                    TimeToWhichNotificationsAreMuted = table.Column<DateTime>(nullable: false),
+                    UserRoleInWorkspace = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
