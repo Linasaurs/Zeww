@@ -100,7 +100,7 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet]
         [Route("GetAllChannelsInWorkspace")]
-        public ICollection<Chat> GetAllChannelsInWorkspace(int workspaceId) {
+        public IQueryable<Chat> GetAllChannelsInWorkspace(int workspaceId) {
             var listOfChannelsInAWorkspace = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
             return listOfChannelsInAWorkspace;
         }
@@ -110,7 +110,6 @@ namespace Zeww.BusinessLogic.Controllers
         public IActionResult SearchByChannelName(String channelName, int workspaceId) {
 
             if (!string.IsNullOrWhiteSpace(channelName)) {
-                //Needs to be adjusted to search against the workspace only
                 var queryOfChannels = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
                 if (queryOfChannels.Any(c => c.Name.ToLower().Contains(channelName)))
                     return Ok(queryOfChannels);
