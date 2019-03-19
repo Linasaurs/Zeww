@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190307100848_UserLocationregion2")]
-    partial class UserLocationregion2
+    [Migration("20190312093949_intial")]
+    partial class intial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,6 +44,8 @@ namespace Zeww.Migrations
                     b.Property<int>("skip");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("WorkspaceId");
 
                     b.ToTable("Chats");
                 });
@@ -189,6 +191,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
+                    b.Property<bool>("IsEmailVisible");
+
                     b.Property<string>("URL");
 
                     b.Property<string>("WorkspaceImageId");
@@ -203,6 +207,14 @@ namespace Zeww.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("Zeww.Models.Chat", b =>
+                {
+                    b.HasOne("Zeww.Models.Workspace")
+                        .WithMany("Chats")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Zeww.Models.File", b =>
