@@ -160,7 +160,7 @@ namespace Zeww.BusinessLogic.Controllers
                 _unitOfWork.Users.Insert(user);
                 _unitOfWork.Save();
 
-                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("SignUp", user.Id.ToString());
+                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).ToLower().Replace("signup", user.Id.ToString());
 
                 return Created(location, user);
             }
@@ -206,25 +206,23 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
 
-
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyUserNameIsUnique")]
-        public IActionResult VerifyUserNameIsUnique(UserNameDTO dto)
+        public IActionResult VerifyUserNameIsUnique([FromQuery]string userName)
         {
-            var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(userName) == null ? false : true;
             if (userNameExists)
                 return BadRequest("This username is already taken.");
-
             return Ok("You can use this user name");
         }
 
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyEmailIsUnique")]
-        public IActionResult VerifyEmailIsUnique(EmailDTO dto)
+        public IActionResult VerifyEmailIsUnique([FromQuery]string email)
         {
-            var emailExists = _unitOfWork.Users.GetUserByEmail(dto.Email) == null ? false : true;
+            var emailExists = _unitOfWork.Users.GetUserByEmail(email) == null ? false : true;
             if (emailExists)
                 return BadRequest("This email is already taken.");
 
@@ -233,7 +231,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet("ShowConnectionStatusForLoggedInUser")]
         public IActionResult ShowConnectionStatus() {
-            //Ziad is working on this method, please do not touch it!
             User userToShowConnectionStatusFor = this.GetAuthenticatedUser();
             var connectionStatus = userToShowConnectionStatusFor.ConnectionStatus;
             return Ok(connectionStatus);
@@ -241,7 +238,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpPut("ToggleUserConnectionStatusForLoggedInUser")]
         public IActionResult ToggleUserConnectionStatus(int userId, ConnectionStatus newConnectionStatus) {
-            //Ziad is working on this method, please do not touch it!
             var userToChangeConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
             if (userToChangeConnectionStatusFor.ConnectionStatus == 0) {
                 userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Away;
@@ -252,6 +248,28 @@ namespace Zeww.BusinessLogic.Controllers
             userToChangeConnectionStatusFor.ConnectionStatus = newConnectionStatus;
             return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
          }
+
+        public Status ShowStatusById(int userId) {
+            var userToShowStatusFor = _unitOfWork.Users.GetByID(userId);
+            var userStatus = userToShowStatusFor.Status;
+            return userStatus;
+        }
+
+        [HttpGet("ShowStatusToAllUsersInWorkspace")]
+        public IActionResult ShowStatusToAllUsersInWorkspace(int[] userIds) {
+            var dictionary = new Dictionary<int, Status>();
+            var allUsersInCurrentWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(1);
+            //Will have to change this method to be used to get the current workspace
+            if (allUsersInCurrentWorkspace == null) {
+                return BadRequest("No users in this workspace");
+            }
+
+            foreach(int userId in allUsersInCurrentWorkspace) {
+                var userStatus = _unitOfWork.Users.GetByID(userId).Status;
+                dictionary.Add(userId, userStatus);
+            }
+            return Ok(dictionary);
+        }
 
         [AllowAnonymous]
         [HttpPost]
@@ -312,7 +330,7 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
         [AllowAnonymous]
-        [HttpGet("workspaces/{id}")]
+        [HttpGet("GetworkspacesbyUserId/{id}")]
         public IActionResult GetworkspacesbyUserId(int id)
         {
             var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
@@ -325,6 +343,20 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpGet]
+        [Route("SearchByUserName/{userName}")]
+        public IActionResult SearchByUserName(string userName, int workspaceId) {
+            var listOfUsersIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
+            if (listOfUsersIdsInWorkspace == null) {
+                return Ok("No users in passed workspace");
+            }
+            var listOfUsersInWorkspace = new List<User>();
+            foreach (int userId in listOfUsersIdsInWorkspace) {
+                listOfUsersInWorkspace.Add(_unitOfWork.Users.GetByID(userId));
+            }
+            return Ok(listOfUsersInWorkspace);
         }
 
         [AllowAnonymous]
@@ -376,7 +408,6 @@ namespace Zeww.BusinessLogic.Controllers
                 }
             }
         }
-
 
         [HttpPut]
         [Route("AddDontDisturbPeriod")]
@@ -438,7 +469,6 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(userChannelChats);
         }
 
-
         [HttpPut]
         [Route("AddCustomStatus")]
         public IActionResult AddCustomStatus([FromBody] CustomStatusDTO CustomStatus)
@@ -494,6 +524,46 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
             return Ok(new { isStarred = userChat.IsStarred });
+        }
+        [HttpPut]
+        [Route("ToggleMuteChat")]
+        public IActionResult ToggleMuteChat([FromBody] ChatIdDTO chat)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userChatsIds = _unitOfWork.Users.GetChatsIdsByUserId(user.Id);
+
+            UserChats userChat = userChatsIds.Any(uci => uci == chat.ChatID) ? _unitOfWork.UserChats.GetUserChatByIds(user.Id, chat.ChatID) : null;
+
+            if (userChat == null)
+                return BadRequest("This chat either does not exist or the user is not allowed to edit this chat");
+
+            userChat.IsMuted = !userChat.IsMuted;
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return Ok(new { isMuted = userChat.IsMuted });
+        }
+        [HttpPut]
+        [Route("MuteWorkspaceForAmountOfHours")]
+        public IActionResult MuteWorkspaceForAmountOfHours([FromBody] MuteWorspaceForHoursDTO dto)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            IQueryable<int> userWorkspaceIds = _unitOfWork.Users.GetWorkspaceIdsByUserId(user.Id);
+
+            var userWorkspaces = userWorkspaceIds.Any(uci => uci == dto.WorkspaceID) ? _unitOfWork.UserWorkspaces.GetUserWorkspaceByIds(user.Id, dto.WorkspaceID) : null;
+
+            if (userWorkspaces == null)
+                return BadRequest("This workspace either does not exist or the user is not allowed to edit this workspace");
+
+            userWorkspaces.TimeToWhichNotificationsAreMuted = DateTime.Now.AddHours(dto.HoursToBeMuted);
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return Ok(new { Workpace = userWorkspaces.WorkspaceId, MutedUntil = userWorkspaces.TimeToWhichNotificationsAreMuted });
         }
     }
 }

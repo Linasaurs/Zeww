@@ -17,5 +17,15 @@ namespace Zeww.Models
         public int WorkspaceId { get; set; }
         //[ForeignKey("WorkspaceId")]
         //public Workspace Workspace { get; set; }
+        public DateTime TimeToWhichNotificationsAreMuted { get; set; }
+        public UserRoleInWorkspace UserRoleInWorkspace { get; set; }
+    }
+
+    public enum UserRoleInWorkspace
+    {
+        Owner,
+        Admin,
+        Member,
+        Guest
     }
 }

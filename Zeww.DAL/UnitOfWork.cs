@@ -15,7 +15,7 @@ namespace Zeww.DAL
 
         public UnitOfWork() {
             DbContextOptionsBuilder<ZewwDbContext> optionsBuilder = new DbContextOptionsBuilder<ZewwDbContext>();
-            string connection = @"Server=.\SQLEXPRESS;Database=ZewwDatabase;Trusted_Connection=True;ConnectRetryCount=0";
+            string connection = @"Server=.;Database=ZewwDatabase;Trusted_Connection=True;ConnectRetryCount=0";
             optionsBuilder.UseSqlServer(connection);
             context = new ZewwDbContext(optionsBuilder.Options);
             Chats = new ChatRepository(context);

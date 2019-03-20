@@ -17,7 +17,11 @@ namespace Zeww.Models
         public DateTime DateCreated { get; set; }
         public bool IsPrivate { get; set; }
         public string Name { get; set; }
-        //Purpose should only be added in the case pf group channels
+
+        //For viewing message threads
+        public int skip { get; set; } = 0;
+
+        //Purpose should only be added in the case of group channels
         public string Purpose { get; set; }
         public string Topic { get; set; }
         public virtual ICollection<UserChats> UserChats { get; set; }
