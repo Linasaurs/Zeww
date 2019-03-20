@@ -40,7 +40,7 @@ namespace Zeww.BusinessLogic.Controllers
             return "Hello";
         }
 
-
+        
         [HttpGet("{id}")]
         public ActionResult GetById(int Id)
         {
@@ -55,9 +55,60 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return NotFound();
             }
-            
-            return Ok(_unitOfWork.Users.GetByID(Id));
 
+            var user = _unitOfWork.Users.GetByID(Id);
+        
+             var parsedString = Enum.GetName(typeof(Status), (int)user.Status);
+            //Enum.TryParse(parsedString, out Enum user.status);
+            Status st=(Status) Enum.Parse(typeof(Status), parsedString);
+            user.Status = st;
+            if (user.Status.ToString() == parsedString)
+            {
+                return  Ok(Status.Busy.ToString());
+            }
+
+            return Ok(parsedString);
+
+        }
+
+        [HttpGet]
+        [Route("getEnumStatusName/{user.Id}")]
+        public string GetEnumStatusName([FromBody] User user)
+        {
+            User _user = this.GetAuthenticatedUser();
+
+            var parsedString = Enum.GetName(typeof(Status), (int)user.Status);
+
+            if(_user.Id != user.Id)
+            {
+                return "You aren't authenticated!";
+            }
+            else
+            {
+                if (user.Status.ToString() == parsedString)
+                {
+                    return parsedString;
+                }
+                else
+                {
+                    return "status not found!";
+                }
+
+            }
+        }
+
+
+        [HttpPut]
+        [Route("UpdateEnumStatusName")]
+        public IActionResult UpdateEnumStatusName([FromBody] string status)
+        {
+            User _user = this.GetAuthenticatedUser();
+
+            Status st = (Status)Enum.Parse(typeof(Status), status);
+
+            _user.Status = st;
+
+            return NoContent();
         }
 
         [HttpGet("withoutPasswords/{id}")]

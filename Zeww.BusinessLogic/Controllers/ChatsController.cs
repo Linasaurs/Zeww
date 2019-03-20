@@ -40,24 +40,27 @@ namespace Zeww.BusinessLogic.Controllers
             var returnedChat = _unitOfWork.Chats.Get(ch => ch.Name == chat.Name && ch.WorkspaceId == chat.WorkspaceId);
             return Ok(returnedChat);
         }
-
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetChannelDetails/{chatID}")]
         public IActionResult GetChannelDetails(int? chatID)
         {
             var chatDetails = _unitOfWork.Chats.GetByID(chatID);
+            var numberOfUsers = _unitOfWork.UserChats.GetNumberOfUsersInChat(chatID);
+            var workspaceUrl = _unitOfWork.Workspaces.GetByID(chatDetails.WorkspaceId);
+            var url = workspaceUrl.URL;
             if (chatDetails==null)
             {
                 return NotFound();
             }
            else if (chatDetails.Id.Equals(chatID))
             {
-                return Ok(chatDetails);
+                var channelDetails = new { chatDetails, numberOfUsers, url };
+                return Ok(channelDetails);
             }
             return NotFound();
 
         }
-
 
 
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)

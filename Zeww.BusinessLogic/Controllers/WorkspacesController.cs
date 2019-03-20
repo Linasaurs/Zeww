@@ -143,10 +143,10 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpPut]
-        [Route("EditWorkspaceName")]
-        public IActionResult EditWorkspaceName([FromBody] Workspace workspace)
+        [Route("EditWorkspaceName/{Id}")]
+        public IActionResult EditWorkspaceName(int Id, [FromBody] Workspace workspace)
         {
-            var workspaceNameToEdit = _unitOfWork.Workspaces.GetByID(workspace.Id);
+            var workspaceNameToEdit = _unitOfWork.Workspaces.GetByID(Id);
             if (workspaceNameToEdit == null)
             {
                 return BadRequest();
@@ -158,14 +158,13 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpPut]
-        [Route("EditWorkspaceURL/{workspace.Id}")]
-        public IActionResult EditWorkspaceURL([FromBody] Workspace workspace)
+        [Route("EditWorkspaceURL/{Id}")]
+        public IActionResult EditWorkspaceURL(int Id, [FromBody] WorkspaceUrlDTO workspaceDTO)
         {
-            var workspaceURLToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
-            if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName== workspace.WorkspaceName)
+            var workspaceURLToEdit = _unitOfWork.Workspaces.GetByID(Id);
+            if (workspaceURLToEdit != null)
             {
-
-                workspaceURLToEdit.URL = workspace.URL;
+                workspaceURLToEdit.URL = workspaceDTO.URL;
                 _unitOfWork.Workspaces.Update(workspaceURLToEdit);
                 _unitOfWork.Save();
                 return Ok();

@@ -17,5 +17,12 @@ namespace Zeww.DAL
 
             return query.Where(uc => uc.UserId == userId && uc.ChatId == chatId).SingleOrDefault();
         }
+        public int GetNumberOfUsersInChat (int? chatId)
+        {
+            IQueryable<UserChats> query = dbSet;
+
+            return query.Where(uc => uc.ChatId == chatId).Count();
+
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace Zeww.Models
         public string WorkspaceProjectName { get; set; }  
 
         public string DateOfCreation { get; set; }
-
+        [Url]
         public string URL { get; set; }
         [Range(0, 23)]
         public int? DailyDoNotDisturbFrom { get; set; }
