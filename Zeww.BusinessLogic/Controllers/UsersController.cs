@@ -40,7 +40,7 @@ namespace Zeww.BusinessLogic.Controllers
             return "Hello";
         }
 
-
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public ActionResult GetById(int Id)
         {
