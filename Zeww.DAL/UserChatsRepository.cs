@@ -17,5 +17,12 @@ namespace Zeww.DAL
 
             return query.Where(uc => uc.UserId == userId && uc.ChatId == chatId).SingleOrDefault();
         }
+
+        public bool IsUserInChannel(int userId, int chatId)
+        {
+            IQueryable<UserChats> query = dbSet;
+
+            return query.Any(uc => uc.UserId == userId && uc.ChatId == chatId);
+        }
     }
 }
