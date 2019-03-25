@@ -14,7 +14,7 @@ namespace Zeww.DAL {
 
         public void Add(Message message)
         {
-            message.dateTime = DateTime.Now;
+            message.TimeStamp = DateTime.Now;
             dbSet.Add(message);
         }
 

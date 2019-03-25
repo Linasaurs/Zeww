@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Zeww.Models;
 using Zeww.Repository;
@@ -45,6 +46,18 @@ namespace Zeww.DAL
             Chat chat = GetByID(channelId);
             chat.Name = newName;
             Update(chat);
+        }
+
+        public int GetUnseenMessagesCount(int chatID, DateTime lastViewedByUser)
+        {
+            IQueryable<Chat> query = dbSet;
+            var messages = query.Where(chat => chat.Id == chatID)
+                .Include(chat => chat.Messages)
+                .SelectMany(chat => chat.Messages);
+
+            var UnseenMessagesCount = messages.Where(message => message.TimeStamp > lastViewedByUser).Count();
+
+            return UnseenMessagesCount;
         }
     }
 }
