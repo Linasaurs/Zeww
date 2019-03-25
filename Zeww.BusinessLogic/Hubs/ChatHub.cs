@@ -54,5 +54,11 @@ namespace Zeww.Hubs
             Clients.Groups(roomName).SendAsync("sendToAll", "someone Left the room");
             return Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
         }
+
+        // for the live server
+        public async Task SendMessage(string user, string message)
+        {
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
+        }
     }
 }
