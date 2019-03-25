@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190312161251_migration")]
-    partial class migration
+    [Migration("20190312101941_emailVisible")]
+    partial class emailVisible
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,6 +44,8 @@ namespace Zeww.Migrations
                     b.Property<int>("skip");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("WorkspaceId");
 
                     b.ToTable("Chats");
                 });
@@ -189,7 +191,13 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
+                    b.Property<bool>("IsEmailVisible");
+
                     b.Property<string>("URL");
+
+                    b.Property<string>("WorkspaceImageId");
+
+                    b.Property<string>("WorkspaceImageName");
 
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
@@ -199,6 +207,14 @@ namespace Zeww.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("Zeww.Models.Chat", b =>
+                {
+                    b.HasOne("Zeww.Models.Workspace")
+                        .WithMany("Chats")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Zeww.Models.File", b =>

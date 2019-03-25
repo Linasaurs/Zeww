@@ -30,11 +30,21 @@ namespace Zeww.DAL
             return workspaces.SelectMany(uw=>uw.Select(u=>u.UserId));
         }
 
-        public ICollection<Chat> GetAllChannelsInAworkspace(int workspaceId) {
+        public IQueryable<Chat> GetAllChannelsInAworkspace(int workspaceId) {
             IQueryable<Workspace> queryWorkspaces = dbSet.Include(w => w.Chats);
             var workspaceToGetChatsIn = queryWorkspaces.FirstOrDefault(w => w.Id == workspaceId);
-            var listOfChatsInWorkspace = workspaceToGetChatsIn.Chats;
+            var listOfChatsInWorkspace = workspaceToGetChatsIn.Chats.AsQueryable();
             return listOfChatsInWorkspace;
+        }
+
+        public IQueryable<Chat> SearchForChannelInWorkspace(string queryString, int workspaceId) {
+            var allChannelsInAWorkspace = GetAllChannelsInAworkspace(workspaceId);
+            if (allChannelsInAWorkspace == null)
+                return null;
+            if (allChannelsInAWorkspace.Any(c => c.Name.ToLower().Contains(queryString)))
+                return allChannelsInAWorkspace;
+            else
+                return null;
         }
     }
 }
