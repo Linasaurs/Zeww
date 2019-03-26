@@ -12,6 +12,6 @@ namespace Zeww.Repository
         IQueryable<UserWorkspace> GetWorkspacesByUserId(int id);
         IQueryable<UserWorkspace> GetUsersByWorkspaceId(int id);
         UserWorkspace GetUserWorkspaceByIds(int userId, int workspaceId);
-
+        bool IsUserInWorkspace(int userId, int workspaceId);
     }
 }

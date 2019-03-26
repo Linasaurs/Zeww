@@ -42,7 +42,7 @@ namespace Zeww.DAL
         public string GenerateJWTToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
+            var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication 2");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -65,10 +65,9 @@ namespace Zeww.DAL
         public IQueryable<int> GetChatsIdsByUserId(int id)
         {
             IQueryable<User> query = dbSet;
-
             var userChats = query.Where(u => u.Id == id).Include(u => u.UserChats).Select(uc=> uc.UserChats);
             return userChats.SelectMany(uc => uc.Select(u => u.ChatId));
-           
+
         }
     }
 }
