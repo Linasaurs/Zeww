@@ -15,7 +15,7 @@ namespace Zeww.Models
         public int ChatId { get; set; }
         public string MessageContent { get; set; }
         public bool isPinned { get; set; }
-        public DateTime dateTime { set; get; }
+        public DateTime TimeStamp { set; get; }
 
     }
 }

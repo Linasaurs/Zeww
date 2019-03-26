@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,12 +10,12 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Zeww.DAL;
 using Zeww.Repository;
+using Zeww.Hubs;
 
 namespace Zeww.BusinessLogic
 {
@@ -41,6 +40,7 @@ namespace Zeww.BusinessLogic
             services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
             services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IUserWorkspaceRepository, UserWorkspaceRepository>();
+
 
             //JWT Authentication
             var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
@@ -76,17 +76,17 @@ namespace Zeww.BusinessLogic
                     ValidateAudience = false
                 };
             });
-
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
+                    builder => builder
+                    .WithOrigins("http://localhost:3000")
+                    .WithMethods("POST")
                     .AllowAnyHeader()
-                    .AllowCredentials());
+                    .AllowCredentials()
+                    );
             });
-         
-           
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,11 +101,13 @@ namespace Zeww.BusinessLogic
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-        
-            app.UseStaticFiles();
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
             app.UseAuthentication();
-            app.UseCors("CorsPolicy");
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chat");
+            });
             app.UseMvc();
         }
     }
