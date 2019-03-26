@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190312101941_emailVisible")]
-    partial class emailVisible
+    [Migration("20190326153703_server-deployment")]
+    partial class serverdeployment
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -87,7 +87,7 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
-                    b.Property<DateTime>("dateTime");
+                    b.Property<DateTime>("TimeStamp");
 
                     b.Property<bool>("isPinned");
 

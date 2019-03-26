@@ -85,7 +85,7 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
-                    b.Property<DateTime>("dateTime");
+                    b.Property<DateTime>("TimeStamp");
 
                     b.Property<bool>("isPinned");
 
