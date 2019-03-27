@@ -106,12 +106,23 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest();
         }
 
-        [HttpGet]
-        [Route("GetAllChannelsInWorkspace")]
+       
         public IQueryable<Chat> GetAllChannelsInWorkspace(int workspaceId) {
             var listOfChannelsInAWorkspace = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
+            if (listOfChannelsInAWorkspace == null)
+                return null;
             return listOfChannelsInAWorkspace;
         }
+
+        [HttpGet]
+        [Route("GetAllChannelsInsideWorkspace")]
+        public IActionResult GetAllChannelsInsideWorkspace(int workspaceId) {
+            var listOfChannelsInAWorkspace = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
+            if (listOfChannelsInAWorkspace == null)
+                return BadRequest("No workspace with this id");
+            return Ok(listOfChannelsInAWorkspace);
+        }
+
 
         [HttpGet]
         [Route("SearchByChannelName/{channelName}")]
