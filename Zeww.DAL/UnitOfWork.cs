@@ -35,6 +35,7 @@ namespace Zeww.DAL
         public IWorkspaceRepository Workspaces{ get; private set; }
         public IFileRepository Files { get; private set; }
         public IUserChatsRepository UserChats { get; private set; }
+        public IEmojiRepository Emojis { get; private set; }
 
 
         public void Save() {
