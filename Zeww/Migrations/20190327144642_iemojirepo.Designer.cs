@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190312093949_intial")]
-    partial class intial
+    [Migration("20190327144642_iemojirepo")]
+    partial class iemojirepo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -87,7 +87,9 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
-                    b.Property<DateTime>("dateTime");
+                    b.Property<DateTime>("TimeStamp");
+
+                    b.Property<int>("emojiCount");
 
                     b.Property<bool>("isPinned");
 

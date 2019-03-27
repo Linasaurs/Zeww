@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class intial : Migration
+    public partial class iemojirepo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -148,7 +148,8 @@ namespace Zeww.Migrations
                     ChatId = table.Column<int>(nullable: false),
                     MessageContent = table.Column<string>(nullable: true),
                     isPinned = table.Column<bool>(nullable: false),
-                    dateTime = table.Column<DateTime>(nullable: false)
+                    TimeStamp = table.Column<DateTime>(nullable: false),
+                    emojiCount = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

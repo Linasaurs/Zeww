@@ -25,6 +25,7 @@ namespace Zeww.DAL {
 
         }
 
+
         //ERROR HERE, Message returns null
         public void DeleteMessage(int id)
         {
@@ -32,7 +33,7 @@ namespace Zeww.DAL {
             dbSet.Remove(message);
         }
 
-    public void PinMessage(int messageId)
+        public void PinMessage(int messageId)
         {
             var messageToPin = GetByID(messageId);
             messageToPin.isPinned = true;
