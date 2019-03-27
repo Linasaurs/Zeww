@@ -36,19 +36,27 @@ namespace Zeww.BusinessLogic.Controllers
             var returnedChat = _unitOfWork.Chats.Get(ch => ch.Name == chat.Name && ch.WorkspaceId == chat.WorkspaceId);
             return Ok(returnedChat);
         }
-
+        [AllowAnonymous]
         [HttpGet]
         [Route("GetChannelDetails/{chatID}")]
         public IActionResult GetChannelDetails(int? chatID) {
             var chatDetails = _unitOfWork.Chats.GetByID(chatID);
-            if (chatDetails == null) {
+            var numberOfUsers = _unitOfWork.UserChats.GetNumberOfUsersInChat(chatID);
+            var workspaceUrl = _unitOfWork.Workspaces.GetByID(chatDetails.WorkspaceId);
+            var url = workspaceUrl.URL;
+            if (chatDetails==null)
+            {
                 return NotFound();
-            } else if (chatDetails.Id.Equals(chatID)) {
-                return Ok(chatDetails);
+            }
+           else if (chatDetails.Id.Equals(chatID))
+            {
+                var channelDetails = new { chatDetails, numberOfUsers, url };
+                return Ok(channelDetails);
             }
             return NotFound();
 
         }
+
 
         //This is a test code for Wael , use if needed else ignore it (Creates a Chat)
         [HttpPost("PostChat")]
@@ -98,12 +106,23 @@ namespace Zeww.BusinessLogic.Controllers
             return BadRequest();
         }
 
-        [HttpGet]
-        [Route("GetAllChannelsInWorkspace")]
+       
         public IQueryable<Chat> GetAllChannelsInWorkspace(int workspaceId) {
             var listOfChannelsInAWorkspace = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
+            if (listOfChannelsInAWorkspace == null)
+                return null;
             return listOfChannelsInAWorkspace;
         }
+
+        [HttpGet]
+        [Route("GetAllChannelsInsideWorkspace")]
+        public IActionResult GetAllChannelsInsideWorkspace(int workspaceId) {
+            var listOfChannelsInAWorkspace = _unitOfWork.Workspaces.GetAllChannelsInAworkspace(workspaceId);
+            if (listOfChannelsInAWorkspace == null)
+                return BadRequest("No workspace with this id");
+            return Ok(listOfChannelsInAWorkspace);
+        }
+
 
         [HttpGet]
         [Route("SearchByChannelName/{channelName}")]

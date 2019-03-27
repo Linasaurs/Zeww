@@ -14,5 +14,7 @@ namespace Zeww.Repository
         bool EditChatTopic(int channelId , string topic);
 
         void EditChannelName(int channelId , string newName);
+    
+        Chat GetChatIfPrivate(int chatId, int workspaceId);
     }
 }

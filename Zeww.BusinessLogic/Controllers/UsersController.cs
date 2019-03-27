@@ -41,7 +41,7 @@ namespace Zeww.BusinessLogic.Controllers
             return "Hello";
         }
 
-        [AllowAnonymous]
+        
         [HttpGet("{id}")]
         public ActionResult GetById(int Id)
         {
@@ -56,9 +56,60 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return NotFound();
             }
-            
-            return Ok(_unitOfWork.Users.GetByID(Id));
 
+            var user = _unitOfWork.Users.GetByID(Id);
+        
+             var parsedString = Enum.GetName(typeof(Status), (int)user.Status);
+            //Enum.TryParse(parsedString, out Enum user.status);
+            Status st=(Status) Enum.Parse(typeof(Status), parsedString);
+            user.Status = st;
+            if (user.Status.ToString() == parsedString)
+            {
+                return  Ok(Status.Busy.ToString());
+            }
+
+            return Ok(parsedString);
+
+        }
+
+        [HttpGet]
+        [Route("getEnumStatusName/{user.Id}")]
+        public string GetEnumStatusName([FromBody] User user)
+        {
+            User _user = this.GetAuthenticatedUser();
+
+            var parsedString = Enum.GetName(typeof(Status), (int)user.Status);
+
+            if(_user.Id != user.Id)
+            {
+                return "You aren't authenticated!";
+            }
+            else
+            {
+                if (user.Status.ToString() == parsedString)
+                {
+                    return parsedString;
+                }
+                else
+                {
+                    return "status not found!";
+                }
+
+            }
+        }
+
+
+        [HttpPut]
+        [Route("UpdateEnumStatusName")]
+        public IActionResult UpdateEnumStatusName([FromBody] string status)
+        {
+            User _user = this.GetAuthenticatedUser();
+
+            Status st = (Status)Enum.Parse(typeof(Status), status);
+
+            _user.Status = st;
+
+            return NoContent();
         }
 
         [HttpGet("withoutPasswords/{id}")]
@@ -566,6 +617,47 @@ namespace Zeww.BusinessLogic.Controllers
             } 
 
                
+        }
+
+        [HttpGet]
+        [Route("getprivatechat/{userId2}/{workspaceId}")]
+        public IActionResult GetPrivateChat(int userId2, int workspaceId)
+        {
+            if (_unitOfWork.Users.GetByID(userId2) == null)
+                return BadRequest("The user does not exist");
+
+            if (_unitOfWork.Workspaces.GetByID(workspaceId) == null)
+                return BadRequest("The workspace does not exist");
+
+            User user1 = this.GetAuthenticatedUser();
+
+            var commonChatIds = _unitOfWork.UserChats.GetCommonChats(user1.Id, userId2);
+
+            Chat privateCommonChat;
+            foreach (var commonChatId in commonChatIds)
+            {
+                privateCommonChat = _unitOfWork.Chats.GetChatIfPrivate(commonChatId, workspaceId);
+
+                if (privateCommonChat != null)
+                    return Ok(privateCommonChat);
+            }
+
+            UserChats userChat1 = new UserChats { UserId = user1.Id };
+            UserChats userChat2 = new UserChats { UserId = userId2 };
+            privateCommonChat = new Chat
+            {
+                CreatorID = user1.Id,
+                DateCreated = DateTime.Now,
+                IsPrivate = true,
+                Name = "dm" + user1.Id + "," + userId2,
+                WorkspaceId = workspaceId,
+                UserChats = new List<UserChats> { userChat1, userChat2 }
+            };
+
+            _unitOfWork.Chats.Insert(privateCommonChat);
+            _unitOfWork.Save();
+            
+            return Created("No Url at the moment", privateCommonChat);
         }
     }
 }
