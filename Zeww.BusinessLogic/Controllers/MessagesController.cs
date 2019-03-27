@@ -50,15 +50,6 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
 
-        [HttpPost("PostEmoji")]
-        public IActionResult PostEmoji([FromBody] Message message)
-        {
-            _unitOfWork.Messages.Add(message);
-            _unitOfWork.Save();
-            return Ok(message);
-
-        }
-
         [HttpDelete]
         public IActionResult Delete([FromHeader] int id)
         {

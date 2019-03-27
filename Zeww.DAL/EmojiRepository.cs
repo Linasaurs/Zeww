@@ -15,13 +15,20 @@ namespace Zeww.DAL
 
         public void Add(Emoji emoji)
         {
-            dbSet.Add(emoji);
+            Emoji searchEmoji = dbSet.SingleOrDefault(e => e.messageID == emoji.messageID && e.userID == emoji.userID);
+            if (searchEmoji == null)
+            {
+                dbSet.Add(emoji);
+            }
         }
 
         public void DeleteEmoji(int messageId, int userId)
         {
             Emoji emoji = dbSet.SingleOrDefault(e => e.messageID == messageId && e.userID == userId);
-            dbSet.Remove(emoji);
+            if (emoji != null)
+            { 
+                dbSet.Remove(emoji);
+        }
         }
 
         public int GetEmojiCount(int messageId)

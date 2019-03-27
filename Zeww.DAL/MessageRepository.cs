@@ -15,6 +15,7 @@ namespace Zeww.DAL {
         public void Add(Message message)
         {
             message.TimeStamp = DateTime.Now;
+            message.emojiCount = 0;
             dbSet.Add(message);
         }
 

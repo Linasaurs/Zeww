@@ -48,6 +48,21 @@ namespace Zeww.Migrations
                     b.ToTable("Chats");
                 });
 
+            modelBuilder.Entity("Zeww.Models.Emoji", b =>
+                {
+                    b.Property<int>("emojiID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("messageID");
+
+                    b.Property<int>("userID");
+
+                    b.HasKey("emojiID");
+
+                    b.ToTable("Emojis");
+                });
+
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
                     b.Property<int>("Id")
