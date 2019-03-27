@@ -16,6 +16,7 @@ using Zeww.Models;
 using Zeww.Repository;
 using Zeww.BusinessLogic.ExtensionMethods;
 using Newtonsoft.Json;
+using System.Net.Mail;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -336,7 +337,12 @@ namespace Zeww.BusinessLogic.Controllers
             var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
             if (user != null)
             {
-                string userJson = JsonConvert.SerializeObject(user);
+                List<Workspace> workspaces = new List<Workspace>();
+                foreach(var workspace in user)
+                {
+                    workspaces.Add(_unitOfWork.Workspaces.GetByID(workspace));
+                }
+                string userJson = JsonConvert.SerializeObject(workspaces);
                 return Ok(userJson);
             }
             else
@@ -564,6 +570,53 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
             return Ok(new { Workpace = userWorkspaces.WorkspaceId, MutedUntil = userWorkspaces.TimeToWhichNotificationsAreMuted });
+        }
+        [HttpPost]
+        [Route("SendInvataionToUser")]
+        public IActionResult SendInavtaionToUser([FromBody] EmailDTO mailTo)
+        {
+            User user = this.GetAuthenticatedUser();
+
+           
+
+                string pweda = "3adewelzew"; //(ConfigurationManager.AppSettings["password"]);
+                string from = "zew.services.tgp@gmail.com"; //Replace this with your own correct Gmail Address
+                                                            /*  string to = "abc@gef.com";*/ //Replace this with the Email Address to whom you want to send the mail
+                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage();
+                mail.To.Add(mailTo.Email);
+                mail.From = new MailAddress(from);
+                mail.Subject = "This is a test mail";
+                mail.SubjectEncoding = System.Text.Encoding.UTF8;
+                mail.Body = "Test Mail.";
+                mail.IsBodyHtml = true;
+
+                mail.Priority = MailPriority.High;
+                System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient();
+
+                
+                client.Credentials = new System.Net.NetworkCredential(from, pweda);
+                client.Port = 587; 
+                client.Host = "smtp.gmail.com";
+                client.EnableSsl = true; 
+
+                try
+                {
+                    client.Send(mail);
+                   return Ok("message Sent");
+                }
+                catch (Exception ex)
+                {
+                    Exception ex2 = ex;
+                    string errorMessage = string.Empty;
+                    while (ex2 != null)
+                    {
+                        errorMessage += ex2.ToString();
+                        ex2 = ex2.InnerException;
+                    }
+                return BadRequest(ex2);
+            } 
+
+               
         }
 
         [HttpGet]
