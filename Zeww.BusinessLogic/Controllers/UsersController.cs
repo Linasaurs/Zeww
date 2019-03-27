@@ -286,7 +286,12 @@ namespace Zeww.BusinessLogic.Controllers
             var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
             if (user != null)
             {
-                string userJson = JsonConvert.SerializeObject(user);
+                List<Workspace> workspaces = new List<Workspace>();
+                foreach(var workspace in user)
+                {
+                    workspaces.Add(_unitOfWork.Workspaces.GetByID(workspace));
+                }
+                string userJson = JsonConvert.SerializeObject(workspaces);
                 return Ok(userJson);
             }
             else
