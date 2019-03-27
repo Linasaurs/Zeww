@@ -42,7 +42,7 @@ namespace Zeww.DAL
         public string GenerateJWTToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication 2");
+            var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

@@ -33,6 +33,8 @@ namespace Zeww.DAL
         public IQueryable<Chat> GetAllChannelsInAworkspace(int workspaceId) {
             IQueryable<Workspace> queryWorkspaces = dbSet.Include(w => w.Chats);
             var workspaceToGetChatsIn = queryWorkspaces.FirstOrDefault(w => w.Id == workspaceId);
+            if (workspaceToGetChatsIn == null)
+                return null;
             var listOfChatsInWorkspace = workspaceToGetChatsIn.Chats.AsQueryable();
             return listOfChatsInWorkspace;
         }
