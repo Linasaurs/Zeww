@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zeww.Models;
 
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    partial class ZewwDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190325101452_updateDatabase2")]
+    partial class updateDatabase2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,7 +87,7 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
-                    b.Property<DateTime>("TimeStamp");
+                    b.Property<DateTime>("dateTime");
 
                     b.Property<bool>("isPinned");
 

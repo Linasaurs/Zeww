@@ -24,7 +24,8 @@ using System.Net;
 
 namespace Zeww.BusinessLogic.Controllers
 {
-    [Authorize]
+    //[Authorize]
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkspacesController : Controller {
@@ -113,10 +114,12 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
-        [HttpPut("{workspaceId}")]
+        [HttpPut]
         [Route("WorkspaceDoNotDisturbPeriod/{workspaceId}")]
         public IActionResult WorkspaceDoNotDisturbPeriod([FromBody] DoNotDisturbDTO dto, int? workspaceId) {
             User user = this.GetAuthenticatedUser();
+
+            
 
             var WorkspaceDoNotDisturbHours = _unitOfWork.Workspaces.GetByID(workspaceId);
 
@@ -144,10 +147,12 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpPut]
-        [Route("EditWorkspaceName")]
-        public IActionResult EditWorkspaceName([FromBody] Workspace workspace) {
-            var workspaceNameToEdit = _unitOfWork.Workspaces.GetByID(workspace.Id);
-            if (workspaceNameToEdit == null) {
+        [Route("EditWorkspaceName/{Id}")]
+        public IActionResult EditWorkspaceName(int Id, [FromBody] Workspace workspace)
+        {
+            var workspaceNameToEdit = _unitOfWork.Workspaces.GetByID(Id);
+            if (workspaceNameToEdit == null)
+            {
                 return BadRequest();
             }
             workspaceNameToEdit.WorkspaceName = workspace.WorkspaceName;
@@ -157,11 +162,13 @@ namespace Zeww.BusinessLogic.Controllers
         }
 
         [HttpPut]
-        [Route("EditWorkspaceURL/{workspace.Id}")]
-        public IActionResult EditWorkspaceURL([FromBody] Workspace workspace) {
-            var workspaceURLToEdit = _unitOfWork.Workspaces.Get().Where(w => w.Id == workspace.Id).FirstOrDefault();
-            if (workspaceURLToEdit != null && workspaceURLToEdit.WorkspaceName == workspace.WorkspaceName) {
-                workspaceURLToEdit.URL = workspace.URL;
+        [Route("EditWorkspaceURL/{Id}")]
+        public IActionResult EditWorkspaceURL(int Id, [FromBody] WorkspaceUrlDTO workspaceDTO)
+        {
+            var workspaceURLToEdit = _unitOfWork.Workspaces.GetByID(Id);
+            if (workspaceURLToEdit != null)
+            {
+                workspaceURLToEdit.URL = workspaceDTO.URL;
                 _unitOfWork.Workspaces.Update(workspaceURLToEdit);
                 _unitOfWork.Save();
                 return Ok();

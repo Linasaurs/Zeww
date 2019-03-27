@@ -59,5 +59,14 @@ namespace Zeww.DAL
 
             return UnseenMessagesCount;
         }
+
+        public Chat GetChatIfPrivate(int chatId, int workspaceId)
+        {
+            IQueryable<Chat> query = dbSet;
+
+            return query.SingleOrDefault(c => c.Id == chatId &&
+                                              c.WorkspaceId == workspaceId &&
+                                              c.IsPrivate == true);
+        }
     }
 }

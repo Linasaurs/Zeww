@@ -10,8 +10,8 @@ using Zeww.Models;
 namespace Zeww.Migrations
 {
     [DbContext(typeof(ZewwDbContext))]
-    [Migration("20190312101941_emailVisible")]
-    partial class emailVisible
+    [Migration("20190325140205_migr")]
+    partial class migr
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
