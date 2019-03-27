@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class emailVisible : Migration
+    public partial class updateDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -24,7 +24,8 @@ using System.Net;
 
 namespace Zeww.BusinessLogic.Controllers
 {
-    [Authorize]
+    //[Authorize]
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkspacesController : Controller {
@@ -113,10 +114,12 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
-        [HttpPut("{workspaceId}")]
+        [HttpPut]
         [Route("WorkspaceDoNotDisturbPeriod/{workspaceId}")]
         public IActionResult WorkspaceDoNotDisturbPeriod([FromBody] DoNotDisturbDTO dto, int? workspaceId) {
             User user = this.GetAuthenticatedUser();
+
+            
 
             var WorkspaceDoNotDisturbHours = _unitOfWork.Workspaces.GetByID(workspaceId);
 
