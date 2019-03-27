@@ -20,6 +20,7 @@ namespace Zeww.Models
         public DbSet<Workspace> Workspaces { get; set; }
         public DbSet<File> Files { get; set; }
         public DbSet<UserWorkspace> UserWorkspaces { get; set; }
+        public DbSet<Emoji> Emojis { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<UserWorkspace>()

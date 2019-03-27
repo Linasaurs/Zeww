@@ -18,6 +18,6 @@ namespace Zeww.Models
         public string MessageContent { get; set; }
         public bool isPinned { get; set; }
         public DateTime TimeStamp { set; get; }
-        public int emojiCount { set { emojiCount = 0; } get { return emojiCount; }}
+        public int emojiCount { set; get; }
     }
 }
