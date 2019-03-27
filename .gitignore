@@ -262,3 +262,4 @@ __pycache__/
 
 # User Specific Application Configuration
 Zeww/appsettings.json
+/Zeww/Migrations
