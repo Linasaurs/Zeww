@@ -43,6 +43,7 @@ namespace Zeww.Models
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
         public virtual ICollection<UserChats> UserChats { get; set; }
         public String Customstatus { get; set; }
+        public string SocketConnectionId { get; set; }
 
         public User() {
             this.UserWorkspaces = new HashSet<UserWorkspace>();

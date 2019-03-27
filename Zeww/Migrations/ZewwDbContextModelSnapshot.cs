@@ -143,6 +143,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("Region");
 
+                    b.Property<string>("SocketConnectionId");
+
                     b.Property<int>("Status");
 
                     b.Property<string>("UserName")
