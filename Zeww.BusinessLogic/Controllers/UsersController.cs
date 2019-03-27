@@ -565,5 +565,46 @@ namespace Zeww.BusinessLogic.Controllers
 
             return Ok(new { Workpace = userWorkspaces.WorkspaceId, MutedUntil = userWorkspaces.TimeToWhichNotificationsAreMuted });
         }
+
+        [HttpGet]
+        [Route("getprivatechat/{userId2}/{workspaceId}")]
+        public IActionResult GetPrivateChat(int userId2, int workspaceId)
+        {
+            if (_unitOfWork.Users.GetByID(userId2) == null)
+                return BadRequest("The user does not exist");
+
+            if (_unitOfWork.Workspaces.GetByID(workspaceId) == null)
+                return BadRequest("The workspace does not exist");
+
+            User user1 = this.GetAuthenticatedUser();
+
+            var commonChatIds = _unitOfWork.UserChats.GetCommonChats(user1.Id, userId2);
+
+            Chat privateCommonChat;
+            foreach (var commonChatId in commonChatIds)
+            {
+                privateCommonChat = _unitOfWork.Chats.GetChatIfPrivate(commonChatId, workspaceId);
+
+                if (privateCommonChat != null)
+                    return Ok(privateCommonChat);
+            }
+
+            UserChats userChat1 = new UserChats { UserId = user1.Id };
+            UserChats userChat2 = new UserChats { UserId = userId2 };
+            privateCommonChat = new Chat
+            {
+                CreatorID = user1.Id,
+                DateCreated = DateTime.Now,
+                IsPrivate = true,
+                Name = "dm" + user1.Id + "," + userId2,
+                WorkspaceId = workspaceId,
+                UserChats = new List<UserChats> { userChat1, userChat2 }
+            };
+
+            _unitOfWork.Chats.Insert(privateCommonChat);
+            _unitOfWork.Save();
+            
+            return Created("No Url at the moment", privateCommonChat);
+        }
     }
 }
