@@ -9,6 +9,7 @@ namespace Zeww.Repository
     {
         //Your method headers go here
         UserChats GetUserChatByIds(int userID, int chatId);
+        int GetNumberOfUsersInChat(int? chatId);
 
         bool IsUserInChannel(int userId, int chatId);
     }
