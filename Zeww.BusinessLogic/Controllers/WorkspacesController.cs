@@ -337,8 +337,13 @@ namespace Zeww.BusinessLogic.Controllers
                 _unitOfWork.Save();
 
                 string message = $"{files.Count} {size} bytes uploaded successfully!";
-
-            return Json(returnedPath);
+                return Json(returnedPath);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex);
+                throw;
+            }
         }
 
         [HttpPut]
@@ -362,34 +367,28 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet]
         [Route("OmniSearch")]
-        public IActionResult OmniSearch(string searchQuery, int workspaceId) {
+        public IActionResult OmniSearch(string searchQuery, int workspaceId)
+        {
             //It does two web requests with that string
             //First the search for all channels with that username
             var returnedChannels = _unitOfWork.Workspaces.SearchForChannelInWorkspace(searchQuery, workspaceId);
             //Search for all users in workspace
             var listOfUserIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
             var returnedUsers = new List<User>();
-            foreach (int userId in listOfUserIdsInWorkspace) {
+            foreach (int userId in listOfUserIdsInWorkspace)
+            {
                 returnedUsers.Add(_unitOfWork.Users.GetByID(userId));
             }
-            returnedUsers = returnedUsers.Where(u=> u.Name.Contains(searchQuery)).ToList<User>();
-            var returnedObject = new { returnedChannels= returnedChannels, returnedUsers = returnedUsers };
+            returnedUsers = returnedUsers.Where(u => u.Name.Contains(searchQuery)).ToList<User>();
+            var returnedObject = new { returnedChannels = returnedChannels, returnedUsers = returnedUsers };
             return Ok(returnedObject);
-                return Json(returnedPath);
-            }
-            catch (Exception ex)
-            {
-                return Ok(ex);
-                throw;
-            }
-        }
-
 
         }
     }
 }
 
-    
+
+
 
 
 
