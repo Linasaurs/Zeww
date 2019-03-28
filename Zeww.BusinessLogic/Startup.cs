@@ -81,7 +81,7 @@ namespace Zeww.BusinessLogic
                 options.AddPolicy("CorsPolicy",
                     builder => builder
                     .WithOrigins("http://localhost:3000")
-                    .WithMethods("POST")
+                    .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
                     );
