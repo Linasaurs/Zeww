@@ -572,7 +572,7 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(new { Workpace = userWorkspaces.WorkspaceId, MutedUntil = userWorkspaces.TimeToWhichNotificationsAreMuted });
         }
         [HttpPost]
-        [Route("SendInvataionToUser")]
+        [Route("SendInvitaionToUser")]
         public IActionResult SendInvitaionToUser([FromBody] EmailDTO mailTo)
         {
             User user = this.GetAuthenticatedUser();
