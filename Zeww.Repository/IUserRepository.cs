@@ -15,5 +15,7 @@ namespace Zeww.Repository
         string GenerateJWTToken(User user);
         IQueryable<int> GetChatsIdsByUserId(int id);
         IQueryable<int> GetWorkspaceIdsByUserId(int id);
+        string GetSocketConnectionIdByUserId(int id);
+        void SetSocketConnectionIdByUserId(int id, string socketConnectionId);
     }
 }

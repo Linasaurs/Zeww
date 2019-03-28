@@ -69,5 +69,18 @@ namespace Zeww.DAL
             return userChats.SelectMany(uc => uc.Select(u => u.ChatId));
 
         }
+
+        public string GetSocketConnectionIdByUserId(int id)
+        {
+            var user = this.GetByID(id);
+            return user.SocketConnectionId;
+        }
+
+        public void SetSocketConnectionIdByUserId(int id, string socketConnectionId)
+        {
+            var user = this.GetByID(id);
+            user.SocketConnectionId = socketConnectionId;
+            this.Update(user);
+        }
     }
 }

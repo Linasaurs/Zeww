@@ -48,6 +48,21 @@ namespace Zeww.Migrations
                     b.ToTable("Chats");
                 });
 
+            modelBuilder.Entity("Zeww.Models.Emoji", b =>
+                {
+                    b.Property<int>("emojiID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("messageID");
+
+                    b.Property<int>("userID");
+
+                    b.HasKey("emojiID");
+
+                    b.ToTable("Emojis");
+                });
+
             modelBuilder.Entity("Zeww.Models.File", b =>
                 {
                     b.Property<int>("Id")
@@ -87,6 +102,8 @@ namespace Zeww.Migrations
 
                     b.Property<DateTime>("TimeStamp");
 
+                    b.Property<int>("emojiCount");
+
                     b.Property<bool>("isPinned");
 
                     b.HasKey("Id");
@@ -125,6 +142,8 @@ namespace Zeww.Migrations
                     b.Property<string>("PhoneNumber");
 
                     b.Property<string>("Region");
+
+                    b.Property<string>("SocketConnectionId");
 
                     b.Property<int>("Status");
 
