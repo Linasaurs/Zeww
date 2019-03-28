@@ -216,6 +216,8 @@ namespace Zeww.Migrations
 
                     b.Property<string>("WorkspaceImageName");
 
+                    b.Property<string>("WorkspaceKey");
+
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
 

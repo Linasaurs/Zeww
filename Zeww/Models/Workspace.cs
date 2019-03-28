@@ -38,6 +38,7 @@ namespace Zeww.Models {
         public string WorkspaceImageId { get; set; }
 
         public string WorkspaceImageName { get; set; }
+        public string WorkspaceKey { get; set; }
 
         public virtual ICollection<UserWorkspace> UserWorkspaces { get; set; }
         public bool CanInviteUsersToWorkspace { get; set; }

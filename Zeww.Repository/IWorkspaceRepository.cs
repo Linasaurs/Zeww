@@ -13,5 +13,6 @@ namespace Zeww.Repository
         IQueryable<int> GetUsersIdInWorkspace(int id);
         IQueryable <Chat> GetAllChannelsInAworkspace(int workspaceId);
         IQueryable<Chat> SearchForChannelInWorkspace(string queryString, int workspaceId);
+        string GenerateRandomString();
     }
 }
