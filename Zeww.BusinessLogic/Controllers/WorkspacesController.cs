@@ -58,9 +58,9 @@ namespace Zeww.BusinessLogic.Controllers
                 return BadRequest();
         }
 
-        [HttpGet("{id}")]
-        public string GetById(int Id) {
-            return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
+        [HttpGet("GetWorkspaceByID/{id}")]
+        public Workspace GetById(int Id) {
+            return _unitOfWork.Workspaces.GetByID(Id);
         }
 
         [HttpPost]
