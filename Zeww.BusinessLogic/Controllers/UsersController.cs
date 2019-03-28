@@ -572,8 +572,8 @@ namespace Zeww.BusinessLogic.Controllers
             return Ok(new { Workpace = userWorkspaces.WorkspaceId, MutedUntil = userWorkspaces.TimeToWhichNotificationsAreMuted });
         }
         [HttpPost]
-        [Route("SendInvataionToUser")]
-        public IActionResult SendInavtaionToUser([FromBody] EmailDTO mailTo)
+        [Route("SendInvitaionToUser")]
+        public IActionResult SendInvitaionToUser([FromBody] EmailDTO mailTo)
         {
             User user = this.GetAuthenticatedUser();
 
@@ -588,7 +588,7 @@ namespace Zeww.BusinessLogic.Controllers
                 mail.Subject = "This is a test mail";
                 mail.SubjectEncoding = System.Text.Encoding.UTF8;
                 mail.Body = "Test Mail.";
-                mail.IsBodyHtml = true;
+                mail.IsBodyHtml = false;
 
                 mail.Priority = MailPriority.High;
                 System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient();
