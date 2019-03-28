@@ -49,6 +49,7 @@ namespace Zeww.BusinessLogic.Controllers
 
         }
 
+
         [HttpDelete]
         public IActionResult Delete([FromHeader] int id)
         {
@@ -69,6 +70,32 @@ namespace Zeww.BusinessLogic.Controllers
                 return Ok(EditedMessage);
             }
             return NoContent();
+        }
+
+
+        [HttpPut("AddLike")]
+        public IActionResult AddLike([FromHeader]int messageId, [FromHeader]int userId)
+        {
+            Emoji newEmoji = new Emoji();
+            newEmoji.messageID = messageId;
+            newEmoji.userID = userId;
+            _unitOfWork.Emojis.Add(newEmoji);
+            _unitOfWork.Save();
+            Message likedMessage = _unitOfWork.Messages.GetByID(messageId);
+            likedMessage.emojiCount = _unitOfWork.Emojis.GetEmojiCount(messageId);
+            _unitOfWork.Save();
+            return Ok(likedMessage);
+        }
+
+        [HttpPut("RemoveLike")]
+        public IActionResult RemoveLike([FromHeader]int messageId, [FromHeader]int userId)
+        {
+            _unitOfWork.Emojis.DeleteEmoji(messageId, userId);
+            _unitOfWork.Save();
+            Message dislikedMessage = _unitOfWork.Messages.GetByID(messageId);
+            dislikedMessage.emojiCount = _unitOfWork.Emojis.GetEmojiCount(messageId);
+            _unitOfWork.Save();
+            return Ok(dislikedMessage);
         }
 
         [HttpPut("PinMessage/{messageId}")]

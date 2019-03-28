@@ -16,6 +16,7 @@ using Zeww.Models;
 using Zeww.Repository;
 using Zeww.BusinessLogic.ExtensionMethods;
 using Newtonsoft.Json;
+using System.Net.Mail;
 
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -40,7 +41,7 @@ namespace Zeww.BusinessLogic.Controllers
             return "Hello";
         }
 
-
+        
         [HttpGet("{id}")]
         public ActionResult GetById(int Id)
         {
@@ -55,9 +56,60 @@ namespace Zeww.BusinessLogic.Controllers
             {
                 return NotFound();
             }
-            
-            return Ok(_unitOfWork.Users.GetByID(Id));
 
+            var user = _unitOfWork.Users.GetByID(Id);
+        
+             var parsedString = Enum.GetName(typeof(Status), (int)user.Status);
+            //Enum.TryParse(parsedString, out Enum user.status);
+            Status st=(Status) Enum.Parse(typeof(Status), parsedString);
+            user.Status = st;
+            if (user.Status.ToString() == parsedString)
+            {
+                return  Ok(Status.Busy.ToString());
+            }
+
+            return Ok(parsedString);
+
+        }
+
+        [HttpGet]
+        [Route("getEnumStatusName/{user.Id}")]
+        public string GetEnumStatusName([FromBody] User user)
+        {
+            User _user = this.GetAuthenticatedUser();
+
+            var parsedString = Enum.GetName(typeof(Status), (int)user.Status);
+
+            if(_user.Id != user.Id)
+            {
+                return "You aren't authenticated!";
+            }
+            else
+            {
+                if (user.Status.ToString() == parsedString)
+                {
+                    return parsedString;
+                }
+                else
+                {
+                    return "status not found!";
+                }
+
+            }
+        }
+
+
+        [HttpPut]
+        [Route("UpdateEnumStatusName")]
+        public IActionResult UpdateEnumStatusName([FromBody] string status)
+        {
+            User _user = this.GetAuthenticatedUser();
+
+            Status st = (Status)Enum.Parse(typeof(Status), status);
+
+            _user.Status = st;
+
+            return NoContent();
         }
 
         [HttpGet("withoutPasswords/{id}")]
@@ -109,7 +161,7 @@ namespace Zeww.BusinessLogic.Controllers
                 _unitOfWork.Users.Insert(user);
                 _unitOfWork.Save();
 
-                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("SignUp", user.Id.ToString());
+                var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).ToLower().Replace("signup", user.Id.ToString());
 
                 return Created(location, user);
             }
@@ -155,25 +207,23 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
 
-
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyUserNameIsUnique")]
-        public IActionResult VerifyUserNameIsUnique(UserNameDTO dto)
+        public IActionResult VerifyUserNameIsUnique([FromQuery]string userName)
         {
-            var userNameExists = _unitOfWork.Users.GetUserByUserName(dto.UserName) == null ? false : true;
+            var userNameExists = _unitOfWork.Users.GetUserByUserName(userName) == null ? false : true;
             if (userNameExists)
                 return BadRequest("This username is already taken.");
-
             return Ok("You can use this user name");
         }
 
         [AllowAnonymous]
         [HttpGet]
         [Route("VerifyEmailIsUnique")]
-        public IActionResult VerifyEmailIsUnique(EmailDTO dto)
+        public IActionResult VerifyEmailIsUnique([FromQuery]string email)
         {
-            var emailExists = _unitOfWork.Users.GetUserByEmail(dto.Email) == null ? false : true;
+            var emailExists = _unitOfWork.Users.GetUserByEmail(email) == null ? false : true;
             if (emailExists)
                 return BadRequest("This email is already taken.");
 
@@ -182,7 +232,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet("ShowConnectionStatusForLoggedInUser")]
         public IActionResult ShowConnectionStatus() {
-            //Ziad is working on this method, please do not touch it!
             User userToShowConnectionStatusFor = this.GetAuthenticatedUser();
             var connectionStatus = userToShowConnectionStatusFor.ConnectionStatus;
             return Ok(connectionStatus);
@@ -190,7 +239,6 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpPut("ToggleUserConnectionStatusForLoggedInUser")]
         public IActionResult ToggleUserConnectionStatus(int userId, ConnectionStatus newConnectionStatus) {
-            //Ziad is working on this method, please do not touch it!
             var userToChangeConnectionStatusFor = _unitOfWork.Users.GetByID(userId);
             if (userToChangeConnectionStatusFor.ConnectionStatus == 0) {
                 userToChangeConnectionStatusFor.ConnectionStatus = ConnectionStatus.Away;
@@ -201,6 +249,28 @@ namespace Zeww.BusinessLogic.Controllers
             userToChangeConnectionStatusFor.ConnectionStatus = newConnectionStatus;
             return Ok(userToChangeConnectionStatusFor.ConnectionStatus);
          }
+
+        public Status ShowStatusById(int userId) {
+            var userToShowStatusFor = _unitOfWork.Users.GetByID(userId);
+            var userStatus = userToShowStatusFor.Status;
+            return userStatus;
+        }
+
+        [HttpGet("ShowStatusToAllUsersInWorkspace")]
+        public IActionResult ShowStatusToAllUsersInWorkspace(int[] userIds) {
+            var dictionary = new Dictionary<int, Status>();
+            var allUsersInCurrentWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(1);
+            //Will have to change this method to be used to get the current workspace
+            if (allUsersInCurrentWorkspace == null) {
+                return BadRequest("No users in this workspace");
+            }
+
+            foreach(int userId in allUsersInCurrentWorkspace) {
+                var userStatus = _unitOfWork.Users.GetByID(userId).Status;
+                dictionary.Add(userId, userStatus);
+            }
+            return Ok(dictionary);
+        }
 
         [AllowAnonymous]
         [HttpPost]
@@ -261,19 +331,38 @@ namespace Zeww.BusinessLogic.Controllers
             }
         }
         [AllowAnonymous]
-        [HttpGet("workspaces/{id}")]
+        [HttpGet("GetworkspacesbyUserId/{id}")]
         public IActionResult GetworkspacesbyUserId(int id)
         {
             var user = _unitOfWork.Users.GetWorkspaceIdsByUserId(id);
             if (user != null)
             {
-                string userJson = JsonConvert.SerializeObject(user);
+                List<Workspace> workspaces = new List<Workspace>();
+                foreach(var workspace in user)
+                {
+                    workspaces.Add(_unitOfWork.Workspaces.GetByID(workspace));
+                }
+                string userJson = JsonConvert.SerializeObject(workspaces);
                 return Ok(userJson);
             }
             else
             {
                 return NotFound();
             }
+        }
+
+        [HttpGet]
+        [Route("SearchByUserName/{userName}")]
+        public IActionResult SearchByUserName(string userName, int workspaceId) {
+            var listOfUsersIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
+            if (listOfUsersIdsInWorkspace == null) {
+                return Ok("No users in passed workspace");
+            }
+            var listOfUsersInWorkspace = new List<User>();
+            foreach (int userId in listOfUsersIdsInWorkspace) {
+                listOfUsersInWorkspace.Add(_unitOfWork.Users.GetByID(userId));
+            }
+            return Ok(listOfUsersInWorkspace);
         }
 
         [AllowAnonymous]
@@ -325,7 +414,6 @@ namespace Zeww.BusinessLogic.Controllers
                 }
             }
         }
-
 
         [HttpPut]
         [Route("AddDontDisturbPeriod")]
@@ -386,7 +474,6 @@ namespace Zeww.BusinessLogic.Controllers
             }
             return Ok(userChannelChats);
         }
-
 
         [HttpPut]
         [Route("AddCustomStatus")]
@@ -483,6 +570,94 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
             return Ok(new { Workpace = userWorkspaces.WorkspaceId, MutedUntil = userWorkspaces.TimeToWhichNotificationsAreMuted });
+        }
+        [HttpPost]
+        [Route("SendInvataionToUser")]
+        public IActionResult SendInavtaionToUser([FromBody] EmailDTO mailTo)
+        {
+            User user = this.GetAuthenticatedUser();
+
+           
+
+                string pweda = "3adewelzew"; //(ConfigurationManager.AppSettings["password"]);
+                string from = "zew.services.tgp@gmail.com"; //Replace this with your own correct Gmail Address
+                                                            /*  string to = "abc@gef.com";*/ //Replace this with the Email Address to whom you want to send the mail
+                System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage();
+                mail.To.Add(mailTo.Email);
+                mail.From = new MailAddress(from);
+                mail.Subject = "This is a test mail";
+                mail.SubjectEncoding = System.Text.Encoding.UTF8;
+                mail.Body = "Test Mail.";
+                mail.IsBodyHtml = true;
+
+                mail.Priority = MailPriority.High;
+                System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient();
+
+                
+                client.Credentials = new System.Net.NetworkCredential(from, pweda);
+                client.Port = 587; 
+                client.Host = "smtp.gmail.com";
+                client.EnableSsl = true; 
+
+                try
+                {
+                    client.Send(mail);
+                   return Ok("message Sent");
+                }
+                catch (Exception ex)
+                {
+                    Exception ex2 = ex;
+                    string errorMessage = string.Empty;
+                    while (ex2 != null)
+                    {
+                        errorMessage += ex2.ToString();
+                        ex2 = ex2.InnerException;
+                    }
+                return BadRequest(ex2);
+            } 
+
+               
+        }
+
+        [HttpGet]
+        [Route("getprivatechat/{userId2}/{workspaceId}")]
+        public IActionResult GetPrivateChat(int userId2, int workspaceId)
+        {
+            if (_unitOfWork.Users.GetByID(userId2) == null)
+                return BadRequest("The user does not exist");
+
+            if (_unitOfWork.Workspaces.GetByID(workspaceId) == null)
+                return BadRequest("The workspace does not exist");
+
+            User user1 = this.GetAuthenticatedUser();
+
+            var commonChatIds = _unitOfWork.UserChats.GetCommonChats(user1.Id, userId2);
+
+            Chat privateCommonChat;
+            foreach (var commonChatId in commonChatIds)
+            {
+                privateCommonChat = _unitOfWork.Chats.GetChatIfPrivate(commonChatId, workspaceId);
+
+                if (privateCommonChat != null)
+                    return Ok(privateCommonChat);
+            }
+
+            UserChats userChat1 = new UserChats { UserId = user1.Id };
+            UserChats userChat2 = new UserChats { UserId = userId2 };
+            privateCommonChat = new Chat
+            {
+                CreatorID = user1.Id,
+                DateCreated = DateTime.Now,
+                IsPrivate = true,
+                Name = "dm" + user1.Id + "," + userId2,
+                WorkspaceId = workspaceId,
+                UserChats = new List<UserChats> { userChat1, userChat2 }
+            };
+
+            _unitOfWork.Chats.Insert(privateCommonChat);
+            _unitOfWork.Save();
+            
+            return Created("No Url at the moment", privateCommonChat);
         }
     }
 }

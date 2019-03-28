@@ -65,10 +65,22 @@ namespace Zeww.DAL
         public IQueryable<int> GetChatsIdsByUserId(int id)
         {
             IQueryable<User> query = dbSet;
-
             var userChats = query.Where(u => u.Id == id).Include(u => u.UserChats).Select(uc=> uc.UserChats);
             return userChats.SelectMany(uc => uc.Select(u => u.ChatId));
-           
+
+        }
+
+        public string GetSocketConnectionIdByUserId(int id)
+        {
+            var user = this.GetByID(id);
+            return user.SocketConnectionId;
+        }
+
+        public void SetSocketConnectionIdByUserId(int id, string socketConnectionId)
+        {
+            var user = this.GetByID(id);
+            user.SocketConnectionId = socketConnectionId;
+            this.Update(user);
         }
     }
 }

@@ -11,11 +11,13 @@ namespace Zeww.Models
     {
         [Key]
         public int Id { get; set; }
+        [ForeignKey("User")]
         public int SenderID { get; set; }
+        [ForeignKey("Chat")]
         public int ChatId { get; set; }
         public string MessageContent { get; set; }
         public bool isPinned { get; set; }
-        public DateTime dateTime { set; get; }
-
+        public DateTime TimeStamp { set; get; }
+        public int emojiCount { set; get; }
     }
 }

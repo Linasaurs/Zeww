@@ -14,7 +14,8 @@ namespace Zeww.DAL {
 
         public void Add(Message message)
         {
-            message.dateTime = DateTime.Now;
+            message.TimeStamp = DateTime.Now;
+            message.emojiCount = 0;
             dbSet.Add(message);
         }
 
@@ -25,6 +26,7 @@ namespace Zeww.DAL {
 
         }
 
+
         //ERROR HERE, Message returns null
         public void DeleteMessage(int id)
         {
@@ -32,7 +34,7 @@ namespace Zeww.DAL {
             dbSet.Remove(message);
         }
 
-    public void PinMessage(int messageId)
+        public void PinMessage(int messageId)
         {
             var messageToPin = GetByID(messageId);
             messageToPin.isPinned = true;

@@ -24,10 +24,37 @@ namespace Zeww.DAL
         //Your methods go here 
         public IQueryable<int> GetUsersIdInWorkspace(int id)
         {
-            IQueryable<Workspace> queryWorksapces = dbSet;
-            var workspaces= queryWorksapces.Where(w=>w.Id==id).Include(w=>w.UserWorkspaces).Select(uw => uw.UserWorkspaces);
+            IQueryable<Workspace> queryWorkspaces = dbSet;
+            var workspaces= queryWorkspaces.Where(w=>w.Id==id)
+                .Include(w=>w.UserWorkspaces).Select(uw => uw.UserWorkspaces);
             return workspaces.SelectMany(uw=>uw.Select(u=>u.UserId));
         }
 
+        public IQueryable<Chat> GetAllChannelsInAworkspace(int workspaceId) {
+            IQueryable<Workspace> queryWorkspaces = dbSet.Include(w => w.Chats);
+            var workspaceToGetChatsIn = queryWorkspaces.FirstOrDefault(w => w.Id == workspaceId);
+            if (workspaceToGetChatsIn == null)
+                return null;
+            var listOfChatsInWorkspace = workspaceToGetChatsIn.Chats.AsQueryable();
+            return listOfChatsInWorkspace;
+        }
+
+        public IQueryable<Chat> SearchForChannelInWorkspace(string queryString, int workspaceId) {
+            var allChannelsInAWorkspace = GetAllChannelsInAworkspace(workspaceId);
+            if (allChannelsInAWorkspace == null)
+                return null;
+            if (allChannelsInAWorkspace.Any(c => c.Name.ToLower().Contains(queryString)))
+                return allChannelsInAWorkspace;
+            else
+                return null;
+        }
+
+        public string GenerateRandomString()
+        {
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, 7)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
     }
 }

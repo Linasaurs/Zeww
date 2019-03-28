@@ -26,6 +26,7 @@ namespace Zeww.DAL
             Workspaces = new WorkspaceRepository(context);
             Files = new FileRepository(context);
             UserChats = new UserChatsRepository(context);
+            Emojis = new EmojiRepository(context);
         }
 
         public IChatRepository Chats { get; private set; }
@@ -35,6 +36,7 @@ namespace Zeww.DAL
         public IWorkspaceRepository Workspaces{ get; private set; }
         public IFileRepository Files { get; private set; }
         public IUserChatsRepository UserChats { get; private set; }
+        public IEmojiRepository Emojis { get; private set; }
 
 
         public void Save() {

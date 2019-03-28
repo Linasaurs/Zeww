@@ -11,6 +11,7 @@ namespace Zeww.Repository {
         IWorkspaceRepository Workspaces { get; }
         IFileRepository Files { get; }
         IUserChatsRepository UserChats { get; }
+        IEmojiRepository Emojis { get; }
         void Save();
     }
 }

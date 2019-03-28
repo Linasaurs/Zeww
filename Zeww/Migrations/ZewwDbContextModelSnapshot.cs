@@ -43,7 +43,24 @@ namespace Zeww.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("WorkspaceId");
+
                     b.ToTable("Chats");
+                });
+
+            modelBuilder.Entity("Zeww.Models.Emoji", b =>
+                {
+                    b.Property<int>("emojiID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("messageID");
+
+                    b.Property<int>("userID");
+
+                    b.HasKey("emojiID");
+
+                    b.ToTable("Emojis");
                 });
 
             modelBuilder.Entity("Zeww.Models.File", b =>
@@ -83,7 +100,9 @@ namespace Zeww.Migrations
 
                     b.Property<int>("SenderID");
 
-                    b.Property<DateTime>("dateTime");
+                    b.Property<DateTime>("TimeStamp");
+
+                    b.Property<int>("emojiCount");
 
                     b.Property<bool>("isPinned");
 
@@ -123,6 +142,8 @@ namespace Zeww.Migrations
                     b.Property<string>("PhoneNumber");
 
                     b.Property<string>("Region");
+
+                    b.Property<string>("SocketConnectionId");
 
                     b.Property<int>("Status");
 
@@ -187,11 +208,15 @@ namespace Zeww.Migrations
 
                     b.Property<string>("DateOfCreation");
 
+                    b.Property<bool>("IsEmailVisible");
+
                     b.Property<string>("URL");
 
                     b.Property<string>("WorkspaceImageId");
 
                     b.Property<string>("WorkspaceImageName");
+
+                    b.Property<string>("WorkspaceKey");
 
                     b.Property<string>("WorkspaceName")
                         .IsRequired();
@@ -201,6 +226,14 @@ namespace Zeww.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("Zeww.Models.Chat", b =>
+                {
+                    b.HasOne("Zeww.Models.Workspace")
+                        .WithMany("Chats")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Zeww.Models.File", b =>
