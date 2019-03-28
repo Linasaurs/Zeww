@@ -84,6 +84,8 @@ namespace Zeww.BusinessLogic.Controllers
         [HttpPost]
         [Route("CreateWorkspace")]
         public IActionResult CreateWorkspace([FromBody] Workspace newWorkspace) {
+            User user = this.GetAuthenticatedUser();
+
             if (!TryValidateModel(newWorkspace))
                 return BadRequest(ModelState);
 
@@ -96,8 +98,16 @@ namespace Zeww.BusinessLogic.Controllers
 
             if (!TryValidateModel(newWorkspace))
                 return BadRequest(ModelState);
-            else
+            else {
+                newWorkspace.CreatorID = user.Id;
+                newWorkspace.WorkspaceKey = _unitOfWork.Workspaces.GenerateRandomString();
+                newWorkspace.UserWorkspaces.Add(new UserWorkspace
+                {
+                    UserId = user.Id
+                });
                 _unitOfWork.Workspaces.Insert(newWorkspace);
+
+            }
             _unitOfWork.Save();
 
             var addedWorkspace = _unitOfWork.Workspaces.GetWorkspaceByName(newWorkspace.WorkspaceName);
@@ -110,8 +120,6 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
             return Created(location, addedWorkspace);
-
-
         }
 
         [HttpPut]
