@@ -63,6 +63,38 @@ namespace Zeww.BusinessLogic.Controllers
             return _unitOfWork.Workspaces.GetByID(Id).WorkspaceName;
         }
 
+        [HttpPost]
+        [Route("joinworkspace")]
+        public IActionResult JoinWorkspace([FromQuery]int workspaceId, [FromQuery]string key)
+        {
+            User user = this.GetAuthenticatedUser();
+
+            var workspace = _unitOfWork.Workspaces.GetByID(workspaceId);
+            if (workspace == null)
+                return BadRequest("The workspace does not exist");
+
+            if (_unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId).Contains(user.Id))
+                return BadRequest("The user is already in the workspace");
+
+            if(workspace.WorkspaceKey == key)
+            {
+                UserWorkspace userWorkspace = new UserWorkspace
+                {
+                    UserId = user.Id,
+                    WorkspaceId = workspaceId,
+                    UserRoleInWorkspace = UserRoleInWorkspace.Member
+                };
+
+                _unitOfWork.UserWorkspaces.Insert(userWorkspace);
+                _unitOfWork.Save();
+
+                return Ok("The user is successfully added to the workspace");
+            }
+
+            return BadRequest("The key you entered is not valid");
+            
+        }
+
         [HttpGet("GetUsersByWorkspaceId/{id}")]
         public ActionResult GetUsersByWorkspaceId(int Id) {
             if (Id < 1) {
