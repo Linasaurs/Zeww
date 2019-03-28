@@ -573,7 +573,7 @@ namespace Zeww.BusinessLogic.Controllers
         }
         [HttpPost]
         [Route("SendInvataionToUser")]
-        public IActionResult SendInavtaionToUser([FromBody] EmailDTO mailTo)
+        public IActionResult SendInvitaionToUser([FromBody] EmailDTO mailTo)
         {
             User user = this.GetAuthenticatedUser();
 
