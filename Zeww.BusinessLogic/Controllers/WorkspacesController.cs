@@ -24,8 +24,7 @@ using System.Net;
 
 namespace Zeww.BusinessLogic.Controllers
 {
-    //[Authorize]
-    [AllowAnonymous]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkspacesController : Controller {
