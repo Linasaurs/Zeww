@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Zeww.BusinessLogic.ExtensionMethods;
 using Zeww.Models;
 using Zeww.Repository;
+using File = Zeww.Models.File;
 
 namespace Zeww.BusinessLogic.Controllers
 {
@@ -17,10 +20,12 @@ namespace Zeww.BusinessLogic.Controllers
     public class ChatsController : Controller
     {
         private IUnitOfWork _unitOfWork;
+        private IHostingEnvironment _hostingEnvironment; 
 
-        public ChatsController(IUnitOfWork unitOfWork)
+        public ChatsController(IUnitOfWork unitOfWork, IHostingEnvironment hostingEnvironment)
         {
             this._unitOfWork = unitOfWork;
+            this._hostingEnvironment = hostingEnvironment;
         }
 
         // GET: /<controller>/
@@ -176,6 +181,48 @@ namespace Zeww.BusinessLogic.Controllers
         public IActionResult viewMessagesDate()
         {
             return Ok();
+        }
+
+
+
+        [HttpPost]
+        [Route("UploadFile/{id}")]
+        public async Task<IActionResult> UploadFile(int id)
+        {
+            long size = 0;
+
+            User uploadedUser = this.GetAuthenticatedUser(); 
+
+            var originalImageName = "";
+            string fileId = Guid.NewGuid().ToString().Replace("-", "");
+
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "Files", fileId);
+
+            var files = Request.Form.Files;
+            var file = files.FirstOrDefault();
+
+            originalImageName = Path.GetFileName(file.FileName);
+
+            var fileExtension = Path.GetExtension(file.FileName);
+            var fullPath = $"{path}{fileExtension}";
+
+            if (file.Length > 0)
+            {
+                using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+            }
+
+            var returnedPath = Request.Scheme + "://" + Request.Host + "/Files/" + fileId + fileExtension;
+
+            File uploadedFile = new File { Source = returnedPath, Name = originalImageName, Extension = fileExtension, UserId = uploadedUser.Id, ChatId = id };
+            _unitOfWork.Files.Add(uploadedFile);
+            _unitOfWork.Save();
+
+            string message = $"{files.Count} {size} bytes uploaded successfully!";
+
+            return Json(returnedPath);
         }
 
     }

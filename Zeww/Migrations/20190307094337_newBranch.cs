@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Zeww.Migrations
 {
-    public partial class cleanMigration : Migration
+    public partial class newBranch : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -66,6 +66,8 @@ namespace Zeww.Migrations
                     URL = table.Column<string>(nullable: true),
                     DailyDoNotDisturbFrom = table.Column<int>(nullable: true),
                     DailyDoNotDisturbTo = table.Column<int>(nullable: true),
+                    WorkspaceImageId = table.Column<string>(nullable: true),
+                    WorkspaceImageName = table.Column<string>(nullable: true),
                     CanInviteUsersToWorkspace = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -156,7 +158,9 @@ namespace Zeww.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false),
-                    WorkspaceId = table.Column<int>(nullable: false)
+                    WorkspaceId = table.Column<int>(nullable: false),
+                    TimeToWhichNotificationsAreMuted = table.Column<DateTime>(nullable: false),
+                    UserRoleInWorkspace = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
