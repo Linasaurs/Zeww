@@ -106,7 +106,8 @@ namespace Zeww.BusinessLogic.Controllers
             }
             var ListOfUsersIds = _unitOfWork.Workspaces.GetUsersIdInWorkspace(Id);
             var ListOfUsers = new List<User>();
-            foreach (var userId in ListOfUsersIds) {
+            foreach (var userId in ListOfUsersIds)
+            {
                 ListOfUsers.Add(_unitOfWork.Users.GetByID(userId));
             }
             return Ok(ListOfUsers);
@@ -143,15 +144,15 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
 
             var addedWorkspace = _unitOfWork.Workspaces.GetWorkspaceByName(newWorkspace.WorkspaceName);
-            var workspaceReference = newWorkspace.WorkspaceName + "/" + addedWorkspace.Id;
-
-            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", workspaceReference);
+            var location = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Request).Replace("CreateWorkspace", "" + addedWorkspace.Id);
 
             addedWorkspace.URL = location;
             _unitOfWork.Workspaces.Update(addedWorkspace);
             _unitOfWork.Save();
 
             return Created(location, addedWorkspace);
+
+
         }
 
         [HttpPut]
@@ -200,6 +201,8 @@ namespace Zeww.BusinessLogic.Controllers
             _unitOfWork.Save();
             return Ok();
         }
+
+          
 
         [HttpPut]
         [Route("EditWorkspaceURL/{Id}")]
@@ -296,41 +299,51 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpPost]
         [Route("Upload/{id}")]
-        public async Task<IActionResult> UploadWorkspaceImageAsync(int id) {
-            long size = 0;
+        public async Task<IActionResult> UploadWorkspaceImageAsync(int id)
+        {
+            try
+            {
+                long size = 0;
 
-            Workspace workspace = _unitOfWork.Workspaces.GetByID(id);
+                Workspace workspace = _unitOfWork.Workspaces.GetByID(id);
 
-            var originalImageName = "";
-            string imageId = Guid.NewGuid().ToString().Replace("-", "");
+                var originalImageName = "";
+                string imageId = Guid.NewGuid().ToString().Replace("-", "");
 
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, "Images", imageId);
+                var path = Path.Combine(_hostingEnvironment.WebRootPath, "Images", imageId);
 
-            var files = Request.Form.Files;
-            var file = files.FirstOrDefault();
+                var files = Request.Form.Files;
+                var file = files.FirstOrDefault();
 
-            originalImageName = Path.GetFileName(file.FileName);
+                originalImageName = Path.GetFileName(file.FileName);
 
-            var fileExtension = Path.GetExtension(file.FileName);
-            var fullPath = $"{path}{fileExtension}";
+                var fileExtension = Path.GetExtension(file.FileName);
+                var fullPath = $"{path}{fileExtension}";
 
-            if (file.Length > 0) {
-                using (var fileStream = new FileStream(fullPath, FileMode.Create)) {
-                    await file.CopyToAsync(fileStream);
+                if (file.Length > 0)
+                {
+                    using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
                 }
+
+                var returnedPath = Request.Scheme + "://" + Request.Host + "/Images/" + imageId + fileExtension;
+
+                workspace.WorkspaceImageId = returnedPath;
+                workspace.WorkspaceImageName = originalImageName;
+
+                _unitOfWork.Workspaces.Update(workspace);
+                _unitOfWork.Save();
+
+                string message = $"{files.Count} {size} bytes uploaded successfully!";
+                return Json(returnedPath);
             }
-
-            var returnedPath = Request.Scheme + "://" + Request.Host + "/Images/" + imageId + fileExtension;
-
-            workspace.WorkspaceImageId = returnedPath;
-            workspace.WorkspaceImageName = originalImageName;
-
-            _unitOfWork.Workspaces.Update(workspace);
-            _unitOfWork.Save();
-
-            string message = $"{files.Count} {size} bytes uploaded successfully!";
-
-            return Json(returnedPath);
+            catch (Exception ex)
+            {
+                return Ok(ex);
+                throw;
+            }
         }
 
         [HttpPut]
@@ -354,25 +367,28 @@ namespace Zeww.BusinessLogic.Controllers
 
         [HttpGet]
         [Route("OmniSearch")]
-        public IActionResult OmniSearch(string searchQuery, int workspaceId) {
+        public IActionResult OmniSearch(string searchQuery, int workspaceId)
+        {
             //It does two web requests with that string
             //First the search for all channels with that username
             var returnedChannels = _unitOfWork.Workspaces.SearchForChannelInWorkspace(searchQuery, workspaceId);
             //Search for all users in workspace
             var listOfUserIdsInWorkspace = _unitOfWork.Workspaces.GetUsersIdInWorkspace(workspaceId);
             var returnedUsers = new List<User>();
-            foreach (int userId in listOfUserIdsInWorkspace) {
+            foreach (int userId in listOfUserIdsInWorkspace)
+            {
                 returnedUsers.Add(_unitOfWork.Users.GetByID(userId));
             }
-            returnedUsers = returnedUsers.Where(u=> u.Name.Contains(searchQuery)).ToList<User>();
-            var returnedObject = new { returnedChannels= returnedChannels, returnedUsers = returnedUsers };
+            returnedUsers = returnedUsers.Where(u => u.Name.Contains(searchQuery)).ToList<User>();
+            var returnedObject = new { returnedChannels = returnedChannels, returnedUsers = returnedUsers };
             return Ok(returnedObject);
 
         }
     }
 }
 
-    
+
+
 
 
 
