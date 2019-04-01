@@ -1,7 +1,7 @@
 ## Zeww
 The data access layer, busniess logic layer, models, and APIs for Zeww. The backend was designed to support the MVC framework design pattern with a code first approach using entity framework.
 
-## Dependencies
+## Software requirements
 
 Microsoft SQL,
 Entity Framework,
