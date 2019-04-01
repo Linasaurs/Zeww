@@ -3,9 +3,9 @@ The data access layer, busniess logic layer, models, and APIs for Zeww. The back
 
 ## Dependencies
 
--Microsoft SQL
--Entity Framework
--ASP.Net Core
+Microsoft SQL,
+Entity Framework,
+ASP.Net Core
 
 ## About Zeww
 
